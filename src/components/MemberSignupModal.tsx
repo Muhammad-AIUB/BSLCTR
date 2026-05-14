@@ -20,12 +20,13 @@ interface Props {
     onClose: () => void;
 }
 
-const SPECIALTY_OPTIONS = [
-    { value: "hepatologist", label: "Hepatologist" },
-    { value: "hepatobiliary_surgeon", label: "Hepatobiliary Surgeon" },
-    { value: "intervention_hepatologist", label: "Intervention Hepatologist" },
-    { value: "other", label: "Other" },
-];
+const toBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
 
 export default function MemberSignupModal({ open, onClose }: Props) {
     const [form, setForm] = useState({
@@ -35,7 +36,6 @@ export default function MemberSignupModal({ open, onClose }: Props) {
         bmdcNo: "",
         designation: "",
         specialtySubject: "",
-        otherSpecialty: "",
         academicQualifications: "",
         specializedTraining: "",
         currentPosting: "",
@@ -57,6 +57,12 @@ export default function MemberSignupModal({ open, onClose }: Props) {
     const set = (key: string, value: string) =>
         setForm((prev) => ({ ...prev, [key]: value }));
 
+    const handleFile = async (key: string, file: File | null) => {
+        if (!file) { set(key, ""); return; }
+        const b64 = await toBase64(file);
+        set(key, b64);
+    };
+
     const addChamber = () => setChamberAddresses((prev) => [...prev, ""]);
     const updateChamber = (i: number, val: string) =>
         setChamberAddresses((prev) => prev.map((a, idx) => (idx === i ? val : a)));
@@ -77,7 +83,6 @@ export default function MemberSignupModal({ open, onClose }: Props) {
         e.preventDefault();
         setError("");
         setSubmitting(true);
-
         try {
             const res = await fetch("/api/member/signup", {
                 method: "POST",
@@ -88,7 +93,6 @@ export default function MemberSignupModal({ open, onClose }: Props) {
                     interventions,
                 }),
             });
-
             const data = await res.json();
             if (!res.ok) {
                 setError(data.error || "Something went wrong");
@@ -106,20 +110,10 @@ export default function MemberSignupModal({ open, onClose }: Props) {
         setSubmitted(false);
         setError("");
         setForm({
-            name: "",
-            mobileNo: "",
-            email: "",
-            bmdcNo: "",
-            designation: "",
-            specialtySubject: "",
-            otherSpecialty: "",
-            academicQualifications: "",
-            specializedTraining: "",
-            currentPosting: "",
-            shortBiography: "",
-            journals: "",
-            profilePicture: "",
-            backgroundPicture: "",
+            name: "", mobileNo: "", email: "", bmdcNo: "", designation: "",
+            specialtySubject: "", academicQualifications: "", specializedTraining: "",
+            currentPosting: "", shortBiography: "", journals: "",
+            profilePicture: "", backgroundPicture: "",
         });
         setChamberAddresses([""]);
         setInterventions([]);
@@ -130,7 +124,7 @@ export default function MemberSignupModal({ open, onClose }: Props) {
         <Dialog open={open} onOpenChange={handleClose}>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold text-primary">
+                    <DialogTitle className="text-xl font-bold text-primary">
                         Member Sign Up
                     </DialogTitle>
                 </DialogHeader>
@@ -138,67 +132,53 @@ export default function MemberSignupModal({ open, onClose }: Props) {
                 {submitted ? (
                     <div className="flex flex-col items-center gap-4 py-10 text-center">
                         <CheckCircle className="h-16 w-16 text-green-500" />
-                        <h3 className="text-xl font-semibold text-slate-800">
-                            Application Submitted!
-                        </h3>
+                        <h3 className="text-xl font-semibold text-slate-800">Application Submitted!</h3>
                         <p className="text-slate-600 max-w-sm">
-                            Your membership application has been received. You will be
-                            notified once an admin reviews your application.
+                            Your application has been received and is pending admin review.
                         </p>
-                        <Button onClick={handleClose} className="mt-2">
-                            Close
-                        </Button>
+                        <Button onClick={handleClose}>Close</Button>
                     </div>
                 ) : (
-                    <form onSubmit={handleSubmit} className="space-y-5">
+                    <form onSubmit={handleSubmit} className="space-y-4">
+
                         {/* 1. Name */}
                         <div className="space-y-1">
-                            <Label htmlFor="name">
-                                Full Name <span className="text-red-500">*</span>
-                            </Label>
+                            <Label htmlFor="name">Name</Label>
                             <Input
                                 id="name"
                                 value={form.name}
                                 onChange={(e) => set("name", e.target.value)}
-                                placeholder="e.g. Dr. John Doe"
                                 required
                             />
                         </div>
 
                         {/* 2. Mobile No */}
                         <div className="space-y-1">
-                            <Label htmlFor="mobileNo">
-                                Mobile Number <span className="text-red-500">*</span>
-                            </Label>
+                            <Label htmlFor="mobileNo">Mobile No</Label>
                             <Input
                                 id="mobileNo"
                                 value={form.mobileNo}
                                 onChange={(e) => set("mobileNo", e.target.value)}
-                                placeholder="e.g. +8801XXXXXXXXX"
+                                placeholder="+8801XXXXXXXXX"
                                 required
                             />
                         </div>
 
-                        {/* 3. Email */}
+                        {/* 3. Email address */}
                         <div className="space-y-1">
-                            <Label htmlFor="email">
-                                Email Address <span className="text-red-500">*</span>
-                            </Label>
+                            <Label htmlFor="email">Email address</Label>
                             <Input
                                 id="email"
                                 type="email"
                                 value={form.email}
                                 onChange={(e) => set("email", e.target.value)}
-                                placeholder="e.g. doctor@hospital.com"
                                 required
                             />
                         </div>
 
-                        {/* 4. BMDC No */}
+                        {/* 4. BMDC no */}
                         <div className="space-y-1">
-                            <Label htmlFor="bmdcNo">
-                                BMDC Registration No <span className="text-red-500">*</span>
-                            </Label>
+                            <Label htmlFor="bmdcNo">BMDC no</Label>
                             <Input
                                 id="bmdcNo"
                                 value={form.bmdcNo}
@@ -210,54 +190,38 @@ export default function MemberSignupModal({ open, onClose }: Props) {
 
                         {/* 5. Designation */}
                         <div className="space-y-1">
-                            <Label htmlFor="designation">
-                                Designation <span className="text-red-500">*</span>
-                            </Label>
+                            <Label htmlFor="designation">Designation</Label>
                             <Input
                                 id="designation"
                                 value={form.designation}
                                 onChange={(e) => set("designation", e.target.value)}
-                                placeholder="e.g. Professor, Associate Professor"
                                 required
                             />
                         </div>
 
                         {/* 6. Specialty Subject */}
                         <div className="space-y-1">
-                            <Label>
-                                Specialty Subject <span className="text-red-500">*</span>
-                            </Label>
+                            <Label>Specialty Subject</Label>
                             <Select
                                 value={form.specialtySubject}
                                 onValueChange={(v) => set("specialtySubject", v)}
-                                required
                             >
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Select specialty..." />
+                                    <SelectValue placeholder="Select..." />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {SPECIALTY_OPTIONS.map((opt) => (
-                                        <SelectItem key={opt.value} value={opt.value}>
-                                            {opt.label}
-                                        </SelectItem>
-                                    ))}
+                                    <SelectItem value="hepatologist">Hepatologist</SelectItem>
+                                    <SelectItem value="hepatobiliary_surgeon">Hepatobiliary Surgeon</SelectItem>
+                                    <SelectItem value="intervention_hepatologist">Intervention Hepatologist</SelectItem>
+                                    <SelectItem value="other">Other</SelectItem>
                                 </SelectContent>
                             </Select>
-                            {isOther && (
-                                <Input
-                                    className="mt-2"
-                                    value={form.otherSpecialty}
-                                    onChange={(e) => set("otherSpecialty", e.target.value)}
-                                    placeholder="Please specify your specialty"
-                                />
-                            )}
                         </div>
 
-                        {/* 7. Academic Qualifications */}
+                        {/* 7. Academic Qualifications or professional degrees */}
                         <div className="space-y-1">
                             <Label htmlFor="academicQualifications">
-                                Academic Qualifications / Professional Degrees{" "}
-                                <span className="text-red-500">*</span>
+                                Academic Qualifications or professional degrees
                             </Label>
                             <Input
                                 id="academicQualifications"
@@ -270,24 +234,18 @@ export default function MemberSignupModal({ open, onClose }: Props) {
 
                         {/* 8. Specialized Training */}
                         <div className="space-y-1">
-                            <Label htmlFor="specializedTraining">
-                                Specialized Training
-                            </Label>
+                            <Label htmlFor="specializedTraining">Specialized Training</Label>
                             <Input
                                 id="specializedTraining"
                                 value={form.specializedTraining}
                                 onChange={(e) => set("specializedTraining", e.target.value)}
-                                placeholder="e.g. Fellowship in Hepatology, Johns Hopkins"
                             />
                         </div>
 
-                        {/* 9. Current Posting */}
+                        {/* 9. Current Posting or Affiliated Institution */}
                         <div className="space-y-1">
                             <Label htmlFor="currentPosting">
-                                Current Posting / Affiliated Institution
-                                {isOther && (
-                                    <span className="ml-2 text-xs text-slate-400">(N/A for Other specialty)</span>
-                                )}
+                                Current Posting or Affiliated Institution
                             </Label>
                             <Input
                                 id="currentPosting"
@@ -295,27 +253,19 @@ export default function MemberSignupModal({ open, onClose }: Props) {
                                 onChange={(e) => set("currentPosting", e.target.value)}
                                 placeholder="e.g. Dhaka Medical College Hospital"
                                 disabled={isOther}
-                                className={isOther ? "opacity-50" : ""}
                             />
                         </div>
 
-                        {/* 10. Chamber Addresses */}
+                        {/* 10. Chamber address */}
                         <div className="space-y-1">
-                            <Label>
-                                Chamber Address(es)
-                                {isOther && (
-                                    <span className="ml-2 text-xs text-slate-400">(N/A for Other specialty)</span>
-                                )}
-                            </Label>
+                            <Label>Chamber address</Label>
                             <div className="space-y-2">
                                 {chamberAddresses.map((addr, i) => (
                                     <div key={i} className="flex gap-2">
                                         <Input
                                             value={addr}
                                             onChange={(e) => updateChamber(i, e.target.value)}
-                                            placeholder={`Chamber address ${i + 1}`}
                                             disabled={isOther}
-                                            className={isOther ? "opacity-50" : ""}
                                         />
                                         {chamberAddresses.length > 1 && !isOther && (
                                             <Button
@@ -335,10 +285,9 @@ export default function MemberSignupModal({ open, onClose }: Props) {
                                         variant="outline"
                                         size="sm"
                                         onClick={addChamber}
-                                        className="mt-1"
                                     >
                                         <Plus className="h-4 w-4 mr-1" />
-                                        Add Chamber
+                                        Add
                                     </Button>
                                 )}
                             </div>
@@ -346,79 +295,57 @@ export default function MemberSignupModal({ open, onClose }: Props) {
 
                         {/* 11. Short Biography */}
                         <div className="space-y-1">
-                            <Label htmlFor="shortBiography">
-                                Short Biography
-                                {isOther && (
-                                    <span className="ml-2 text-xs text-slate-400">(N/A for Other specialty)</span>
-                                )}
-                            </Label>
+                            <Label htmlFor="shortBiography">Short Biography</Label>
                             <Textarea
                                 id="shortBiography"
                                 value={form.shortBiography}
                                 onChange={(e) => set("shortBiography", e.target.value)}
-                                placeholder="Write about yourself..."
+                                placeholder="Write about yourself"
                                 rows={3}
                                 disabled={isOther}
-                                className={isOther ? "opacity-50" : ""}
                             />
                         </div>
 
                         {/* 12. Journals */}
                         <div className="space-y-1">
-                            <Label htmlFor="journals">
-                                Journals
-                                {isOther && (
-                                    <span className="ml-2 text-xs text-slate-400">(N/A for Other specialty)</span>
-                                )}
-                            </Label>
+                            <Label htmlFor="journals">Journals</Label>
                             <Textarea
                                 id="journals"
                                 value={form.journals}
                                 onChange={(e) => set("journals", e.target.value)}
-                                placeholder="List your published journals..."
                                 rows={2}
                                 disabled={isOther}
-                                className={isOther ? "opacity-50" : ""}
                             />
                         </div>
 
-                        {/* 13. Profile Picture URL */}
+                        {/* 13. Profile picture */}
                         <div className="space-y-1">
-                            <Label htmlFor="profilePicture">Profile Picture URL</Label>
-                            <Input
+                            <Label htmlFor="profilePicture">Profile picture</Label>
+                            <input
                                 id="profilePicture"
-                                value={form.profilePicture}
-                                onChange={(e) => set("profilePicture", e.target.value)}
-                                placeholder="https://... (link to your photo)"
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => handleFile("profilePicture", e.target.files?.[0] ?? null)}
+                                className="block w-full text-sm text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-sm file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
                             />
                         </div>
 
-                        {/* 14. Background Picture URL */}
+                        {/* 14. Background picture */}
                         <div className="space-y-1">
-                            <Label htmlFor="backgroundPicture">
-                                Background Picture URL
-                                {isOther && (
-                                    <span className="ml-2 text-xs text-slate-400">(N/A for Other specialty)</span>
-                                )}
-                            </Label>
-                            <Input
+                            <Label htmlFor="backgroundPicture">Background picture</Label>
+                            <input
                                 id="backgroundPicture"
-                                value={form.backgroundPicture}
-                                onChange={(e) => set("backgroundPicture", e.target.value)}
-                                placeholder="https://... (link to background image)"
+                                type="file"
+                                accept="image/*"
                                 disabled={isOther}
-                                className={isOther ? "opacity-50" : ""}
+                                onChange={(e) => handleFile("backgroundPicture", e.target.files?.[0] ?? null)}
+                                className="block w-full text-sm text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-sm file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                             />
                         </div>
 
-                        {/* 15. Interventions / Diseases */}
+                        {/* 15. Interventions you are doing or disease you are dealing */}
                         <div className="space-y-1">
-                            <Label>
-                                Interventions / Diseases
-                                {isOther && (
-                                    <span className="ml-2 text-xs text-slate-400">(N/A for Other specialty)</span>
-                                )}
-                            </Label>
+                            <Label>Interventions you are doing or disease you are dealing</Label>
                             {!isOther && (
                                 <div className="flex gap-2">
                                     <Input
@@ -430,13 +357,9 @@ export default function MemberSignupModal({ open, onClose }: Props) {
                                                 addIntervention();
                                             }
                                         }}
-                                        placeholder="e.g. ERCP, Endoscopy (press Enter to add)"
+                                        placeholder="e.g. ERCP, Endoscopy"
                                     />
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={addIntervention}
-                                    >
+                                    <Button type="button" variant="outline" onClick={addIntervention}>
                                         Add
                                     </Button>
                                 </div>
@@ -449,15 +372,13 @@ export default function MemberSignupModal({ open, onClose }: Props) {
                                             className="flex items-center gap-1 bg-primary/10 text-primary text-sm px-3 py-1 rounded-full"
                                         >
                                             {tag}
-                                            {!isOther && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => removeIntervention(tag)}
-                                                    className="hover:text-red-500"
-                                                >
-                                                    <X className="h-3 w-3" />
-                                                </button>
-                                            )}
+                                            <button
+                                                type="button"
+                                                onClick={() => removeIntervention(tag)}
+                                                className="hover:text-red-500"
+                                            >
+                                                <X className="h-3 w-3" />
+                                            </button>
                                         </span>
                                     ))}
                                 </div>
@@ -475,7 +396,7 @@ export default function MemberSignupModal({ open, onClose }: Props) {
                                 Cancel
                             </Button>
                             <Button type="submit" disabled={submitting || !form.specialtySubject}>
-                                {submitting ? "Submitting..." : "Submit Application"}
+                                {submitting ? "Submitting..." : "Submit"}
                             </Button>
                         </div>
                     </form>
