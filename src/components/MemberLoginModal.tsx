@@ -9,9 +9,10 @@ import { Label } from "./ui/label";
 interface Props {
     open: boolean;
     onClose: () => void;
+    onSuccess: (name: string) => void;
 }
 
-export default function MemberLoginModal({ open, onClose }: Props) {
+export default function MemberLoginModal({ open, onClose, onSuccess }: Props) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -31,8 +32,8 @@ export default function MemberLoginModal({ open, onClose }: Props) {
             if (!res.ok) {
                 setError(data.error || "Login failed");
             } else {
-                localStorage.setItem("memberAuth", JSON.stringify(data.member));
                 handleClose();
+                onSuccess(data.name);
             }
         } catch {
             setError("Network error. Please try again.");

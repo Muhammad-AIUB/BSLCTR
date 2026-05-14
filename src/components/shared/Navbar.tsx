@@ -12,13 +12,15 @@ import { ChevronDown } from "lucide-react";
 const Navbar = () => {
     const router = useRouter();
     const [adminEmail, setAdminEmail] = useState<string | null>(null);
+    const [memberName, setMemberName] = useState<string | null>(null);
     const [memberMenuOpen, setMemberMenuOpen] = useState(false);
     const [signupOpen, setSignupOpen] = useState(false);
     const [loginOpen, setLoginOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
+    // Load admin auth from localStorage
     useEffect(() => {
-        const loadAuth = () => {
+        const loadAdmin = () => {
             try {
                 const raw = localStorage.getItem("adminAuth");
                 if (!raw) { setAdminEmail(null); return; }
@@ -28,14 +30,21 @@ const Navbar = () => {
                 setAdminEmail(null);
             }
         };
-
-        loadAuth();
-        const onStorage = (e: StorageEvent) => { if (e.key === "adminAuth") loadAuth(); };
+        loadAdmin();
+        const onStorage = (e: StorageEvent) => { if (e.key === "adminAuth") loadAdmin(); };
         window.addEventListener("storage", onStorage);
         return () => window.removeEventListener("storage", onStorage);
     }, []);
 
-    // Close dropdown when clicking outside
+    // Check member session via httpOnly cookie
+    useEffect(() => {
+        fetch("/api/member/me")
+            .then((r) => r.json())
+            .then((d) => setMemberName(d.member?.name ?? null))
+            .catch(() => setMemberName(null));
+    }, []);
+
+    // Close dropdown on outside click
     useEffect(() => {
         const handler = (e: MouseEvent) => {
             if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -46,10 +55,16 @@ const Navbar = () => {
         return () => document.removeEventListener("mousedown", handler);
     }, []);
 
-    const handleLogout = () => {
+    const handleAdminLogout = () => {
         localStorage.removeItem("adminAuth");
         setAdminEmail(null);
         router.push("/");
+    };
+
+    const handleMemberLogout = async () => {
+        await fetch("/api/member/logout", { method: "POST" });
+        setMemberName(null);
+        setMemberMenuOpen(false);
     };
 
     return (
@@ -64,48 +79,50 @@ const Navbar = () => {
 
                 <div className="flex items-center gap-2">
                     {adminEmail ? (
-                        <Button
-                            className="bg-red-600 hover:bg-red-700 rounded-full"
-                            onClick={handleLogout}
-                        >
+                        <Button className="bg-red-600 hover:bg-red-700 rounded-full" onClick={handleAdminLogout}>
                             Log out
                         </Button>
                     ) : (
                         <AdminLoginModal />
                     )}
 
-                    {/* Member dropdown */}
+                    {/* Member button */}
                     <div className="relative" ref={menuRef}>
                         <Button
                             variant="outline"
                             className="rounded-full flex items-center gap-1"
                             onClick={() => setMemberMenuOpen((prev) => !prev)}
                         >
-                            Member
+                            {memberName ? memberName : "Member"}
                             <ChevronDown className={`h-4 w-4 transition-transform ${memberMenuOpen ? "rotate-180" : ""}`} />
                         </Button>
 
                         {memberMenuOpen && (
                             <div className="absolute right-0 mt-2 w-36 bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden z-50">
-                                <button
-                                    className="w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 font-medium transition-colors"
-                                    onClick={() => {
-                                        setMemberMenuOpen(false);
-                                        setSignupOpen(true);
-                                    }}
-                                >
-                                    Sign Up
-                                </button>
-                                <div className="h-px bg-slate-100" />
-                                <button
-                                    className="w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 font-medium transition-colors"
-                                    onClick={() => {
-                                        setMemberMenuOpen(false);
-                                        setLoginOpen(true);
-                                    }}
-                                >
-                                    Log In
-                                </button>
+                                {memberName ? (
+                                    <button
+                                        className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-slate-50 font-medium transition-colors"
+                                        onClick={handleMemberLogout}
+                                    >
+                                        Log Out
+                                    </button>
+                                ) : (
+                                    <>
+                                        <button
+                                            className="w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 font-medium transition-colors"
+                                            onClick={() => { setMemberMenuOpen(false); setSignupOpen(true); }}
+                                        >
+                                            Sign Up
+                                        </button>
+                                        <div className="h-px bg-slate-100" />
+                                        <button
+                                            className="w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 font-medium transition-colors"
+                                            onClick={() => { setMemberMenuOpen(false); setLoginOpen(true); }}
+                                        >
+                                            Log In
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         )}
                     </div>
@@ -113,7 +130,11 @@ const Navbar = () => {
             </nav>
 
             <MemberSignupModal open={signupOpen} onClose={() => setSignupOpen(false)} />
-            <MemberLoginModal open={loginOpen} onClose={() => setLoginOpen(false)} />
+            <MemberLoginModal
+                open={loginOpen}
+                onClose={() => setLoginOpen(false)}
+                onSuccess={(name) => setMemberName(name)}
+            />
         </>
     );
 };

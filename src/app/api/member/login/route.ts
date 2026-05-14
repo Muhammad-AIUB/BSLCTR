@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { signMemberToken, memberCookieOptions } from "@/lib/memberAuth";
 
 export async function POST(req: NextRequest) {
     const { email, password } = await req.json();
@@ -28,8 +29,9 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
     }
 
-    return NextResponse.json({
-        success: true,
-        member: { id: member.id, name: member.name, email: member.email },
-    });
+    const token = await signMemberToken({ id: member.id, name: member.name, email: member.email });
+
+    const res = NextResponse.json({ success: true, name: member.name });
+    res.cookies.set(memberCookieOptions(token));
+    return res;
 }
