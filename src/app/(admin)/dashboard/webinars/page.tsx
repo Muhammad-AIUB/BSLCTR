@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, X, Trash2, Link as LinkIcon, Calendar, Clock } from "lucide-react";
+import { Plus, X, Trash2, Pencil, Link as LinkIcon, Calendar, Clock, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,19 +33,10 @@ const emptyForm = () => ({
     sponsors: [{ name: "", logo: "" }] as Sponsor[],
 });
 
-function MultiField({
-    label,
-    values,
-    onChange,
-}: {
-    label: string;
-    values: string[];
-    onChange: (vals: string[]) => void;
-}) {
+function MultiField({ label, values, onChange }: { label: string; values: string[]; onChange: (v: string[]) => void }) {
     const update = (i: number, v: string) => onChange(values.map((x, idx) => (idx === i ? v : x)));
     const add = () => onChange([...values, ""]);
     const remove = (i: number) => onChange(values.filter((_, idx) => idx !== i));
-
     return (
         <div className="space-y-1">
             <Label>{label}</Label>
@@ -68,13 +59,7 @@ function MultiField({
     );
 }
 
-function SponsorField({
-    sponsors,
-    onChange,
-}: {
-    sponsors: Sponsor[];
-    onChange: (s: Sponsor[]) => void;
-}) {
+function SponsorField({ sponsors, onChange }: { sponsors: Sponsor[]; onChange: (s: Sponsor[]) => void }) {
     const update = (i: number, key: keyof Sponsor, v: string) =>
         onChange(sponsors.map((s, idx) => (idx === i ? { ...s, [key]: v } : s)));
     const add = () => onChange([...sponsors, { name: "", logo: "" }]);
@@ -97,25 +82,15 @@ function SponsorField({
                     <div key={i} className="border rounded-lg p-3 space-y-2 bg-slate-50">
                         <div className="flex items-center justify-between">
                             <span className="text-xs text-slate-500 font-medium">Sponsor {i + 1}</span>
-                            {sponsors.length > 1 && (
-                                <Button type="button" variant="ghost" size="icon" className="h-6 w-6" onClick={() => remove(i)}>
-                                    <X className="h-3 w-3" />
-                                </Button>
-                            )}
+                            <Button type="button" variant="ghost" size="icon" className="h-6 w-6 text-red-400 hover:text-red-600" onClick={() => remove(i)}>
+                                <X className="h-3 w-3" />
+                            </Button>
                         </div>
-                        <Input
-                            placeholder="Sponsor name"
-                            value={s.name}
-                            onChange={(e) => update(i, "name", e.target.value)}
-                        />
+                        <Input placeholder="Sponsor name" value={s.name} onChange={(e) => update(i, "name", e.target.value)} />
                         <div className="space-y-1">
                             <span className="text-xs text-slate-500">Logo (optional)</span>
-                            {s.logo && (
-                                <img src={s.logo} alt="logo" className="h-10 object-contain mb-1" />
-                            )}
-                            <input
-                                type="file"
-                                accept="image/*"
+                            {s.logo && <img src={s.logo} alt="logo" className="h-10 object-contain mb-1" />}
+                            <input type="file" accept="image/*"
                                 onChange={(e) => handleLogoFile(i, e.target.files?.[0] ?? null)}
                                 className="block w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
                             />
@@ -130,13 +105,71 @@ function SponsorField({
     );
 }
 
+function WebinarForm({
+    initial,
+    onSave,
+    onCancel,
+    submitting,
+    error,
+}: {
+    initial: ReturnType<typeof emptyForm>;
+    onSave: (form: ReturnType<typeof emptyForm>) => Promise<void>;
+    onCancel: () => void;
+    submitting: boolean;
+    error: string;
+}) {
+    const [form, setForm] = useState(initial);
+    const set = (key: string, val: unknown) => setForm((f) => ({ ...f, [key]: val }));
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        await onSave(form);
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1">
+                <Label htmlFor="headline">Headline</Label>
+                <Input id="headline" value={form.headline} onChange={(e) => set("headline", e.target.value)} required />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                    <Label htmlFor="date">Date</Label>
+                    <Input id="date" type="date" value={form.date} onChange={(e) => set("date", e.target.value)} required />
+                </div>
+                <div className="space-y-1">
+                    <Label htmlFor="time">Time</Label>
+                    <Input id="time" type="time" value={form.time} onChange={(e) => set("time", e.target.value)} required />
+                </div>
+            </div>
+            <div className="space-y-1">
+                <Label htmlFor="link">Link</Label>
+                <Input id="link" type="url" value={form.link} onChange={(e) => set("link", e.target.value)}
+                    placeholder="https://zoom.us/... or YouTube, Facebook..." required />
+            </div>
+            <MultiField label="Keynote Speaker" values={form.keynoteSpeakers} onChange={(v) => set("keynoteSpeakers", v)} />
+            <MultiField label="Moderator" values={form.moderators} onChange={(v) => set("moderators", v)} />
+            <MultiField label="Chairperson" values={form.chairpersons} onChange={(v) => set("chairpersons", v)} />
+            <MultiField label="Co-Chairman" values={form.coChairmen} onChange={(v) => set("coChairmen", v)} />
+            <SponsorField sponsors={form.sponsors} onChange={(v) => set("sponsors", v)} />
+            {error && <p className="text-sm text-red-500 bg-red-50 border border-red-200 rounded px-3 py-2">{error}</p>}
+            <div className="flex gap-2 pt-1">
+                <Button type="button" variant="outline" className="flex-1" onClick={onCancel}>Cancel</Button>
+                <Button type="submit" className="flex-1" disabled={submitting}>
+                    {submitting ? "Saving..." : "Save"}
+                </Button>
+            </div>
+        </form>
+    );
+}
+
 export default function WebinarsPage() {
     const [webinars, setWebinars] = useState<Webinar[]>([]);
     const [loading, setLoading] = useState(true);
     const [form, setForm] = useState(emptyForm());
     const [submitting, setSubmitting] = useState(false);
-    const [showForm, setShowForm] = useState(false);
     const [error, setError] = useState("");
+    const [editingId, setEditingId] = useState<string | null>(null);
 
     const fetchWebinars = async () => {
         setLoading(true);
@@ -150,34 +183,51 @@ export default function WebinarsPage() {
 
     useEffect(() => { fetchWebinars(); }, []);
 
-    const setField = (key: string, val: unknown) => setForm((f) => ({ ...f, [key]: val }));
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleAdd = async (f: ReturnType<typeof emptyForm>) => {
         setError("");
         setSubmitting(true);
         try {
             const payload = {
-                ...form,
-                keynoteSpeakers: form.keynoteSpeakers.filter(Boolean),
-                moderators: form.moderators.filter(Boolean),
-                chairpersons: form.chairpersons.filter(Boolean),
-                coChairmen: form.coChairmen.filter(Boolean),
-                sponsors: form.sponsors.filter((s) => s.name.trim()),
+                ...f,
+                keynoteSpeakers: f.keynoteSpeakers.filter(Boolean),
+                moderators: f.moderators.filter(Boolean),
+                chairpersons: f.chairpersons.filter(Boolean),
+                coChairmen: f.coChairmen.filter(Boolean),
+                sponsors: f.sponsors.filter((s) => s.name.trim()),
             };
             const res = await fetch("/api/admin/webinars", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
             });
-            if (!res.ok) {
-                const d = await res.json();
-                setError(d.error || "Failed to save");
-            } else {
-                setForm(emptyForm());
-                setShowForm(false);
-                await fetchWebinars();
-            }
+            if (!res.ok) { const d = await res.json(); setError(d.error || "Failed"); return; }
+            setForm(emptyForm());
+            await fetchWebinars();
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const handleEdit = async (id: string, f: ReturnType<typeof emptyForm>) => {
+        setError("");
+        setSubmitting(true);
+        try {
+            const payload = {
+                ...f,
+                keynoteSpeakers: f.keynoteSpeakers.filter(Boolean),
+                moderators: f.moderators.filter(Boolean),
+                chairpersons: f.chairpersons.filter(Boolean),
+                coChairmen: f.coChairmen.filter(Boolean),
+                sponsors: f.sponsors.filter((s) => s.name.trim()),
+            };
+            const res = await fetch(`/api/admin/webinars/${id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+            if (!res.ok) { const d = await res.json(); setError(d.error || "Failed"); return; }
+            setEditingId(null);
+            await fetchWebinars();
         } finally {
             setSubmitting(false);
         }
@@ -190,145 +240,96 @@ export default function WebinarsPage() {
 
     return (
         <div className="min-h-screen bg-slate-50">
-            <div className="container mx-auto px-4 py-10 max-w-4xl">
-                <div className="flex items-center justify-between mb-6">
-                    <div>
-                        <h2 className="text-2xl font-bold text-slate-800">Webinars</h2>
-                        <p className="text-slate-500 text-sm mt-0.5">Manage live webinar sessions.</p>
+            <div className="flex gap-6 px-6 py-8 h-full">
+
+                {/* Left — Add Form */}
+                <div className="w-96 shrink-0">
+                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 sticky top-8">
+                        <h3 className="text-base font-semibold text-slate-800 mb-4">Add Webinar</h3>
+                        <WebinarForm
+                            initial={form}
+                            onSave={handleAdd}
+                            onCancel={() => setForm(emptyForm())}
+                            submitting={submitting}
+                            error={error}
+                        />
                     </div>
-                    <Button onClick={() => setShowForm((v) => !v)}>
-                        <Plus className="h-4 w-4 mr-1" />
-                        {showForm ? "Cancel" : "Add Webinar"}
-                    </Button>
                 </div>
 
-                {/* Form */}
-                {showForm && (
-                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-8">
-                        <h3 className="text-lg font-semibold text-slate-800 mb-5">New Webinar</h3>
-                        <form onSubmit={handleSubmit} className="space-y-5">
-                            <div className="space-y-1">
-                                <Label htmlFor="headline">Headline</Label>
-                                <Input
-                                    id="headline"
-                                    value={form.headline}
-                                    onChange={(e) => setField("headline", e.target.value)}
-                                    required
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-1">
-                                    <Label htmlFor="date">Date</Label>
-                                    <Input
-                                        id="date"
-                                        type="date"
-                                        value={form.date}
-                                        onChange={(e) => setField("date", e.target.value)}
-                                        required
+                {/* Right — List */}
+                <div className="flex-1 min-w-0">
+                    <h2 className="text-xl font-bold text-slate-800 mb-4">Webinar List</h2>
+                    {loading ? (
+                        <div className="text-center py-16 text-slate-400">Loading...</div>
+                    ) : webinars.length === 0 ? (
+                        <div className="text-center py-16 text-slate-400">No webinars yet.</div>
+                    ) : (
+                        <div className="space-y-4">
+                            {webinars.map((w) =>
+                                editingId === w.id ? (
+                                    <div key={w.id} className="bg-white rounded-xl border border-primary/40 shadow-sm p-5">
+                                        <h4 className="text-sm font-semibold text-slate-700 mb-4">Edit Webinar</h4>
+                                        <WebinarForm
+                                            initial={{
+                                                headline: w.headline,
+                                                date: w.date,
+                                                time: w.time,
+                                                link: w.link,
+                                                keynoteSpeakers: w.keynoteSpeakers.length ? w.keynoteSpeakers : [""],
+                                                moderators: w.moderators.length ? w.moderators : [""],
+                                                chairpersons: w.chairpersons.length ? w.chairpersons : [""],
+                                                coChairmen: w.coChairmen.length ? w.coChairmen : [""],
+                                                sponsors: w.sponsors.length ? w.sponsors : [{ name: "", logo: "" }],
+                                            }}
+                                            onSave={(f) => handleEdit(w.id, f)}
+                                            onCancel={() => setEditingId(null)}
+                                            submitting={submitting}
+                                            error={error}
+                                        />
+                                    </div>
+                                ) : (
+                                    <WebinarCard
+                                        key={w.id}
+                                        webinar={w}
+                                        onEdit={() => setEditingId(w.id)}
+                                        onDelete={() => handleDelete(w.id)}
                                     />
-                                </div>
-                                <div className="space-y-1">
-                                    <Label htmlFor="time">Time</Label>
-                                    <Input
-                                        id="time"
-                                        type="time"
-                                        value={form.time}
-                                        onChange={(e) => setField("time", e.target.value)}
-                                        required
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="space-y-1">
-                                <Label htmlFor="link">Link</Label>
-                                <Input
-                                    id="link"
-                                    type="url"
-                                    value={form.link}
-                                    onChange={(e) => setField("link", e.target.value)}
-                                    placeholder="https://zoom.us/... or YouTube, Facebook..."
-                                    required
-                                />
-                            </div>
-
-                            <MultiField
-                                label="Keynote Speaker"
-                                values={form.keynoteSpeakers}
-                                onChange={(v) => setField("keynoteSpeakers", v)}
-                            />
-                            <MultiField
-                                label="Moderator"
-                                values={form.moderators}
-                                onChange={(v) => setField("moderators", v)}
-                            />
-                            <MultiField
-                                label="Chairperson"
-                                values={form.chairpersons}
-                                onChange={(v) => setField("chairpersons", v)}
-                            />
-                            <MultiField
-                                label="Co-Chairman"
-                                values={form.coChairmen}
-                                onChange={(v) => setField("coChairmen", v)}
-                            />
-                            <SponsorField
-                                sponsors={form.sponsors}
-                                onChange={(v) => setField("sponsors", v)}
-                            />
-
-                            {error && (
-                                <p className="text-sm text-red-500 bg-red-50 border border-red-200 rounded px-3 py-2">
-                                    {error}
-                                </p>
+                                )
                             )}
-
-                            <div className="flex justify-end gap-3 pt-1">
-                                <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
-                                    Cancel
-                                </Button>
-                                <Button type="submit" disabled={submitting}>
-                                    {submitting ? "Saving..." : "Save Webinar"}
-                                </Button>
-                            </div>
-                        </form>
-                    </div>
-                )}
-
-                {/* List */}
-                {loading ? (
-                    <div className="text-center py-16 text-slate-400">Loading...</div>
-                ) : webinars.length === 0 ? (
-                    <div className="text-center py-16 text-slate-400">No webinars yet.</div>
-                ) : (
-                    <div className="grid gap-4">
-                        {webinars.map((w) => (
-                            <WebinarCard key={w.id} webinar={w} onDelete={() => handleDelete(w.id)} />
-                        ))}
-                    </div>
-                )}
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
 }
 
-function WebinarCard({ webinar: w, onDelete }: { webinar: Webinar; onDelete: () => void }) {
+function WebinarCard({ webinar: w, onEdit, onDelete }: { webinar: Webinar; onEdit: () => void; onDelete: () => void }) {
     const [confirm, setConfirm] = useState(false);
 
     return (
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
             <div className="flex items-start justify-between gap-3 mb-3">
-                <h3 className="font-semibold text-slate-800 text-lg">{w.headline}</h3>
-                {confirm ? (
-                    <div className="flex gap-2 shrink-0">
-                        <Button size="sm" variant="destructive" onClick={onDelete}>Confirm Delete</Button>
-                        <Button size="sm" variant="outline" onClick={() => setConfirm(false)}>Cancel</Button>
-                    </div>
-                ) : (
-                    <Button size="sm" variant="ghost" className="text-slate-400 hover:text-red-500 shrink-0" onClick={() => setConfirm(true)}>
-                        <Trash2 className="h-4 w-4" />
-                    </Button>
-                )}
+                <h3 className="font-semibold text-slate-800">{w.headline}</h3>
+                <div className="flex items-center gap-1 shrink-0">
+                    {confirm ? (
+                        <>
+                            <Button size="sm" variant="destructive" onClick={onDelete}>
+                                <Check className="h-3.5 w-3.5 mr-1" /> Confirm
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => setConfirm(false)}>Cancel</Button>
+                        </>
+                    ) : (
+                        <>
+                            <Button size="sm" variant="outline" className="text-slate-600 hover:text-primary" onClick={onEdit}>
+                                <Pencil className="h-3.5 w-3.5 mr-1" /> Edit
+                            </Button>
+                            <Button size="sm" variant="outline" className="text-slate-400 hover:text-red-500 hover:border-red-300" onClick={() => setConfirm(true)}>
+                                <Trash2 className="h-3.5 w-3.5 mr-1" /> Delete
+                            </Button>
+                        </>
+                    )}
+                </div>
             </div>
 
             <div className="flex flex-wrap gap-4 text-sm text-slate-600 mb-3">
@@ -347,10 +348,10 @@ function WebinarCard({ webinar: w, onDelete }: { webinar: Webinar; onDelete: () 
             </div>
 
             {w.sponsors.length > 0 && (
-                <div className="flex flex-wrap gap-3 mt-2">
+                <div className="flex flex-wrap gap-2 mt-2">
                     {w.sponsors.map((s, i) => (
                         <div key={i} className="flex items-center gap-2 bg-slate-50 border rounded-lg px-3 py-1.5">
-                            {s.logo && <img src={s.logo} alt={s.name} className="h-6 object-contain" />}
+                            {s.logo && <img src={s.logo} alt={s.name} className="h-5 object-contain" />}
                             <span className="text-sm text-slate-700">{s.name}</span>
                         </div>
                     ))}
