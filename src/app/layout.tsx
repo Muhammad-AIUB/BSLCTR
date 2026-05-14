@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import TopBar from "@/components/shared/TopBar";
 import Navbar from "@/components/shared/Navbar";
 import Search from "@/components/Search";
 import NavLinksBar from "@/components/shared/NavLinksBar";
@@ -20,8 +19,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body>
-                <TopBar />
+            <body suppressHydrationWarning>
                 <Navbar />
                 <Search />
                 <ScrollToTop />

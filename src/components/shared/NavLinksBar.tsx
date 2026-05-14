@@ -11,17 +11,18 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 const links = [
     { name: "Home", path: "/" },
     { name: "Live Webinars", path: "/live-webinars" },
+    { name: "BSLCTRcon", path: "/bslctrcon" },
     {
         name: "All Hepatologist, Hepatobiliary Surgeon, Interventiona list",
         path: "/hepatologist-surgeon-interventiona",
     },
     { name: "Guidelines", path: "/guidelines" },
-    { name: "Video/Photo Gallery", path: "/gallery" },
     { name: "Case Presentations", path: "/cases" },
-    { name: "BSLCTRcon", path: "/bslctrcon" },
-    { name: "About US", path: "/about" },
+    { name: "Video/Photo Gallery", path: "/gallery" },
+    { name: "Q&A", path: "/qa" },
     { name: "Donation", path: "/donate" },
     { name: "Subscribe", path: "/subscribe" },
+    { name: "About US", path: "/about" },
 ];
 
 const NavLinksBar = () => {
