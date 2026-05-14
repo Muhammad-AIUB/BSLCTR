@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -17,6 +18,7 @@ export default function MemberLoginModal({ open, onClose, onSuccess }: Props) {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -34,6 +36,7 @@ export default function MemberLoginModal({ open, onClose, onSuccess }: Props) {
             } else {
                 handleClose();
                 onSuccess(data.name);
+                router.push("/member-dashboard");
             }
         } catch {
             setError("Network error. Please try again.");

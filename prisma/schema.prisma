@@ -15,6 +15,21 @@ model Admin {
     updatedAt DateTime @updatedAt
 }
 
+model Webinar {
+    id              String   @id @default(cuid())
+    headline        String
+    date            String
+    time            String
+    link            String
+    keynoteSpeakers String[]
+    moderators      String[]
+    chairpersons    String[]
+    coChairmen      String[]
+    sponsors        Json     @default("[]")
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+}
+
 enum MemberStatus {
     PENDING
     APPROVED
