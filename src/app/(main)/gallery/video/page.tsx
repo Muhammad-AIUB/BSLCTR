@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, X, Minimize2, ChevronLeft } from "lucide-react";
 import Link from "next/link";
@@ -15,38 +15,46 @@ const videos = [
 export default function VideoGalleryPage() {
     const [playingId, setPlayingId] = useState<string | null>(null);
     const [floating, setFloating] = useState(false);
-    const playerRef = useRef<HTMLDivElement>(null);
+    // callback ref — fires as soon as the element mounts/unmounts
+    const [playerEl, setPlayerEl] = useState<HTMLDivElement | null>(null);
 
-    // IntersectionObserver — when playing card leaves viewport, switch to floating
+    const playerRef = useCallback((node: HTMLDivElement | null) => {
+        setPlayerEl(node);
+    }, []);
+
+    // IntersectionObserver — watch the playing card; go floating when off-screen
     useEffect(() => {
-        if (!playingId || !playerRef.current) return;
+        if (!playerEl) return;
         setFloating(false);
 
         const observer = new IntersectionObserver(
             ([entry]) => {
-                if (!entry.isIntersecting) setFloating(true);
-                else setFloating(false);
+                setFloating(!entry.isIntersecting);
             },
-            { threshold: 0.3 }
+            { threshold: 0.25 }
         );
-        observer.observe(playerRef.current);
+        observer.observe(playerEl);
         return () => observer.disconnect();
-    }, [playingId]);
+    }, [playerEl]);
 
-    const handlePlay = (id: string) => {
-        setPlayingId(id);
-        setFloating(false);
-    };
+    // When video stops, remove floating
+    useEffect(() => {
+        if (!playingId) setFloating(false);
+    }, [playingId]);
 
     const handleStop = () => {
         setPlayingId(null);
         setFloating(false);
     };
 
+    const scrollToPlayer = () => {
+        setFloating(false);
+        playerEl?.scrollIntoView({ behavior: "smooth", block: "center" });
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200 px-4 py-12">
             <div className="max-w-6xl mx-auto">
-                {/* Back */}
                 <Link href="/gallery" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-blue-600 text-sm mb-8 transition-colors">
                     <ChevronLeft className="h-4 w-4" /> Back to Gallery
                 </Link>
@@ -59,6 +67,7 @@ export default function VideoGalleryPage() {
                         return (
                             <motion.div
                                 key={video.id}
+                                /* callback ref only on the currently playing card */
                                 ref={isPlaying ? playerRef : null}
                                 initial={{ opacity: 0, y: 24 }}
                                 animate={{ opacity: 1, y: 0 }}
@@ -66,7 +75,6 @@ export default function VideoGalleryPage() {
                                 className="bg-white rounded-2xl overflow-hidden shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300"
                             >
                                 {isPlaying ? (
-                                    /* Inline Player */
                                     <div className="relative aspect-video bg-black">
                                         <iframe
                                             src={`https://www.youtube.com/embed/${video.id}?autoplay=1`}
@@ -83,10 +91,9 @@ export default function VideoGalleryPage() {
                                         </button>
                                     </div>
                                 ) : (
-                                    /* Thumbnail */
                                     <div
                                         className="relative aspect-video cursor-pointer group"
-                                        onClick={() => handlePlay(video.id)}
+                                        onClick={() => setPlayingId(video.id)}
                                     >
                                         <img
                                             src={`https://img.youtube.com/vi/${video.id}/hqdefault.jpg`}
@@ -112,16 +119,16 @@ export default function VideoGalleryPage() {
                 </div>
             </div>
 
-            {/* Floating Mini Player */}
+            {/* Floating Mini Player — appears when playing card scrolls out of view */}
             <AnimatePresence>
                 {playingId && floating && (
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                        initial={{ opacity: 0, scale: 0.85, y: 24 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.8, y: 20 }}
-                        transition={{ duration: 0.25 }}
-                        className="fixed bottom-6 right-6 z-50 w-72 rounded-xl overflow-hidden shadow-2xl border border-slate-200 bg-black"
-                        style={{ aspectRatio: "16/9" }}
+                        exit={{ opacity: 0, scale: 0.85, y: 24 }}
+                        transition={{ duration: 0.2 }}
+                        className="fixed bottom-6 right-6 z-50 bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+                        style={{ width: 300, aspectRatio: "16/9" }}
                     >
                         <iframe
                             src={`https://www.youtube.com/embed/${playingId}?autoplay=1`}
@@ -130,22 +137,17 @@ export default function VideoGalleryPage() {
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowFullScreen
                         />
-                        {/* Controls */}
-                        <div className="absolute top-2 right-2 flex gap-1">
+                        <div className="absolute top-2 right-2 flex gap-1.5">
                             <button
-                                onClick={() => {
-                                    setFloating(false);
-                                    // scroll back to card
-                                    playerRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-                                }}
-                                className="bg-black/60 hover:bg-black/80 text-white rounded-full p-1 transition-colors"
-                                title="Go back to player"
+                                onClick={scrollToPlayer}
+                                className="bg-black/70 hover:bg-black/90 text-white rounded-full p-1.5 transition-colors backdrop-blur-sm"
+                                title="Back to player"
                             >
                                 <Minimize2 className="h-3.5 w-3.5" />
                             </button>
                             <button
                                 onClick={handleStop}
-                                className="bg-black/60 hover:bg-black/80 text-white rounded-full p-1 transition-colors"
+                                className="bg-black/70 hover:bg-black/90 text-white rounded-full p-1.5 transition-colors backdrop-blur-sm"
                                 title="Stop"
                             >
                                 <X className="h-3.5 w-3.5" />
