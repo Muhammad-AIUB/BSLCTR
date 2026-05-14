@@ -14,3 +14,33 @@ model Admin {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
+
+enum MemberStatus {
+    PENDING
+    APPROVED
+    REJECTED
+}
+
+model Member {
+    id                     String       @id @default(cuid())
+    name                   String
+    mobileNo               String
+    email                  String       @unique
+    bmdcNo                 String
+    designation            String
+    specialtySubject       String
+    otherSpecialty         String?
+    academicQualifications String
+    specializedTraining    String?
+    currentPosting         String?
+    chamberAddresses       String[]
+    shortBiography         String?
+    journals               String?
+    profilePicture         String?
+    backgroundPicture      String?
+    interventions          String[]
+    status                 MemberStatus @default(PENDING)
+    rejectionReason        String?
+    createdAt              DateTime     @default(now())
+    updatedAt              DateTime     @updatedAt
+}
