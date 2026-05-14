@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import SubscribeModal from "../SubscribeModal";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { motion, AnimatePresence } from "framer-motion";
 
 const links = [
     { name: "Home", path: "/" },
@@ -25,15 +26,19 @@ const links = [
     { name: "About US", path: "/about" },
 ];
 
+const homeLink = links[0];
+const restLinks = links.slice(1);
+
 const NavLinksBar = () => {
     const [showSubscribeModal, setShowSubscribeModal] = useState(false);
+    const [expanded, setExpanded] = useState(false);
     const pathname = usePathname();
 
     return (
         <>
             <nav className="w-full bg-secondary shadow-sm sticky top-0 z-50">
+                {/* Mobile: Hamburger */}
                 <div className="flex items-center justify-between px-4 py-3 md:hidden">
-                    {/* Mobile: Hamburger */}
                     <Sheet>
                         <SheetTrigger asChild>
                             <Button
@@ -82,57 +87,82 @@ const NavLinksBar = () => {
                             </div>
                         </SheetContent>
                     </Sheet>
-
-                    {/* Logo */}
                     <div className="text-white font-bold text-xl">BSLCTR</div>
                 </div>
 
-                {/* Desktop: Full Nav */}
-                <div className="hidden md:flex items-stretch justify-between divide-x divide-primary bg-secondary py-1 px-2 lg:py-2 lg:px-4">
-                    {links.map((link, index) => {
-                        if (link.name === "Subscribe") {
-                            return (
-                                <div key={index} className="flex-grow min-w-0">
-                                    <Button
-                                        variant="ghost"
-                                        className={`rounded-none px-1 py-2 md:px-2 lg:px-4 xl:px-6 text-white hover:bg-sky-400 hover:text-white w-full h-full text-[10px] md:text-xs lg:text-sm font-medium whitespace-normal leading-tight ${
-                                            pathname === link.path
-                                                ? "bg-sky-400"
-                                                : ""
-                                        }`}
-                                        onClick={() =>
-                                            setShowSubscribeModal(true)
-                                        }
-                                    >
-                                        <span className="break-words text-center">
-                                            {link.name}
-                                        </span>
-                                    </Button>
-                                </div>
-                            );
-                        }
+                {/* Desktop: Expand on hover */}
+                <div
+                    className="hidden md:flex items-stretch overflow-hidden bg-secondary py-1 px-2 lg:py-2 lg:px-4"
+                    onMouseEnter={() => setExpanded(true)}
+                    onMouseLeave={() => setExpanded(false)}
+                >
+                    {/* Home — always visible */}
+                    <Link href={homeLink.path} className="shrink-0">
+                        <Button
+                            variant="ghost"
+                            className={`rounded-none px-4 lg:px-6 text-white hover:bg-sky-400 hover:text-white h-full text-sm font-medium ${
+                                pathname === homeLink.path ? "bg-sky-400" : ""
+                            }`}
+                        >
+                            {homeLink.name}
+                        </Button>
+                    </Link>
 
-                        return (
-                            <Link
-                                key={index}
-                                href={link.path}
-                                className="flex-grow min-w-0"
-                            >
-                                <Button
-                                    variant="ghost"
-                                    className={`rounded-none px-1 py-2 md:px-2 lg:px-4 xl:px-6 text-white hover:bg-sky-400 hover:text-white w-full h-full text-[10px] md:text-xs lg:text-sm font-medium whitespace-normal leading-tight ${
-                                        pathname === link.path
-                                            ? "bg-sky-400 "
-                                            : ""
-                                    }`}
+                    {/* Divider after Home */}
+                    <div className="w-px bg-primary self-stretch shrink-0" />
+
+                    {/* Rest of links — slide in on hover */}
+                    <AnimatePresence>
+                        {expanded &&
+                            restLinks.map((link, index) => (
+                                <motion.div
+                                    key={link.path}
+                                    className="flex items-stretch shrink-0"
+                                    initial={{ width: 0, opacity: 0 }}
+                                    animate={{ width: "auto", opacity: 1 }}
+                                    exit={{ width: 0, opacity: 0 }}
+                                    transition={{
+                                        duration: 0.2,
+                                        delay: index * 0.04,
+                                        ease: "easeOut",
+                                    }}
+                                    style={{ overflow: "hidden" }}
                                 >
-                                    <span className="break-words text-center">
-                                        {link.name}
-                                    </span>
-                                </Button>
-                            </Link>
-                        );
-                    })}
+                                    {link.name === "Subscribe" ? (
+                                        <Button
+                                            variant="ghost"
+                                            className={`rounded-none px-3 lg:px-4 text-white hover:bg-sky-400 hover:text-white h-full text-[10px] md:text-xs lg:text-sm font-medium whitespace-nowrap ${
+                                                pathname === link.path
+                                                    ? "bg-sky-400"
+                                                    : ""
+                                            }`}
+                                            onClick={() =>
+                                                setShowSubscribeModal(true)
+                                            }
+                                        >
+                                            {link.name}
+                                        </Button>
+                                    ) : (
+                                        <Link
+                                            href={link.path}
+                                            className="flex items-stretch"
+                                        >
+                                            <Button
+                                                variant="ghost"
+                                                className={`rounded-none px-3 lg:px-4 text-white hover:bg-sky-400 hover:text-white h-full text-[10px] md:text-xs lg:text-sm font-medium whitespace-nowrap ${
+                                                    pathname === link.path
+                                                        ? "bg-sky-400"
+                                                        : ""
+                                                }`}
+                                            >
+                                                {link.name}
+                                            </Button>
+                                        </Link>
+                                    )}
+                                    <div className="w-px bg-primary self-stretch" />
+                                </motion.div>
+                            ))}
+                    </AnimatePresence>
                 </div>
             </nav>
 
