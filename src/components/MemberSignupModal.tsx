@@ -20,13 +20,13 @@ interface Props {
     onClose: () => void;
 }
 
-const toBase64 = (file: File): Promise<string> =>
-    new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
+const uploadFile = async (file: File): Promise<string> => {
+    const fd = new FormData();
+    fd.append("file", file);
+    const res = await fetch("/api/upload", { method: "POST", body: fd });
+    const data = await res.json();
+    return data.url as string;
+};
 
 export default function MemberSignupModal({ open, onClose }: Props) {
     const [form, setForm] = useState({
@@ -59,8 +59,8 @@ export default function MemberSignupModal({ open, onClose }: Props) {
 
     const handleFile = async (key: string, file: File | null) => {
         if (!file) { set(key, ""); return; }
-        const b64 = await toBase64(file);
-        set(key, b64);
+        const url = await uploadFile(file);
+        set(key, url);
     };
 
     const addChamber = () => setChamberAddresses((prev) => [...prev, ""]);
