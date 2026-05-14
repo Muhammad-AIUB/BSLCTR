@@ -37,7 +37,7 @@ const SPECIALTY_LABELS: Record<string, string> = {
 export default function Dashboard() {
     const [members, setMembers] = useState<MemberApplication[]>([]);
     const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState<"ALL" | "PENDING" | "APPROVED" | "REJECTED">("ALL");
+    const [filter, setFilter] = useState<"ALL" | "APPROVED" | "REJECTED">("ALL");
     const [processingId, setProcessingId] = useState<string | null>(null);
 
     const fetchMembers = async () => {
@@ -74,7 +74,7 @@ export default function Dashboard() {
                 <p className="text-slate-500 mb-6 text-sm">Review and manage membership applications.</p>
 
                 <div className="flex gap-2 flex-wrap mb-6">
-                    {(["ALL", "PENDING", "APPROVED", "REJECTED"] as const).map((f) => (
+                    {(["ALL", "APPROVED", "REJECTED"] as const).map((f) => (
                         <Button
                             key={f}
                             size="sm"
