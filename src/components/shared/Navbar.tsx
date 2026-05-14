@@ -6,6 +6,7 @@ import { Button } from "../ui/button";
 import { useEffect, useRef, useState } from "react";
 import AdminLoginModal from "../AdminLoginModal";
 import MemberSignupModal from "../MemberSignupModal";
+import MemberLoginModal from "../MemberLoginModal";
 import { ChevronDown } from "lucide-react";
 
 const Navbar = () => {
@@ -13,6 +14,7 @@ const Navbar = () => {
     const [adminEmail, setAdminEmail] = useState<string | null>(null);
     const [memberMenuOpen, setMemberMenuOpen] = useState(false);
     const [signupOpen, setSignupOpen] = useState(false);
+    const [loginOpen, setLoginOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -99,7 +101,7 @@ const Navbar = () => {
                                     className="w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 font-medium transition-colors"
                                     onClick={() => {
                                         setMemberMenuOpen(false);
-                                        // Member login — to be implemented
+                                        setLoginOpen(true);
                                     }}
                                 >
                                     Log In
@@ -111,6 +113,7 @@ const Navbar = () => {
             </nav>
 
             <MemberSignupModal open={signupOpen} onClose={() => setSignupOpen(false)} />
+            <MemberLoginModal open={loginOpen} onClose={() => setLoginOpen(false)} />
         </>
     );
 };

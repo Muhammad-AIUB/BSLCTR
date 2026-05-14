@@ -33,6 +33,7 @@ export default function MemberSignupModal({ open, onClose }: Props) {
         name: "",
         mobileNo: "",
         email: "",
+        password: "",
         bmdcNo: "",
         designation: "",
         specialtySubject: "",
@@ -110,7 +111,7 @@ export default function MemberSignupModal({ open, onClose }: Props) {
         setSubmitted(false);
         setError("");
         setForm({
-            name: "", mobileNo: "", email: "", bmdcNo: "", designation: "",
+            name: "", mobileNo: "", email: "", password: "", bmdcNo: "", designation: "",
             specialtySubject: "", academicQualifications: "", specializedTraining: "",
             currentPosting: "", shortBiography: "", journals: "",
             profilePicture: "", backgroundPicture: "",
@@ -172,6 +173,18 @@ export default function MemberSignupModal({ open, onClose }: Props) {
                                 type="email"
                                 value={form.email}
                                 onChange={(e) => set("email", e.target.value)}
+                                required
+                            />
+                        </div>
+
+                        {/* Password */}
+                        <div className="space-y-1">
+                            <Label htmlFor="password">Password</Label>
+                            <Input
+                                id="password"
+                                type="password"
+                                value={form.password}
+                                onChange={(e) => set("password", e.target.value)}
                                 required
                             />
                         </div>

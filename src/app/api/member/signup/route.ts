@@ -1,30 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
 
         const {
-            name,
-            mobileNo,
-            email,
-            bmdcNo,
-            designation,
-            specialtySubject,
-            otherSpecialty,
-            academicQualifications,
-            specializedTraining,
-            currentPosting,
-            chamberAddresses,
-            shortBiography,
-            journals,
-            profilePicture,
-            backgroundPicture,
-            interventions,
+            name, mobileNo, email, password, bmdcNo, designation,
+            specialtySubject, academicQualifications, specializedTraining,
+            currentPosting, chamberAddresses, shortBiography, journals,
+            profilePicture, backgroundPicture, interventions,
         } = body;
 
-        if (!name || !mobileNo || !email || !bmdcNo || !designation || !specialtySubject || !academicQualifications) {
+        if (!name || !mobileNo || !email || !password || !bmdcNo || !designation || !specialtySubject || !academicQualifications) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
 
@@ -34,16 +23,17 @@ export async function POST(req: NextRequest) {
         }
 
         const isOther = specialtySubject === "other";
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         const member = await prisma.member.create({
             data: {
                 name,
                 mobileNo,
                 email,
+                password: hashedPassword,
                 bmdcNo,
                 designation,
                 specialtySubject,
-                otherSpecialty: isOther ? otherSpecialty : null,
                 academicQualifications,
                 specializedTraining: specializedTraining || null,
                 currentPosting: isOther ? null : (currentPosting || null),

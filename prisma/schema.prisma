@@ -26,6 +26,7 @@ model Member {
     name                   String
     mobileNo               String
     email                  String       @unique
+    password               String?
     bmdcNo                 String
     designation            String
     specialtySubject       String
