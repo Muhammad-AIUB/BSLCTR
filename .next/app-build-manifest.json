@@ -1,0 +1,68 @@
+{
+  "pages": {
+    "/_not-found/page": [
+      "static/chunks/webpack-33d750608a2a6955.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-4f84124391a7dac4.js",
+      "static/chunks/main-app-8f2598d1824225cd.js",
+      "static/chunks/app/_not-found/page-1e2c147dafd84c97.js"
+    ],
+    "/layout": [
+      "static/chunks/webpack-33d750608a2a6955.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-4f84124391a7dac4.js",
+      "static/chunks/main-app-8f2598d1824225cd.js",
+      "static/css/dd73965663786333.css",
+      "static/chunks/545-03c47e806ae83aca.js",
+      "static/chunks/411-e1fb5d7685504ce8.js",
+      "static/chunks/140-a4fb5ecc93d57f90.js",
+      "static/chunks/227-57fb474aeaa3363b.js",
+      "static/chunks/app/layout-e0f90538f7e74ddd.js"
+    ],
+    "/gallery/page": [
+      "static/chunks/webpack-33d750608a2a6955.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-4f84124391a7dac4.js",
+      "static/chunks/main-app-8f2598d1824225cd.js",
+      "static/chunks/545-03c47e806ae83aca.js",
+      "static/chunks/446-50c6257fbdbf9b62.js",
+      "static/chunks/app/gallery/page-88d0d88cf9522bf2.js"
+    ],
+    "/dashboard/page": [
+      "static/chunks/webpack-33d750608a2a6955.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-4f84124391a7dac4.js",
+      "static/chunks/main-app-8f2598d1824225cd.js",
+      "static/chunks/545-03c47e806ae83aca.js",
+      "static/chunks/140-a4fb5ecc93d57f90.js",
+      "static/chunks/app/dashboard/page-14ba84cc066aad93.js"
+    ],
+    "/live-webinars/page": [
+      "static/chunks/webpack-33d750608a2a6955.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-4f84124391a7dac4.js",
+      "static/chunks/main-app-8f2598d1824225cd.js",
+      "static/chunks/545-03c47e806ae83aca.js",
+      "static/chunks/446-50c6257fbdbf9b62.js",
+      "static/chunks/411-e1fb5d7685504ce8.js",
+      "static/chunks/app/live-webinars/page-7eafed5fa7c24092.js"
+    ],
+    "/page": [
+      "static/chunks/webpack-33d750608a2a6955.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-4f84124391a7dac4.js",
+      "static/chunks/main-app-8f2598d1824225cd.js",
+      "static/chunks/545-03c47e806ae83aca.js",
+      "static/chunks/446-50c6257fbdbf9b62.js",
+      "static/chunks/512-bb0dde3454eec9a9.js",
+      "static/chunks/app/page-4426a4b3550ed86e.js"
+    ],
+    "/live/page": [
+      "static/chunks/webpack-33d750608a2a6955.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-4f84124391a7dac4.js",
+      "static/chunks/main-app-8f2598d1824225cd.js",
+      "static/chunks/app/live/page-556ae751f797dae1.js"
+    ]
+  }
+}
