@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,18 @@ const restLinks = links.slice(1);
 const NavLinksBar = () => {
     const [showSubscribeModal, setShowSubscribeModal] = useState(false);
     const [expanded, setExpanded] = useState(false);
+    const [hasUpcoming, setHasUpcoming] = useState(false);
     const pathname = usePathname();
+
+    useEffect(() => {
+        fetch("/api/webinars")
+            .then((r) => r.json())
+            .then((data: { date: string }[]) => {
+                const today = new Date().toISOString().split("T")[0];
+                setHasUpcoming(data.some((w) => w.date > today));
+            })
+            .catch(() => {});
+    }, []);
 
     return (
         <>
@@ -73,13 +84,25 @@ const NavLinksBar = () => {
                                         <Link key={index} href={link.path}>
                                             <Button
                                                 variant="ghost"
-                                                className={`w-full justify-start text-white ${
+                                                className={`relative w-full justify-start text-white ${
                                                     pathname === link.path
                                                         ? "bg-sky-400"
                                                         : ""
                                                 }`}
                                             >
                                                 {link.name}
+                                                {link.path === "/live-webinars" && (
+                                                    <span className={`ml-2 inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full border transition-all duration-300 ${
+                                                        hasUpcoming
+                                                            ? "bg-amber-400 border-amber-300 text-amber-900"
+                                                            : "bg-white/10 border-white/20 text-white/40"
+                                                    }`}>
+                                                        <span className={`inline-flex rounded-full h-1.5 w-1.5 ${
+                                                            hasUpcoming ? "bg-amber-700 animate-pulse" : "bg-white/30"
+                                                        }`} />
+                                                        Upcoming
+                                                    </span>
+                                                )}
                                             </Button>
                                         </Link>
                                     );
@@ -149,13 +172,25 @@ const NavLinksBar = () => {
                                         >
                                             <Button
                                                 variant="ghost"
-                                                className={`rounded-none px-3 lg:px-4 text-white hover:bg-sky-400 hover:text-white h-full text-[10px] md:text-xs lg:text-sm font-medium whitespace-nowrap ${
+                                                className={`relative rounded-none px-3 lg:px-4 text-white hover:bg-sky-400 hover:text-white h-full text-[10px] md:text-xs lg:text-sm font-medium whitespace-nowrap ${
                                                     pathname === link.path
                                                         ? "bg-sky-400"
                                                         : ""
                                                 }`}
                                             >
                                                 {link.name}
+                                                {link.path === "/live-webinars" && (
+                                                    <span className={`ml-1.5 inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded-full border transition-all duration-300 ${
+                                                        hasUpcoming
+                                                            ? "bg-amber-400 border-amber-300 text-amber-900"
+                                                            : "bg-white/10 border-white/20 text-white/40"
+                                                    }`}>
+                                                        <span className={`inline-flex rounded-full h-1.5 w-1.5 ${
+                                                            hasUpcoming ? "bg-amber-700 animate-pulse" : "bg-white/30"
+                                                        }`} />
+                                                        Upcoming
+                                                    </span>
+                                                )}
                                             </Button>
                                         </Link>
                                     )}
