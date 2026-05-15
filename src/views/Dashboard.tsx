@@ -68,21 +68,19 @@ export default function Dashboard() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50">
-            <div className="container mx-auto px-4 py-10 max-w-4xl">
-                <h2 className="text-2xl font-bold text-slate-800 mb-1">Member Applications</h2>
-                <p className="text-slate-500 mb-6 text-sm">Review and manage membership applications.</p>
-
-                <div className="flex gap-2 flex-wrap mb-6">
+        <div className="min-h-screen bg-slate-50 px-6 py-8">
+            <div className="max-w-4xl mx-auto">
+                <div className="inline-flex items-center bg-slate-200 rounded-xl p-1 gap-1 mb-6">
                     {(["ALL", "APPROVED", "REJECTED"] as const).map((f) => (
-                        <Button
+                        <button
                             key={f}
-                            size="sm"
-                            variant={filter === f ? "default" : "outline"}
                             onClick={() => setFilter(f)}
+                            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
+                                filter === f ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"
+                            }`}
                         >
                             {f === "ALL" ? "All" : f.charAt(0) + f.slice(1).toLowerCase()}
-                        </Button>
+                        </button>
                     ))}
                 </div>
 
@@ -91,7 +89,7 @@ export default function Dashboard() {
                 ) : members.length === 0 ? (
                     <div className="text-center py-16 text-slate-400">No applications found.</div>
                 ) : (
-                    <div className="grid gap-5">
+                    <div className="grid gap-5 max-w-4xl">
                         {members.map((m) => (
                             <div key={m.id} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                                 {/* Background picture */}
@@ -221,6 +219,7 @@ export default function Dashboard() {
         </div>
     );
 }
+
 
 function Info({ label, value }: { label: string; value: string }) {
     return (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, X, Trash2, Pencil, Link as LinkIcon, Calendar, Clock, Check } from "lucide-react";
+import { Plus, X, Trash2, Pencil, Link as LinkIcon, Calendar, Clock, Check, List, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,6 +21,8 @@ interface Webinar {
     createdAt: string;
 }
 
+type Tab = "add" | "list";
+
 const emptyForm = () => ({
     headline: "",
     date: "",
@@ -32,6 +34,33 @@ const emptyForm = () => ({
     coChairmen: [""],
     sponsors: [{ name: "", logo: "" }] as Sponsor[],
 });
+
+function TabToggle({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) {
+    return (
+        <div className="inline-flex items-center bg-slate-200 rounded-xl p-1 gap-1 mb-6">
+            <button
+                onClick={() => onChange("add")}
+                className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    tab === "add"
+                        ? "bg-white text-primary shadow-sm"
+                        : "text-slate-500 hover:text-slate-700"
+                }`}
+            >
+                <PlusCircle className="h-4 w-4" /> Add
+            </button>
+            <button
+                onClick={() => onChange("list")}
+                className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    tab === "list"
+                        ? "bg-white text-primary shadow-sm"
+                        : "text-slate-500 hover:text-slate-700"
+                }`}
+            >
+                <List className="h-4 w-4" /> List View
+            </button>
+        </div>
+    );
+}
 
 function MultiField({ label, values, onChange }: { label: string; values: string[]; onChange: (v: string[]) => void }) {
     const update = (i: number, v: string) => onChange(values.map((x, idx) => (idx === i ? v : x)));
@@ -111,12 +140,14 @@ function WebinarForm({
     onCancel,
     submitting,
     error,
+    editMode,
 }: {
     initial: ReturnType<typeof emptyForm>;
     onSave: (form: ReturnType<typeof emptyForm>) => Promise<void>;
     onCancel: () => void;
     submitting: boolean;
     error: string;
+    editMode?: boolean;
 }) {
     const [form, setForm] = useState(initial);
     const set = (key: string, val: unknown) => setForm((f) => ({ ...f, [key]: val }));
@@ -154,9 +185,11 @@ function WebinarForm({
             <SponsorField sponsors={form.sponsors} onChange={(v) => set("sponsors", v)} />
             {error && <p className="text-sm text-red-500 bg-red-50 border border-red-200 rounded px-3 py-2">{error}</p>}
             <div className="flex gap-2 pt-1">
-                <Button type="button" variant="outline" className="flex-1" onClick={onCancel}>Cancel</Button>
+                <Button type="button" variant="outline" className="flex-1" onClick={onCancel}>
+                    {editMode ? "Cancel" : "Reset"}
+                </Button>
                 <Button type="submit" className="flex-1" disabled={submitting}>
-                    {submitting ? "Saving..." : "Save"}
+                    {submitting ? "Saving..." : editMode ? "Update" : "Add Webinar"}
                 </Button>
             </div>
         </form>
@@ -164,12 +197,14 @@ function WebinarForm({
 }
 
 export default function WebinarsPage() {
+    const [tab, setTab] = useState<Tab>("add");
     const [webinars, setWebinars] = useState<Webinar[]>([]);
     const [loading, setLoading] = useState(true);
     const [form, setForm] = useState(emptyForm());
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState("");
     const [editingId, setEditingId] = useState<string | null>(null);
+    const [editForm, setEditForm] = useState<ReturnType<typeof emptyForm> | null>(null);
 
     const fetchWebinars = async () => {
         setLoading(true);
@@ -203,6 +238,7 @@ export default function WebinarsPage() {
             if (!res.ok) { const d = await res.json(); setError(d.error || "Failed"); return; }
             setForm(emptyForm());
             await fetchWebinars();
+            setTab("list");
         } finally {
             setSubmitting(false);
         }
@@ -227,7 +263,9 @@ export default function WebinarsPage() {
             });
             if (!res.ok) { const d = await res.json(); setError(d.error || "Failed"); return; }
             setEditingId(null);
+            setEditForm(null);
             await fetchWebinars();
+            setTab("list");
         } finally {
             setSubmitting(false);
         }
@@ -238,68 +276,69 @@ export default function WebinarsPage() {
         await fetchWebinars();
     };
 
+    const startEdit = (w: Webinar) => {
+        setEditingId(w.id);
+        setEditForm({
+            headline: w.headline,
+            date: w.date,
+            time: w.time,
+            link: w.link,
+            keynoteSpeakers: w.keynoteSpeakers.length ? w.keynoteSpeakers : [""],
+            moderators: w.moderators.length ? w.moderators : [""],
+            chairpersons: w.chairpersons.length ? w.chairpersons : [""],
+            coChairmen: w.coChairmen.length ? w.coChairmen : [""],
+            sponsors: w.sponsors.length ? w.sponsors : [{ name: "", logo: "" }],
+        });
+        setTab("add");
+    };
+
+    const cancelEdit = () => {
+        setEditingId(null);
+        setEditForm(null);
+        setError("");
+    };
+
     return (
-        <div className="min-h-screen bg-slate-50">
-            <div className="flex gap-6 px-6 py-8 h-full">
+        <div className="min-h-screen bg-slate-50 px-6 py-8">
+            <TabToggle tab={tab} onChange={(t) => { setTab(t); if (t === "add" && !editingId) { setError(""); } if (t === "list") cancelEdit(); }} />
 
-                {/* Left — Add Form */}
-                <div className="w-96 shrink-0">
-                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 sticky top-8">
-                        <h3 className="text-base font-semibold text-slate-800 mb-4">Add Webinar</h3>
-                        <WebinarForm
-                            initial={form}
-                            onSave={handleAdd}
-                            onCancel={() => setForm(emptyForm())}
-                            submitting={submitting}
-                            error={error}
-                        />
-                    </div>
+            {tab === "add" && (
+                <div className="max-w-2xl mx-auto bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                    <h3 className="text-base font-semibold text-slate-800 mb-5">
+                        {editingId ? "Edit Webinar" : "Add Webinar"}
+                    </h3>
+                    <WebinarForm
+                        key={editingId ?? "new"}
+                        initial={editForm ?? form}
+                        onSave={editingId ? (f) => handleEdit(editingId, f) : handleAdd}
+                        onCancel={editingId ? cancelEdit : () => setForm(emptyForm())}
+                        submitting={submitting}
+                        error={error}
+                        editMode={!!editingId}
+                    />
                 </div>
+            )}
 
-                {/* Right — List */}
-                <div className="flex-1 min-w-0">
-                    <h2 className="text-xl font-bold text-slate-800 mb-4">Webinar List</h2>
+            {tab === "list" && (
+                <div className="max-w-4xl mx-auto">
                     {loading ? (
                         <div className="text-center py-16 text-slate-400">Loading...</div>
                     ) : webinars.length === 0 ? (
                         <div className="text-center py-16 text-slate-400">No webinars yet.</div>
                     ) : (
                         <div className="space-y-4">
-                            {webinars.map((w) =>
-                                editingId === w.id ? (
-                                    <div key={w.id} className="bg-white rounded-xl border border-primary/40 shadow-sm p-5">
-                                        <h4 className="text-sm font-semibold text-slate-700 mb-4">Edit Webinar</h4>
-                                        <WebinarForm
-                                            initial={{
-                                                headline: w.headline,
-                                                date: w.date,
-                                                time: w.time,
-                                                link: w.link,
-                                                keynoteSpeakers: w.keynoteSpeakers.length ? w.keynoteSpeakers : [""],
-                                                moderators: w.moderators.length ? w.moderators : [""],
-                                                chairpersons: w.chairpersons.length ? w.chairpersons : [""],
-                                                coChairmen: w.coChairmen.length ? w.coChairmen : [""],
-                                                sponsors: w.sponsors.length ? w.sponsors : [{ name: "", logo: "" }],
-                                            }}
-                                            onSave={(f) => handleEdit(w.id, f)}
-                                            onCancel={() => setEditingId(null)}
-                                            submitting={submitting}
-                                            error={error}
-                                        />
-                                    </div>
-                                ) : (
-                                    <WebinarCard
-                                        key={w.id}
-                                        webinar={w}
-                                        onEdit={() => setEditingId(w.id)}
-                                        onDelete={() => handleDelete(w.id)}
-                                    />
-                                )
-                            )}
+                            {webinars.map((w) => (
+                                <WebinarCard
+                                    key={w.id}
+                                    webinar={w}
+                                    onEdit={() => startEdit(w)}
+                                    onDelete={() => handleDelete(w.id)}
+                                />
+                            ))}
                         </div>
                     )}
                 </div>
-            </div>
+            )}
         </div>
     );
 }
