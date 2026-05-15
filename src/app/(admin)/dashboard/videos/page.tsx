@@ -231,9 +231,6 @@ export default function VideosPage() {
                             {/* Pending Reviews */}
                             {pending.length > 0 && (
                                 <div className="mb-8">
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">{pending.length} Pending</span>
-                                    </div>
                                     <div className="space-y-4">
                                         {pending.map((v) => (
                                             <PendingVideoCard
