@@ -161,20 +161,20 @@ const Navbar = () => {
                                         <p className="text-sm font-semibold text-slate-700 truncate">{adminEmail}</p>
                                     </div>
 
-                                    {/* Pending notifications */}
-                                    {pendingItems.length > 0 && (
-                                        <div className="border-b border-slate-100">
+                                    {/* Pending notifications — always visible */}
+                                    <div className="border-b border-slate-100">
+                                        {pendingItems.length === 0 ? (
+                                            <p className="px-4 py-3 text-xs text-slate-400 italic">No pending uploads</p>
+                                        ) : (
                                             <div className="max-h-72 overflow-y-auto divide-y divide-slate-50">
                                                 {pendingItems.map((item) => (
                                                     <div key={`${item.type}-${item.id}`} className="px-4 py-3 bg-amber-50/60 hover:bg-amber-50 transition-colors">
-                                                        <div className="flex items-start justify-between gap-2 mb-2">
-                                                            <div className="flex items-center gap-1.5 min-w-0">
-                                                                {item.type === "video"
-                                                                    ? <Video className="h-3.5 w-3.5 text-blue-500 shrink-0" />
-                                                                    : <ImageIcon className="h-3.5 w-3.5 text-purple-500 shrink-0" />
-                                                                }
-                                                                <span className="text-sm font-medium text-slate-800 truncate">{item.title}</span>
-                                                            </div>
+                                                        <div className="flex items-center gap-1.5 min-w-0 mb-1">
+                                                            {item.type === "video"
+                                                                ? <Video className="h-3.5 w-3.5 text-blue-500 shrink-0" />
+                                                                : <ImageIcon className="h-3.5 w-3.5 text-purple-500 shrink-0" />
+                                                            }
+                                                            <span className="text-sm font-medium text-slate-800 truncate">{item.title}</span>
                                                         </div>
                                                         {item.uploadedByName && (
                                                             <p className="text-xs text-slate-400 mb-2">by {item.uploadedByName}</p>
@@ -196,8 +196,8 @@ const Navbar = () => {
                                                     </div>
                                                 ))}
                                             </div>
-                                        </div>
-                                    )}
+                                        )}
+                                    </div>
 
                                     {/* Dashboard link */}
                                     <Link
