@@ -14,7 +14,7 @@ const links = [
     { name: "Live Webinars", path: "/live-webinars" },
     { name: "BSLCTRcon", path: "/bslctrcon" },
     {
-        name: "All Hepatologists, Hepatobiliary Surgeons, Interventionalists",
+        name: "All Hepatologists, Hepatobiliary Surgeons, Interventional Lists",
         path: "/hepatologist-surgeon-interventiona",
     },
     { name: "Guidelines", path: "/guidelines" },
