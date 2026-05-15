@@ -6,14 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import AdminLoginModal from "../AdminLoginModal";
 import MemberSignupModal from "../MemberSignupModal";
 import MemberLoginModal from "../MemberLoginModal";
-import { LayoutDashboard, LogOut, Check, X, Video, Image as ImageIcon } from "lucide-react";
-
-interface PendingItem {
-    id: string;
-    title: string;
-    uploadedByName?: string;
-    type: "video" | "photo";
-}
+import { LayoutDashboard, LogOut, Bell } from "lucide-react";
 
 const Navbar = () => {
     const router = useRouter();
@@ -23,7 +16,7 @@ const Navbar = () => {
     const [memberMenuOpen, setMemberMenuOpen] = useState(false);
     const [signupOpen, setSignupOpen] = useState(false);
     const [loginOpen, setLoginOpen] = useState(false);
-    const [pendingItems, setPendingItems] = useState<PendingItem[]>([]);
+    const [pendingCount, setPendingCount] = useState(0);
     const adminMenuRef = useRef<HTMLDivElement>(null);
     const memberMenuRef = useRef<HTMLDivElement>(null);
 
@@ -38,7 +31,7 @@ const Navbar = () => {
         }
     };
 
-    const fetchPending = async () => {
+    const fetchPendingCount = async () => {
         try {
             const [vRes, pRes] = await Promise.all([
                 fetch("/api/admin/videos"),
@@ -46,17 +39,12 @@ const Navbar = () => {
             ]);
             const videos = await vRes.json();
             const photos = await pRes.json();
-            const items: PendingItem[] = [
-                ...(Array.isArray(videos) ? videos : [])
-                    .filter((v: { status: string }) => v.status === "PENDING")
-                    .map((v: { id: string; title: string; uploadedByName?: string }) => ({ ...v, type: "video" as const })),
-                ...(Array.isArray(photos) ? photos : [])
-                    .filter((p: { status: string }) => p.status === "PENDING")
-                    .map((p: { id: string; title: string; uploadedByName?: string }) => ({ ...p, type: "photo" as const })),
-            ];
-            setPendingItems(items);
+            const count =
+                (Array.isArray(videos) ? videos.filter((v: { status: string }) => v.status === "PENDING").length : 0) +
+                (Array.isArray(photos) ? photos.filter((p: { status: string }) => p.status === "PENDING").length : 0);
+            setPendingCount(count);
         } catch {
-            setPendingItems([]);
+            setPendingCount(0);
         }
     };
 
@@ -72,11 +60,10 @@ const Navbar = () => {
         };
     }, []);
 
-    // Fetch pending on admin login + every 30s polling
     useEffect(() => {
-        if (!adminEmail) { setPendingItems([]); return; }
-        fetchPending();
-        const interval = setInterval(fetchPending, 30000);
+        if (!adminEmail) { setPendingCount(0); return; }
+        fetchPendingCount();
+        const interval = setInterval(fetchPendingCount, 30000);
         return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [adminEmail]);
@@ -110,21 +97,8 @@ const Navbar = () => {
         setMemberMenuOpen(false);
     };
 
-    const handleItemStatus = async (item: PendingItem, status: "APPROVED" | "REJECTED") => {
-        const url = item.type === "video"
-            ? `/api/admin/videos/${item.id}`
-            : `/api/admin/photos/${item.id}`;
-        await fetch(url, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status }),
-        });
-        await fetchPending();
-    };
-
     const adminInitial = adminEmail ? adminEmail[0].toUpperCase() : "A";
     const memberInitial = memberName ? memberName[0].toUpperCase() : "M";
-    const pendingCount = pendingItems.length;
 
     return (
         <>
@@ -141,7 +115,7 @@ const Navbar = () => {
                         <div className="relative" ref={adminMenuRef}>
                             {/* Avatar button with notification badge */}
                             <button
-                                onClick={() => { setAdminMenuOpen((p) => !p); fetchPending(); }}
+                                onClick={() => setAdminMenuOpen((p) => !p)}
                                 className="relative w-11 h-11 rounded-full bg-blue-700 hover:bg-blue-600 text-white font-bold text-lg flex items-center justify-center shadow-md border-2 border-white/30 transition-colors"
                                 title={adminEmail}
                             >
@@ -154,50 +128,27 @@ const Navbar = () => {
                             </button>
 
                             {adminMenuOpen && (
-                                <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-slate-100 z-[9999] overflow-hidden">
+                                <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 z-[9999] overflow-hidden">
                                     {/* Header */}
                                     <div className="px-4 py-3 border-b border-slate-100">
                                         <p className="text-xs text-slate-400">Logged in as</p>
                                         <p className="text-sm font-semibold text-slate-700 truncate">{adminEmail}</p>
                                     </div>
 
-                                    {/* Pending notifications — always visible */}
-                                    <div className="border-b border-slate-100">
-                                        {pendingItems.length === 0 ? (
-                                            <p className="px-4 py-3 text-xs text-slate-400 italic">No pending uploads</p>
-                                        ) : (
-                                            <div className="max-h-72 overflow-y-auto divide-y divide-slate-50">
-                                                {pendingItems.map((item) => (
-                                                    <div key={`${item.type}-${item.id}`} className="px-4 py-3 bg-amber-50/60 hover:bg-amber-50 transition-colors">
-                                                        <div className="flex items-center gap-1.5 min-w-0 mb-1">
-                                                            {item.type === "video"
-                                                                ? <Video className="h-3.5 w-3.5 text-blue-500 shrink-0" />
-                                                                : <ImageIcon className="h-3.5 w-3.5 text-purple-500 shrink-0" />
-                                                            }
-                                                            <span className="text-sm font-medium text-slate-800 truncate">{item.title}</span>
-                                                        </div>
-                                                        {item.uploadedByName && (
-                                                            <p className="text-xs text-slate-400 mb-2">by {item.uploadedByName}</p>
-                                                        )}
-                                                        <div className="flex gap-2">
-                                                            <button
-                                                                onClick={() => handleItemStatus(item, "APPROVED")}
-                                                                className="flex items-center gap-1 text-xs font-semibold text-emerald-700 bg-emerald-100 hover:bg-emerald-200 px-3 py-1 rounded-full transition-colors"
-                                                            >
-                                                                <Check className="h-3 w-3" /> Approve
-                                                            </button>
-                                                            <button
-                                                                onClick={() => handleItemStatus(item, "REJECTED")}
-                                                                className="flex items-center gap-1 text-xs font-semibold text-red-600 bg-red-100 hover:bg-red-200 px-3 py-1 rounded-full transition-colors"
-                                                            >
-                                                                <X className="h-3 w-3" /> Reject
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
+                                    {/* Notifications link */}
+                                    <Link
+                                        href="/dashboard/notifications"
+                                        className="flex items-center gap-2 px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 font-medium transition-colors"
+                                        onClick={() => setAdminMenuOpen(false)}
+                                    >
+                                        <Bell className="h-4 w-4 text-primary" />
+                                        <span className="flex-1">Notifications</span>
+                                        {pendingCount > 0 && (
+                                            <span className="min-w-[20px] h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center px-1">
+                                                {pendingCount}
+                                            </span>
                                         )}
-                                    </div>
+                                    </Link>
 
                                     {/* Dashboard link */}
                                     <Link

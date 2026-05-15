@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { Users, LogOut, Radio, Video, Image as ImageIcon, ArrowLeft } from "lucide-react";
+import { Users, LogOut, Radio, Video, Image as ImageIcon, ArrowLeft, Bell } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const router = useRouter();
@@ -33,8 +33,29 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     if (!ready) return null;
 
+    const [pendingCount, setPendingCount] = useState(0);
+
+    useEffect(() => {
+        const fetchCount = async () => {
+            try {
+                const [vRes, pRes] = await Promise.all([
+                    fetch("/api/admin/videos"),
+                    fetch("/api/admin/photos"),
+                ]);
+                const videos = await vRes.json();
+                const photos = await pRes.json();
+                const count =
+                    (Array.isArray(videos) ? videos.filter((v: { status: string }) => v.status === "PENDING").length : 0) +
+                    (Array.isArray(photos) ? photos.filter((p: { status: string }) => p.status === "PENDING").length : 0);
+                setPendingCount(count);
+            } catch { /* ignore */ }
+        };
+        if (ready) { fetchCount(); const id = setInterval(fetchCount, 30000); return () => clearInterval(id); }
+    }, [ready]);
+
     const navItems = [
         { href: "/dashboard", label: "Members", icon: Users },
+        { href: "/dashboard/notifications", label: "Notifications", icon: Bell, badge: pendingCount },
         { href: "/dashboard/webinars", label: "Webinars", icon: Radio },
         { href: "/dashboard/videos", label: "Videos", icon: Video },
         { href: "/dashboard/photos", label: "Images", icon: ImageIcon },
@@ -54,7 +75,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </div>
 
                 <nav className="flex-1 px-3 py-4 space-y-1">
-                    {navItems.map(({ href, label, icon: Icon }) => {
+                    {navItems.map(({ href, label, icon: Icon, badge }) => {
                         const active = pathname === href;
                         return (
                             <Link
@@ -67,7 +88,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                 }`}
                             >
                                 <Icon className="h-4 w-4 shrink-0" />
-                                {label}
+                                <span className="flex-1">{label}</span>
+                                {badge != null && badge > 0 && (
+                                    <span className="min-w-[20px] h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center px-1">
+                                        {badge}
+                                    </span>
+                                )}
                             </Link>
                         );
                     })}
