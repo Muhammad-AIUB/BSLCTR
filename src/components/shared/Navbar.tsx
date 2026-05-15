@@ -98,7 +98,7 @@ const Navbar = () => {
                             </button>
 
                             {adminMenuOpen && (
-                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-50">
+                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-[9999]">
                                     <div className="px-4 py-3 border-b border-slate-100">
                                         <p className="text-xs text-slate-400">Logged in as</p>
                                         <p className="text-sm font-semibold text-slate-700 truncate">{adminEmail}</p>
@@ -134,7 +134,7 @@ const Navbar = () => {
                             </button>
 
                             {memberMenuOpen && (
-                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-50">
+                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-[9999]">
                                     <div className="px-4 py-3 border-b border-slate-100">
                                         <p className="text-xs text-slate-400">Logged in as</p>
                                         <p className="text-sm font-semibold text-slate-700 truncate">{memberName}</p>
@@ -172,7 +172,7 @@ const Navbar = () => {
                                 </button>
 
                                 {memberMenuOpen && (
-                                    <div className="absolute right-0 mt-2 w-40 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-50">
+                                    <div className="absolute right-0 mt-2 w-40 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-[9999]">
                                         <button
                                             className="w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 font-medium transition-colors"
                                             onClick={() => { setMemberMenuOpen(false); setSignupOpen(true); }}
