@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import AdminLoginModal from "../AdminLoginModal";
 import MemberSignupModal from "../MemberSignupModal";
 import MemberLoginModal from "../MemberLoginModal";
@@ -38,7 +38,7 @@ const Navbar = () => {
         }
     };
 
-    const fetchPending = useCallback(async () => {
+    const fetchPending = async () => {
         try {
             const [vRes, pRes] = await Promise.all([
                 fetch("/api/admin/videos"),
@@ -47,14 +47,18 @@ const Navbar = () => {
             const videos = await vRes.json();
             const photos = await pRes.json();
             const items: PendingItem[] = [
-                ...videos.filter((v: { status: string }) => v.status === "PENDING").map((v: { id: string; title: string; uploadedByName?: string }) => ({ ...v, type: "video" as const })),
-                ...photos.filter((p: { status: string }) => p.status === "PENDING").map((p: { id: string; title: string; uploadedByName?: string }) => ({ ...p, type: "photo" as const })),
+                ...(Array.isArray(videos) ? videos : [])
+                    .filter((v: { status: string }) => v.status === "PENDING")
+                    .map((v: { id: string; title: string; uploadedByName?: string }) => ({ ...v, type: "video" as const })),
+                ...(Array.isArray(photos) ? photos : [])
+                    .filter((p: { status: string }) => p.status === "PENDING")
+                    .map((p: { id: string; title: string; uploadedByName?: string }) => ({ ...p, type: "photo" as const })),
             ];
             setPendingItems(items);
         } catch {
             setPendingItems([]);
         }
-    }, []);
+    };
 
     useEffect(() => {
         loadAdmin();
@@ -68,10 +72,14 @@ const Navbar = () => {
         };
     }, []);
 
+    // Fetch pending on admin login + every 30s polling
     useEffect(() => {
-        if (adminEmail) fetchPending();
-        else setPendingItems([]);
-    }, [adminEmail, fetchPending]);
+        if (!adminEmail) { setPendingItems([]); return; }
+        fetchPending();
+        const interval = setInterval(fetchPending, 30000);
+        return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [adminEmail]);
 
     useEffect(() => {
         fetch("/api/member/me")
@@ -133,7 +141,7 @@ const Navbar = () => {
                         <div className="relative" ref={adminMenuRef}>
                             {/* Avatar button with notification badge */}
                             <button
-                                onClick={() => setAdminMenuOpen((p) => !p)}
+                                onClick={() => { setAdminMenuOpen((p) => !p); fetchPending(); }}
                                 className="relative w-11 h-11 rounded-full bg-blue-700 hover:bg-blue-600 text-white font-bold text-lg flex items-center justify-center shadow-md border-2 border-white/30 transition-colors"
                                 title={adminEmail}
                             >
