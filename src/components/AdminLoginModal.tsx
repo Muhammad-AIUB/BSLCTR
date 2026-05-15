@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import {
     Dialog,
     DialogContent,
@@ -18,7 +17,6 @@ export default function AdminLoginModal() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
-    const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -34,7 +32,7 @@ export default function AdminLoginModal() {
             setOpen(false);
             setEmail("");
             setPassword("");
-            router.push("/dashboard");
+            window.dispatchEvent(new Event("adminAuthChanged"));
             return;
         } else {
             setError("Invalid credentials. Use admin@bslctr.org / admin123");

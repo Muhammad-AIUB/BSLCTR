@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { Users, LogOut, Radio, Video, Image as ImageIcon } from "lucide-react";
+import { Users, LogOut, Radio, Video, Image as ImageIcon, ArrowLeft } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const router = useRouter();
@@ -73,7 +73,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     })}
                 </nav>
 
-                <div className="px-3 py-4 border-t border-white/20">
+                <div className="px-3 py-4 border-t border-white/20 space-y-1">
+                    <Link
+                        href="/"
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition-colors text-sm"
+                    >
+                        <ArrowLeft className="h-4 w-4 shrink-0" />
+                        Back to Site
+                    </Link>
                     <button
                         onClick={handleLogout}
                         className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition-colors text-sm"

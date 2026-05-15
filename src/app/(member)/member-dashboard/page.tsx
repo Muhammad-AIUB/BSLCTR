@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Calendar, Clock, Link as LinkIcon, LogOut, Radio, Video, ImageIcon, Tag, Plus, X, Clock3, CheckCircle2, XCircle } from "lucide-react";
+import { Calendar, Clock, Link as LinkIcon, LogOut, Radio, Video, ImageIcon, Tag, Plus, X, Clock3, CheckCircle2, XCircle, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import ShareButtons from "@/components/ShareButtons";
 import dynamic from "next/dynamic";
 
@@ -188,7 +189,10 @@ export default function MemberDashboard() {
                         </button>
                     ))}
                 </nav>
-                <div className="px-3 py-4 border-t border-white/20">
+                <div className="px-3 py-4 border-t border-white/20 space-y-1">
+                    <Link href="/" className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition-colors text-sm">
+                        <ArrowLeft className="h-4 w-4 shrink-0" />Back to Site
+                    </Link>
                     <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition-colors text-sm">
                         <LogOut className="h-4 w-4 shrink-0" />Log Out
                     </button>
