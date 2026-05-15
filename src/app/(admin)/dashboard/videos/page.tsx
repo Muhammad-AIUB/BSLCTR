@@ -17,6 +17,8 @@ interface Video {
     description: string;
     tags: string[];
     createdAt: string;
+    status: string;
+    uploadedByName?: string;
 }
 
 const emptyForm = () => ({
@@ -190,6 +192,18 @@ export default function VideosPage() {
         await fetchVideos();
     };
 
+    const handleStatus = async (id: string, status: "APPROVED" | "REJECTED") => {
+        await fetch(`/api/admin/videos/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status }),
+        });
+        await fetchVideos();
+    };
+
+    const pending = videos.filter((v) => v.status === "PENDING");
+    const rest = videos.filter((v) => v.status !== "PENDING");
+
     return (
         <div className="min-h-screen bg-slate-50">
             <div className="flex gap-6 px-6 py-8 h-full">
@@ -210,43 +224,101 @@ export default function VideosPage() {
 
                 {/* Right — List */}
                 <div className="flex-1 min-w-0">
-                    <h2 className="text-xl font-bold text-slate-800 mb-4">Video List</h2>
                     {loading ? (
                         <div className="text-center py-16 text-slate-400">Loading...</div>
-                    ) : videos.length === 0 ? (
-                        <div className="text-center py-16 text-slate-400">No videos yet.</div>
                     ) : (
-                        <div className="space-y-4">
-                            {videos.map((v) =>
-                                editingId === v.id ? (
-                                    <div key={v.id} className="bg-white rounded-xl border border-primary/40 shadow-sm p-5">
-                                        <h4 className="text-sm font-semibold text-slate-700 mb-4">Edit Video</h4>
-                                        <VideoForm
-                                            initial={{
-                                                title: v.title,
-                                                link: v.link,
-                                                description: v.description,
-                                                tags: v.tags,
-                                            }}
-                                            onSave={(f) => handleEdit(v.id, f)}
-                                            onCancel={() => setEditingId(null)}
-                                            submitting={submitting}
-                                            error={error}
-                                        />
+                        <>
+                            {/* Pending Reviews */}
+                            {pending.length > 0 && (
+                                <div className="mb-8">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">{pending.length} Pending</span>
                                     </div>
-                                ) : (
-                                    <VideoCard
-                                        key={v.id}
-                                        video={v}
-                                        onEdit={() => setEditingId(v.id)}
-                                        onDelete={() => handleDelete(v.id)}
-                                    />
-                                )
+                                    <div className="space-y-4">
+                                        {pending.map((v) => (
+                                            <PendingVideoCard
+                                                key={v.id}
+                                                video={v}
+                                                onApprove={() => handleStatus(v.id, "APPROVED")}
+                                                onReject={() => handleStatus(v.id, "REJECTED")}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
                             )}
-                        </div>
+
+                            {/* All Other Videos */}
+                            {rest.length === 0 && pending.length === 0 ? (
+                                <div className="text-center py-16 text-slate-400">No videos yet.</div>
+                            ) : rest.length > 0 && (
+                                <div className="space-y-4">
+                                    {rest.map((v) =>
+                                        editingId === v.id ? (
+                                            <div key={v.id} className="bg-white rounded-xl border border-primary/40 shadow-sm p-5">
+                                                <h4 className="text-sm font-semibold text-slate-700 mb-4">Edit Video</h4>
+                                                <VideoForm
+                                                    initial={{
+                                                        title: v.title,
+                                                        link: v.link,
+                                                        description: v.description,
+                                                        tags: v.tags,
+                                                    }}
+                                                    onSave={(f) => handleEdit(v.id, f)}
+                                                    onCancel={() => setEditingId(null)}
+                                                    submitting={submitting}
+                                                    error={error}
+                                                />
+                                            </div>
+                                        ) : (
+                                            <VideoCard
+                                                key={v.id}
+                                                video={v}
+                                                onEdit={() => setEditingId(v.id)}
+                                                onDelete={() => handleDelete(v.id)}
+                                            />
+                                        )
+                                    )}
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </div>
+        </div>
+    );
+}
+
+function PendingVideoCard({ video: v, onApprove, onReject }: { video: Video; onApprove: () => void; onReject: () => void }) {
+    return (
+        <div className="bg-white rounded-xl border border-amber-200 shadow-sm p-5">
+            <div className="flex items-start justify-between gap-3 mb-2">
+                <div>
+                    <h3 className="font-semibold text-slate-800">{v.title}</h3>
+                    {v.uploadedByName && (
+                        <p className="text-xs text-slate-400 mt-0.5">Submitted by {v.uploadedByName}</p>
+                    )}
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                    <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={onApprove}>
+                        <Check className="h-3.5 w-3.5 mr-1" /> Approve
+                    </Button>
+                    <Button size="sm" variant="destructive" onClick={onReject}>
+                        <X className="h-3.5 w-3.5 mr-1" /> Reject
+                    </Button>
+                </div>
+            </div>
+            <a href={v.link} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-sm text-primary hover:underline mb-2">
+                <LinkIcon className="h-3.5 w-3.5" /> {v.link}
+            </a>
+            {v.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                    {v.tags.map((tag) => (
+                        <span key={tag} className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full">
+                            <Tag className="h-3 w-3" />{tag}
+                        </span>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

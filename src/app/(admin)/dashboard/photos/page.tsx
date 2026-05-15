@@ -17,6 +17,8 @@ interface Photo {
     description: string;
     tags: string[];
     createdAt: string;
+    status: string;
+    uploadedByName?: string;
 }
 
 const emptyForm = () => ({
@@ -224,6 +226,18 @@ export default function PhotosPage() {
         await fetchPhotos();
     };
 
+    const handleStatus = async (id: string, status: "APPROVED" | "REJECTED") => {
+        await fetch(`/api/admin/photos/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status }),
+        });
+        await fetchPhotos();
+    };
+
+    const pending = photos.filter((p) => p.status === "PENDING");
+    const rest = photos.filter((p) => p.status !== "PENDING");
+
     return (
         <div className="min-h-screen bg-slate-50">
             <div className="flex gap-6 px-6 py-8 h-full">
@@ -244,40 +258,63 @@ export default function PhotosPage() {
 
                 {/* Right — List */}
                 <div className="flex-1 min-w-0">
-                    <h2 className="text-xl font-bold text-slate-800 mb-4">Photo List</h2>
                     {loading ? (
                         <div className="text-center py-16 text-slate-400">Loading...</div>
-                    ) : photos.length === 0 ? (
-                        <div className="text-center py-16 text-slate-400">No photos yet.</div>
                     ) : (
-                        <div className="space-y-4">
-                            {photos.map((p) =>
-                                editingId === p.id ? (
-                                    <div key={p.id} className="bg-white rounded-xl border border-primary/40 shadow-sm p-5">
-                                        <h4 className="text-sm font-semibold text-slate-700 mb-4">Edit Photo</h4>
-                                        <PhotoForm
-                                            initial={{
-                                                title: p.title,
-                                                link: p.link,
-                                                description: p.description,
-                                                tags: p.tags,
-                                            }}
-                                            onSave={(f) => handleEdit(p.id, f)}
-                                            onCancel={() => setEditingId(null)}
-                                            submitting={submitting}
-                                            error={error}
-                                        />
+                        <>
+                            {/* Pending Reviews */}
+                            {pending.length > 0 && (
+                                <div className="mb-8">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">{pending.length} Pending</span>
                                     </div>
-                                ) : (
-                                    <PhotoCard
-                                        key={p.id}
-                                        photo={p}
-                                        onEdit={() => setEditingId(p.id)}
-                                        onDelete={() => handleDelete(p.id)}
-                                    />
-                                )
+                                    <div className="space-y-4">
+                                        {pending.map((p) => (
+                                            <PendingPhotoCard
+                                                key={p.id}
+                                                photo={p}
+                                                onApprove={() => handleStatus(p.id, "APPROVED")}
+                                                onReject={() => handleStatus(p.id, "REJECTED")}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
                             )}
-                        </div>
+
+                            {/* All Other Photos */}
+                            {rest.length === 0 && pending.length === 0 ? (
+                                <div className="text-center py-16 text-slate-400">No photos yet.</div>
+                            ) : rest.length > 0 && (
+                                <div className="space-y-4">
+                                    {rest.map((p) =>
+                                        editingId === p.id ? (
+                                            <div key={p.id} className="bg-white rounded-xl border border-primary/40 shadow-sm p-5">
+                                                <h4 className="text-sm font-semibold text-slate-700 mb-4">Edit Photo</h4>
+                                                <PhotoForm
+                                                    initial={{
+                                                        title: p.title,
+                                                        link: p.link,
+                                                        description: p.description,
+                                                        tags: p.tags,
+                                                    }}
+                                                    onSave={(f) => handleEdit(p.id, f)}
+                                                    onCancel={() => setEditingId(null)}
+                                                    submitting={submitting}
+                                                    error={error}
+                                                />
+                                            </div>
+                                        ) : (
+                                            <PhotoCard
+                                                key={p.id}
+                                                photo={p}
+                                                onEdit={() => setEditingId(p.id)}
+                                                onDelete={() => handleDelete(p.id)}
+                                            />
+                                        )
+                                    )}
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </div>
@@ -287,6 +324,48 @@ export default function PhotosPage() {
 
 function isImageUrl(url: string) {
     return /\.(jpg|jpeg|png|gif|webp|avif|svg)(\?.*)?$/i.test(url);
+}
+
+function PendingPhotoCard({ photo: p, onApprove, onReject }: { photo: Photo; onApprove: () => void; onReject: () => void }) {
+    return (
+        <div className="bg-white rounded-xl border border-amber-200 shadow-sm p-5">
+            <div className="flex items-start justify-between gap-3 mb-2">
+                <div>
+                    <h3 className="font-semibold text-slate-800">{p.title}</h3>
+                    {p.uploadedByName && (
+                        <p className="text-xs text-slate-400 mt-0.5">Submitted by {p.uploadedByName}</p>
+                    )}
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                    <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={onApprove}>
+                        <Check className="h-3.5 w-3.5 mr-1" /> Approve
+                    </Button>
+                    <Button size="sm" variant="destructive" onClick={onReject}>
+                        <X className="h-3.5 w-3.5 mr-1" /> Reject
+                    </Button>
+                </div>
+            </div>
+            {p.link && isImageUrl(p.link) && (
+                <div className="mb-2">
+                    <img src={p.link} alt={p.title} className="h-32 w-auto object-cover rounded-lg border border-slate-200" />
+                </div>
+            )}
+            {p.link && !isImageUrl(p.link) && (
+                <a href={p.link} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-sm text-primary hover:underline mb-2">
+                    <LinkIcon className="h-3.5 w-3.5" /> {p.link}
+                </a>
+            )}
+            {p.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                    {p.tags.map((tag) => (
+                        <span key={tag} className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full">
+                            <Tag className="h-3 w-3" />{tag}
+                        </span>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
 }
 
 function PhotoCard({ photo: p, onEdit, onDelete }: { photo: Photo; onEdit: () => void; onDelete: () => void }) {

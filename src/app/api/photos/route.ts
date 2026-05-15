@@ -3,7 +3,10 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
     try {
-        const photos = await prisma.photo.findMany({ orderBy: { createdAt: "desc" } });
+        const photos = await prisma.photo.findMany({
+            where: { status: "APPROVED" },
+            orderBy: { createdAt: "desc" },
+        });
         return NextResponse.json(photos);
     } catch (error) {
         console.error(error);

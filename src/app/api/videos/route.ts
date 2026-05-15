@@ -3,7 +3,10 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
     try {
-        const videos = await prisma.video.findMany({ orderBy: { createdAt: "desc" } });
+        const videos = await prisma.video.findMany({
+            where: { status: "APPROVED" },
+            orderBy: { createdAt: "desc" },
+        });
         return NextResponse.json(videos);
     } catch (error) {
         console.error(error);
