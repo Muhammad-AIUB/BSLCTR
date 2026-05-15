@@ -26,11 +26,11 @@ export default function HeroSlider() {
                 style={{ transform: `translateX(-${current * 100}%)` }}
             >
                 {slides.map((src, i) => (
-                    <div key={i} className="w-full shrink-0">
+                    <div key={i} className="w-full shrink-0 h-[420px] md:h-[520px]">
                         <img
                             src={src}
                             alt={`Slide ${i + 1}`}
-                            className="w-full h-auto object-contain"
+                            className="w-full h-full object-cover"
                             draggable={false}
                         />
                     </div>
