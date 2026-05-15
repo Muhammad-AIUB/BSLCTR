@@ -10,6 +10,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const pathname = usePathname();
     const [adminEmail, setAdminEmail] = useState<string | null>(null);
     const [ready, setReady] = useState(false);
+    const [pendingCount, setPendingCount] = useState(0);
 
     useEffect(() => {
         try {
@@ -26,16 +27,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         router.replace("/");
     }, [router]);
 
-    const handleLogout = () => {
-        localStorage.removeItem("adminAuth");
-        router.push("/");
-    };
-
-    if (!ready) return null;
-
-    const [pendingCount, setPendingCount] = useState(0);
-
     useEffect(() => {
+        if (!ready) return;
         const fetchCount = async () => {
             try {
                 const [vRes, pRes] = await Promise.all([
@@ -50,8 +43,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 setPendingCount(count);
             } catch { /* ignore */ }
         };
-        if (ready) { fetchCount(); const id = setInterval(fetchCount, 30000); return () => clearInterval(id); }
+        fetchCount();
+        const id = setInterval(fetchCount, 30000);
+        return () => clearInterval(id);
     }, [ready]);
+
+    const handleLogout = () => {
+        localStorage.removeItem("adminAuth");
+        router.push("/");
+    };
+
+    if (!ready) return null;
 
     const navItems = [
         { href: "/dashboard", label: "Members", icon: Users },
