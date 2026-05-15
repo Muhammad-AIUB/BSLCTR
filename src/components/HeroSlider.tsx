@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 
 const slides = [
-    "/ChatGPT Image May 15, 2026, 10_14_04 PM.png",
-    "/ChatGPT Image May 15, 2026, 10_14_11 PM.png",
-    "/ChatGPT Image May 15, 2026, 10_14_14 PM.png",
+    "/hero-slide-1.png",
+    "/hero-slide-2.png",
+    "/hero-slide-3.png",
 ];
 
 export default function HeroSlider() {
