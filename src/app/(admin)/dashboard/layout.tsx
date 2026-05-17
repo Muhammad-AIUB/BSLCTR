@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { Users, LogOut, Radio, Video, Image as ImageIcon, ArrowLeft, Bell } from "lucide-react";
+import { Users, LogOut, Radio, Video, Image as ImageIcon, ArrowLeft, Bell, BookOpen } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const router = useRouter();
@@ -61,6 +61,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { href: "/dashboard/webinars", label: "Webinars", icon: Radio },
         { href: "/dashboard/videos", label: "Videos", icon: Video },
         { href: "/dashboard/photos", label: "Images", icon: ImageIcon },
+        { href: "/dashboard/guidelines", label: "Guidelines", icon: BookOpen },
     ];
 
     return (
