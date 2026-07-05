@@ -14,7 +14,7 @@ export default function HeroSlider() {
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrent((prev) => (prev + 1) % slides.length);
-        }, 2000);
+        }, 4000);
         return () => clearInterval(timer);
     }, []);
 
@@ -38,17 +38,22 @@ export default function HeroSlider() {
             </div>
 
             {/* Pagination dots */}
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-0">
                 {slides.map((_, i) => (
                     <button
                         key={i}
                         onClick={() => setCurrent(i)}
-                        className={`rounded-full transition-all duration-300 ${
-                            i === current
-                                ? "bg-primary w-6 h-3"
-                                : "bg-white/70 w-3 h-3 hover:bg-white"
-                        }`}
-                    />
+                        aria-label={`Go to slide ${i + 1}`}
+                        className="p-2 -m-1 flex items-center justify-center"
+                    >
+                        <span
+                            className={`rounded-full transition-all duration-300 ${
+                                i === current
+                                    ? "bg-primary w-6 h-3"
+                                    : "bg-white/70 w-3 h-3 hover:bg-white"
+                            }`}
+                        />
+                    </button>
                 ))}
             </div>
         </div>
