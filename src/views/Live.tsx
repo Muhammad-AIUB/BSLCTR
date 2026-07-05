@@ -2,7 +2,7 @@ export default function Live() {
     return (
         <section className="min-h-screen bg-gradient-to-b from-sky-100 to-white flex flex-col items-center justify-center px-4 py-16">
             <div className="text-center max-w-2xl mb-12">
-                <h1 className="text-4xl md:text-5xl font-extrabold text-sky-800 mb-4">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-sky-800 mb-4">
                     📡 Watch Our Live Broadcast
                 </h1>
                 <p className="text-lg text-gray-700">

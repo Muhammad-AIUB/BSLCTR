@@ -118,7 +118,7 @@ function SponsorField({ sponsors, onChange }: { sponsors: Sponsor[]; onChange: (
                         <Input placeholder="Sponsor name" value={s.name} onChange={(e) => update(i, "name", e.target.value)} />
                         <div className="space-y-1">
                             <span className="text-xs text-slate-500">Logo (optional)</span>
-                            {s.logo && <img src={s.logo} alt="logo" className="h-10 object-contain mb-1" />}
+                            {s.logo && <img src={s.logo} alt="logo" className="h-10 max-w-full object-contain mb-1" />}
                             <input type="file" accept="image/*"
                                 onChange={(e) => handleLogoFile(i, e.target.files?.[0] ?? null)}
                                 className="block w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
@@ -163,7 +163,7 @@ function WebinarForm({
                 <Label htmlFor="headline">Headline</Label>
                 <Input id="headline" value={form.headline} onChange={(e) => set("headline", e.target.value)} required />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
                     <Label htmlFor="date">Date</Label>
                     <Input id="date" type="date" value={form.date} onChange={(e) => set("date", e.target.value)} required />
@@ -299,7 +299,7 @@ export default function WebinarsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 px-6 py-8">
+        <div className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 sm:py-8">
             <TabToggle tab={tab} onChange={(t) => { setTab(t); if (t === "add" && !editingId) { setError(""); } if (t === "list") cancelEdit(); }} />
 
             {tab === "add" && (
@@ -348,8 +348,8 @@ function WebinarCard({ webinar: w, onEdit, onDelete }: { webinar: Webinar; onEdi
 
     return (
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-            <div className="flex items-start justify-between gap-3 mb-3">
-                <h3 className="font-semibold text-slate-800">{w.headline}</h3>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3 mb-3">
+                <h3 className="font-semibold text-slate-800 min-w-0 break-words">{w.headline}</h3>
                 <div className="flex items-center gap-1 shrink-0">
                     {confirm ? (
                         <>
@@ -390,7 +390,7 @@ function WebinarCard({ webinar: w, onEdit, onDelete }: { webinar: Webinar; onEdi
                 <div className="flex flex-wrap gap-2 mt-2">
                     {w.sponsors.map((s, i) => (
                         <div key={i} className="flex items-center gap-2 bg-slate-50 border rounded-lg px-3 py-1.5">
-                            {s.logo && <img src={s.logo} alt={s.name} className="h-5 object-contain" />}
+                            {s.logo && <img src={s.logo} alt={s.name} className="h-5 max-w-full object-contain" />}
                             <span className="text-sm text-slate-700">{s.name}</span>
                         </div>
                     ))}

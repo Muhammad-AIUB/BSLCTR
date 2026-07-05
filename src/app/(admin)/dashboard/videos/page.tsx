@@ -186,7 +186,7 @@ export default function VideosPage() {
     const rest = videos.filter((v) => v.status !== "PENDING");
 
     return (
-        <div className="min-h-screen bg-slate-50 px-6 py-8">
+        <div className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 sm:py-8">
             <TabToggle tab={tab} onChange={(t) => { setTab(t); if (t === "list") cancelEdit(); }} />
 
             {tab === "add" && (
@@ -241,9 +241,9 @@ export default function VideosPage() {
 function PendingVideoCard({ video: v, onApprove, onReject }: { video: Video; onApprove: () => void; onReject: () => void }) {
     return (
         <div className="bg-white rounded-xl border border-amber-200 shadow-sm p-5">
-            <div className="flex items-start justify-between gap-3 mb-2">
-                <div>
-                    <h3 className="font-semibold text-slate-800">{v.title}</h3>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3 mb-2">
+                <div className="min-w-0">
+                    <h3 className="font-semibold text-slate-800 break-words">{v.title}</h3>
                     {v.uploadedByName && <p className="text-xs text-slate-400 mt-0.5">Submitted by {v.uploadedByName}</p>}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
@@ -255,8 +255,8 @@ function PendingVideoCard({ video: v, onApprove, onReject }: { video: Video; onA
                     </Button>
                 </div>
             </div>
-            <a href={v.link} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-sm text-primary hover:underline mb-2">
-                <LinkIcon className="h-3.5 w-3.5" /> {v.link}
+            <a href={v.link} target="_blank" rel="noreferrer" className="flex items-start gap-1 text-sm text-primary hover:underline mb-2 break-all">
+                <LinkIcon className="h-3.5 w-3.5 shrink-0 mt-0.5" /> {v.link}
             </a>
             {v.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1.5">
@@ -275,8 +275,8 @@ function VideoCard({ video: v, onEdit, onDelete }: { video: Video; onEdit: () =>
     const [confirm, setConfirm] = useState(false);
     return (
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-            <div className="flex items-start justify-between gap-3 mb-3">
-                <h3 className="font-semibold text-slate-800">{v.title}</h3>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3 mb-3">
+                <h3 className="font-semibold text-slate-800 min-w-0 break-words">{v.title}</h3>
                 <div className="flex items-center gap-1 shrink-0">
                     {confirm ? (
                         <>

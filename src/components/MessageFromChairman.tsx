@@ -158,7 +158,7 @@ Thank you.`,
                                     } gap-8 lg:gap-12 items-start`}
                                 >
                                     {/* Image Section */}
-                                    <div className="w-full lg:w-4/12 flex-shrink-0">
+                                    <div className="w-full max-w-sm mx-auto lg:max-w-none lg:mx-0 lg:w-4/12 flex-shrink-0">
                                         <div className="relative">
                                             {/* Main image container */}
                                             <div className="relative overflow-hidden rounded-xl shadow-lg">
@@ -192,7 +192,7 @@ Thank you.`,
 
                                     {/* Content Section */}
                                     <div className="flex-1">
-                                        <div className="relative bg-white rounded-2xl shadow-lg border border-slate-200 p-8 lg:p-10 hover:shadow-xl transition-shadow duration-300">
+                                        <div className="relative bg-white rounded-2xl shadow-lg border border-slate-200 p-5 sm:p-8 lg:p-10 hover:shadow-xl transition-shadow duration-300">
                                             {/* Quote icon */}
                                             <Quote className="absolute -top-3 left-8 w-12 h-12 text-primary/20" />
 

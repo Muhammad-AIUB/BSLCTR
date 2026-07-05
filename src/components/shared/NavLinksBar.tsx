@@ -49,20 +49,20 @@ const NavLinksBar = () => {
         <>
             <nav className="w-full bg-secondary shadow-sm sticky top-0 z-50">
                 {/* Mobile: Hamburger */}
-                <div className="flex items-center justify-between px-4 py-3 md:hidden">
+                <div className="flex items-center justify-between px-4 py-3 lg:hidden">
                     <Sheet>
                         <SheetTrigger asChild>
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="text-white"
+                                className="text-white h-11 w-11"
                             >
                                 <Menu className="h-6 w-6" />
                             </Button>
                         </SheetTrigger>
                         <SheetContent
                             side="left"
-                            className="bg-sky-500 text-white border-none"
+                            className="bg-sky-500 text-white border-none overflow-y-auto"
                         >
                             <div className="flex flex-col gap-4 mt-8">
                                 {links.map((link, index) => {
@@ -71,7 +71,7 @@ const NavLinksBar = () => {
                                             <Button
                                                 key={index}
                                                 variant="ghost"
-                                                className="w-full justify-start text-white"
+                                                className="w-full justify-start text-white whitespace-normal h-auto text-left"
                                                 onClick={() =>
                                                     setShowSubscribeModal(true)
                                                 }
@@ -84,7 +84,7 @@ const NavLinksBar = () => {
                                         <Link key={index} href={link.path}>
                                             <Button
                                                 variant="ghost"
-                                                className={`relative w-full justify-start text-white ${
+                                                className={`relative w-full justify-start text-white whitespace-normal h-auto text-left ${
                                                     pathname === link.path
                                                         ? "bg-sky-400"
                                                         : ""
@@ -115,7 +115,7 @@ const NavLinksBar = () => {
 
                 {/* Desktop: Expand on hover */}
                 <div
-                    className="hidden md:flex items-stretch overflow-hidden bg-secondary py-1 px-2 lg:py-2 lg:px-4"
+                    className="hidden lg:flex items-stretch overflow-x-auto overflow-y-hidden bg-secondary py-1 px-2 lg:py-2 lg:px-4"
                     onMouseEnter={() => setExpanded(true)}
                     onMouseLeave={() => setExpanded(false)}
                 >

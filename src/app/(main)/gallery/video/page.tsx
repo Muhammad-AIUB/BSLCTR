@@ -55,7 +55,7 @@ export default function VideoGalleryPage() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200 px-4 py-12">
             <div className="max-w-6xl mx-auto">
-                <Link href="/gallery" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-blue-600 text-sm mb-8 transition-colors">
+                <Link href="/gallery" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-blue-600 text-sm py-2 -mt-2 mb-6 transition-colors">
                     <ChevronLeft className="h-4 w-4" /> Back to Gallery
                 </Link>
 
@@ -85,9 +85,9 @@ export default function VideoGalleryPage() {
                                         />
                                         <button
                                             onClick={handleStop}
-                                            className="absolute top-3 right-3 bg-black/60 hover:bg-black/80 text-white rounded-full p-1.5 transition-colors z-10"
+                                            className="absolute top-3 right-3 bg-black/60 hover:bg-black/80 text-white rounded-full p-2.5 sm:p-1.5 transition-colors z-10"
                                         >
-                                            <X className="h-4 w-4" />
+                                            <X className="h-5 w-5 sm:h-4 sm:w-4" />
                                         </button>
                                     </div>
                                 ) : (
@@ -127,8 +127,8 @@ export default function VideoGalleryPage() {
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.85, y: 24 }}
                         transition={{ duration: 0.2 }}
-                        className="fixed bottom-6 right-6 z-50 bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10"
-                        style={{ width: 300, aspectRatio: "16/9" }}
+                        className="fixed bottom-6 right-6 z-50 w-[300px] max-w-[calc(100vw-3rem)] bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+                        style={{ aspectRatio: "16/9" }}
                     >
                         <iframe
                             src={`https://www.youtube.com/embed/${playingId}?autoplay=1`}
@@ -137,20 +137,20 @@ export default function VideoGalleryPage() {
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowFullScreen
                         />
-                        <div className="absolute top-2 right-2 flex gap-1.5">
+                        <div className="absolute top-2 right-2 flex gap-2 sm:gap-1.5">
                             <button
                                 onClick={scrollToPlayer}
-                                className="bg-black/70 hover:bg-black/90 text-white rounded-full p-1.5 transition-colors backdrop-blur-sm"
+                                className="bg-black/70 hover:bg-black/90 text-white rounded-full p-2 sm:p-1.5 transition-colors backdrop-blur-sm"
                                 title="Back to player"
                             >
-                                <Minimize2 className="h-3.5 w-3.5" />
+                                <Minimize2 className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
                             </button>
                             <button
                                 onClick={handleStop}
-                                className="bg-black/70 hover:bg-black/90 text-white rounded-full p-1.5 transition-colors backdrop-blur-sm"
+                                className="bg-black/70 hover:bg-black/90 text-white rounded-full p-2 sm:p-1.5 transition-colors backdrop-blur-sm"
                                 title="Stop"
                             >
-                                <X className="h-3.5 w-3.5" />
+                                <X className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
                             </button>
                         </div>
                     </motion.div>

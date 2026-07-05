@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Calendar, Clock, Link as LinkIcon, LogOut, Radio, Video, ImageIcon, Tag, Plus, X, Clock3, CheckCircle2, XCircle, ArrowLeft } from "lucide-react";
+import { Calendar, Clock, Link as LinkIcon, LogOut, Radio, Video, ImageIcon, Tag, Plus, X, Clock3, CheckCircle2, XCircle, ArrowLeft, Menu } from "lucide-react";
 import Link from "next/link";
 import ShareButtons from "@/components/ShareButtons";
 import dynamic from "next/dynamic";
@@ -25,17 +25,17 @@ function isImageUrl(url: string) {
 
 function StatusBadge({ status }: { status: string }) {
     if (status === "APPROVED") return (
-        <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
+        <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full shrink-0 whitespace-nowrap">
             <CheckCircle2 className="h-3 w-3" /> Approved
         </span>
     );
     if (status === "REJECTED") return (
-        <span className="inline-flex items-center gap-1 text-xs font-medium text-red-700 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full">
+        <span className="inline-flex items-center gap-1 text-xs font-medium text-red-700 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full shrink-0 whitespace-nowrap">
             <XCircle className="h-3 w-3" /> Rejected
         </span>
     );
     return (
-        <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
+        <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full shrink-0 whitespace-nowrap">
             <Clock3 className="h-3 w-3" /> Pending Review
         </span>
     );
@@ -54,7 +54,7 @@ function TagsInput({ tags, onChange }: { tags: string[]; onChange: (t: string[])
                 <input value={input} onChange={e => setInput(e.target.value)}
                     onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); add(); } }}
                     placeholder="Add tag..." className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
-                <button type="button" onClick={add} className="border border-slate-200 rounded-lg px-2.5 hover:bg-slate-50">
+                <button type="button" onClick={add} className="border border-slate-200 rounded-lg px-3 py-1.5 hover:bg-slate-50">
                     <Plus className="h-4 w-4 text-slate-500" />
                 </button>
             </div>
@@ -63,7 +63,7 @@ function TagsInput({ tags, onChange }: { tags: string[]; onChange: (t: string[])
                     {tags.map(t => (
                         <span key={t} className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full">
                             <Tag className="h-3 w-3" />{t}
-                            <button type="button" onClick={() => onChange(tags.filter(x => x !== t))}><X className="h-3 w-3 hover:text-red-500" /></button>
+                            <button type="button" className="p-1 -m-1" onClick={() => onChange(tags.filter(x => x !== t))}><X className="h-3 w-3 hover:text-red-500" /></button>
                         </span>
                     ))}
                 </div>
@@ -76,6 +76,7 @@ export default function MemberDashboard() {
     const router = useRouter();
     const [member, setMember] = useState<{ name: string; email: string } | null>(null);
     const [activeTab, setActiveTab] = useState<Tab>("webinars");
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const [webinars, setWebinars] = useState<Webinar[]>([]);
     const [videos, setVideos] = useState<VideoItem[]>([]);
@@ -170,26 +171,32 @@ export default function MemberDashboard() {
     ];
 
     return (
-        <div className="flex min-h-screen bg-slate-100">
-            <aside className="w-64 bg-primary text-white flex flex-col shrink-0">
-                <div className="px-6 py-5 border-b border-white/20">
-                    <div className="text-2xl font-bold tracking-wide">BSLCTR</div>
-                    <div className="text-xs text-white/60 mt-0.5">Member Panel</div>
+        <div className="flex min-h-screen flex-col lg:flex-row bg-slate-100">
+            <aside className="w-full lg:w-64 bg-primary text-white flex flex-col lg:shrink-0">
+                <div className="px-6 py-5 border-b border-white/20 flex items-center justify-between">
+                    <div>
+                        <div className="text-2xl font-bold tracking-wide">BSLCTR</div>
+                        <div className="text-xs text-white/60 mt-0.5">Member Panel</div>
+                    </div>
+                    <button type="button" onClick={() => setSidebarOpen(o => !o)} aria-label="Toggle menu"
+                        className="lg:hidden p-2 -m-2 text-white/80 hover:text-white">
+                        {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                    </button>
                 </div>
-                <div className="px-6 py-4 border-b border-white/20">
+                <div className={`px-6 py-4 border-b border-white/20 ${sidebarOpen ? "block" : "hidden"} lg:block`}>
                     <div className="text-xs text-white/50 uppercase tracking-widest mb-1">Welcome</div>
                     <div className="text-sm font-medium truncate">{member.name}</div>
                     <div className="text-xs text-white/50 truncate">{member.email}</div>
                 </div>
-                <nav className="flex-1 px-3 py-4 space-y-1">
+                <nav className={`flex-1 px-3 py-4 space-y-1 ${sidebarOpen ? "block" : "hidden"} lg:block`}>
                     {navItems.map(({ key, label, icon: Icon }) => (
-                        <button key={key} onClick={() => setActiveTab(key)}
+                        <button key={key} onClick={() => { setActiveTab(key); setSidebarOpen(false); }}
                             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors ${activeTab === key ? "bg-white/15 text-white cursor-default" : "text-white/70 hover:bg-white/10 hover:text-white"}`}>
                             <Icon className="h-4 w-4 shrink-0" />{label}
                         </button>
                     ))}
                 </nav>
-                <div className="px-3 py-4 border-t border-white/20 space-y-1">
+                <div className={`px-3 py-4 border-t border-white/20 space-y-1 ${sidebarOpen ? "block" : "hidden"} lg:block`}>
                     <Link href="/" className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition-colors text-sm">
                         <ArrowLeft className="h-4 w-4 shrink-0" />Back to Site
                     </Link>
@@ -199,8 +206,8 @@ export default function MemberDashboard() {
                 </div>
             </aside>
 
-            <main className="flex-1 overflow-y-auto">
-                <div className="container mx-auto px-6 py-10 max-w-4xl">
+            <main className="flex-1 min-w-0 overflow-y-auto">
+                <div className="container mx-auto px-4 py-6 sm:px-6 sm:py-10 max-w-4xl">
 
                     {/* Webinars */}
                     {activeTab === "webinars" && (
@@ -246,10 +253,10 @@ export default function MemberDashboard() {
 
                     {/* Videos */}
                     {activeTab === "videos" && (
-                        <div className="flex gap-6">
+                        <div className="flex flex-col gap-6 lg:flex-row">
                             {/* Upload form */}
-                            <div className="w-80 shrink-0">
-                                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 sticky top-8">
+                            <div className="w-full lg:w-80 lg:shrink-0">
+                                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 lg:sticky lg:top-8">
                                     <p className="text-sm font-semibold text-slate-700 mb-4">Submit Video</p>
                                     <form onSubmit={submitVideo} className="space-y-3">
                                         <input required value={vForm.title} onChange={e => setVForm(f => ({ ...f, title: e.target.value }))}
@@ -290,7 +297,7 @@ export default function MemberDashboard() {
                                                         </div>
                                                     )}
                                                     {v.description && v.description !== "<p></p>" && (
-                                                        <div className="prose prose-sm max-w-none text-slate-600 text-sm mb-2"
+                                                        <div className="prose prose-sm max-w-none break-words text-slate-600 text-sm mb-2"
                                                             dangerouslySetInnerHTML={{ __html: v.description }} />
                                                     )}
                                                     {v.status === "APPROVED" && (
@@ -312,10 +319,10 @@ export default function MemberDashboard() {
 
                     {/* Photos */}
                     {activeTab === "photos" && (
-                        <div className="flex gap-6">
+                        <div className="flex flex-col gap-6 lg:flex-row">
                             {/* Upload form */}
-                            <div className="w-80 shrink-0">
-                                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 sticky top-8">
+                            <div className="w-full lg:w-80 lg:shrink-0">
+                                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 lg:sticky lg:top-8">
                                     <p className="text-sm font-semibold text-slate-700 mb-4">Submit Photo</p>
                                     <form onSubmit={submitPhoto} className="space-y-3">
                                         <input required value={pForm.title} onChange={e => setPForm(f => ({ ...f, title: e.target.value }))}
@@ -363,10 +370,10 @@ export default function MemberDashboard() {
                                                         </div>
                                                     )}
                                                     {p.link && isImageUrl(p.link) && (
-                                                        <div className="mb-2"><img src={p.link} alt={p.title} className="max-h-48 w-auto object-cover rounded-lg border border-slate-200" /></div>
+                                                        <div className="mb-2"><img src={p.link} alt={p.title} className="max-h-48 max-w-full w-auto object-cover rounded-lg border border-slate-200" /></div>
                                                     )}
                                                     {p.description && p.description !== "<p></p>" && (
-                                                        <div className="prose prose-sm max-w-none text-slate-600 text-sm mb-2"
+                                                        <div className="prose prose-sm max-w-none break-words text-slate-600 text-sm mb-2"
                                                             dangerouslySetInnerHTML={{ __html: p.description }} />
                                                     )}
                                                     {p.status === "APPROVED" && (

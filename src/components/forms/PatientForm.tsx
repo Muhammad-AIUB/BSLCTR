@@ -81,7 +81,7 @@ export function PatientForm({ onBack }: PatientFormProps) {
                     type="button"
                     variant="ghost"
                     onClick={onBack}
-                    className="mb-2 p-0 h-auto bg-destructive/10 text-destructive hover:bg-destructive/20 hover:text-destructive rounded-md"
+                    className="mb-2 p-0 h-auto max-sm:px-3 max-sm:py-2 bg-destructive/10 text-destructive hover:bg-destructive/20 hover:text-destructive rounded-md"
                     aria-label="Back"
                 >
                     <ChevronLeft className="h-4 w-4 mr-1" /> Back

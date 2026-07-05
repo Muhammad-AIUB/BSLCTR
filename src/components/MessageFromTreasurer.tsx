@@ -65,7 +65,7 @@ const MessageFromTreasurer = () => {
                     transition={{ delay: 0.3 }}
                 >
                     <Card className="overflow-hidden shadow-lg border border-gray-200 bg-white">
-                        <div className="p-12 text-center">
+                        <div className="p-6 sm:p-8 lg:p-12 text-center">
                             <motion.div
                                 variants={fadeInUp}
                                 transition={{ duration: 0.6, ease: "easeOut" }}

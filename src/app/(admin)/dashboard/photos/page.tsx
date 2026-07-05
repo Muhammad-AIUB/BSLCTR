@@ -119,15 +119,15 @@ function PhotoForm({ initial, onSave, onCancel, submitting, error, editMode }: {
             <div className="space-y-1">
                 <Label>Photo Link or Upload</Label>
                 <Input type="url" value={form.link} onChange={(e) => set("link", e.target.value)} placeholder="https://..." />
-                <div className="flex items-center gap-2 mt-1">
+                <div className="flex flex-wrap items-center gap-2 mt-1">
                     <span className="text-xs text-slate-400">or upload:</span>
                     <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e.target.files?.[0] ?? null)}
-                        className="block text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer" />
+                        className="block max-w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer" />
                     {uploading && <span className="text-xs text-slate-400">Uploading...</span>}
                 </div>
                 {form.link && (
                     <div className="mt-2">
-                        <img src={form.link} alt="Preview" className="h-20 w-auto object-cover rounded border border-slate-200"
+                        <img src={form.link} alt="Preview" className="h-20 max-w-full w-auto object-cover rounded border border-slate-200"
                             onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
                     </div>
                 )}
@@ -213,7 +213,7 @@ export default function PhotosPage() {
     const rest = photos.filter((p) => p.status !== "PENDING");
 
     return (
-        <div className="min-h-screen bg-slate-50 px-6 py-8">
+        <div className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 sm:py-8">
             <TabToggle tab={tab} onChange={(t) => { setTab(t); if (t === "list") cancelEdit(); }} />
 
             {tab === "add" && (
@@ -268,9 +268,9 @@ export default function PhotosPage() {
 function PendingPhotoCard({ photo: p, onApprove, onReject }: { photo: Photo; onApprove: () => void; onReject: () => void }) {
     return (
         <div className="bg-white rounded-xl border border-amber-200 shadow-sm p-5">
-            <div className="flex items-start justify-between gap-3 mb-2">
-                <div>
-                    <h3 className="font-semibold text-slate-800">{p.title}</h3>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3 mb-2">
+                <div className="min-w-0">
+                    <h3 className="font-semibold text-slate-800 break-words">{p.title}</h3>
                     {p.uploadedByName && <p className="text-xs text-slate-400 mt-0.5">Submitted by {p.uploadedByName}</p>}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
@@ -284,12 +284,12 @@ function PendingPhotoCard({ photo: p, onApprove, onReject }: { photo: Photo; onA
             </div>
             {p.link && isImageUrl(p.link) && (
                 <div className="mb-2">
-                    <img src={p.link} alt={p.title} className="h-32 w-auto object-cover rounded-lg border border-slate-200" />
+                    <img src={p.link} alt={p.title} className="h-32 max-w-full w-auto object-cover rounded-lg border border-slate-200" />
                 </div>
             )}
             {p.link && !isImageUrl(p.link) && (
-                <a href={p.link} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-sm text-primary hover:underline mb-2">
-                    <LinkIcon className="h-3.5 w-3.5" /> {p.link}
+                <a href={p.link} target="_blank" rel="noreferrer" className="flex items-start gap-1 text-sm text-primary hover:underline mb-2 break-all">
+                    <LinkIcon className="h-3.5 w-3.5 shrink-0 mt-0.5" /> {p.link}
                 </a>
             )}
             {p.tags.length > 0 && (
@@ -309,8 +309,8 @@ function PhotoCard({ photo: p, onEdit, onDelete }: { photo: Photo; onEdit: () =>
     const [confirm, setConfirm] = useState(false);
     return (
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-            <div className="flex items-start justify-between gap-3 mb-3">
-                <h3 className="font-semibold text-slate-800">{p.title}</h3>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3 mb-3">
+                <h3 className="font-semibold text-slate-800 min-w-0 break-words">{p.title}</h3>
                 <div className="flex items-center gap-1 shrink-0">
                     {confirm ? (
                         <>
@@ -331,7 +331,7 @@ function PhotoCard({ photo: p, onEdit, onDelete }: { photo: Photo; onEdit: () =>
             </div>
             {p.link && isImageUrl(p.link) && (
                 <div className="mb-3">
-                    <img src={p.link} alt={p.title} className="h-32 w-auto object-cover rounded-lg border border-slate-200" />
+                    <img src={p.link} alt={p.title} className="h-32 max-w-full w-auto object-cover rounded-lg border border-slate-200" />
                 </div>
             )}
             {p.link && !isImageUrl(p.link) && (

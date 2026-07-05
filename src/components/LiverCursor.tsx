@@ -70,9 +70,16 @@ export default function LiverCursor() {
 
     const [hovering, setHovering] = useState(false);
     const [clicking, setClicking] = useState(false);
+    // Only enable on devices with a real mouse — on touch devices the sprite
+    // would stick wherever the user last tapped and cursor:none breaks nothing.
+    const [enabled, setEnabled] = useState(false);
     // Start with image disabled — only enable if preload succeeds.
     // This prevents the broken-image icon from ever flashing.
     const [imgFailed, setImgFailed] = useState(true);
+
+    useEffect(() => {
+        setEnabled(window.matchMedia("(hover: hover) and (pointer: fine)").matches);
+    }, []);
 
     // Preload check: if /liver-cursor.png loads, switch to it
     useEffect(() => {
@@ -83,6 +90,7 @@ export default function LiverCursor() {
     }, []);
 
     useEffect(() => {
+        if (!enabled) return;
         const wrap = wrapRef.current;
         if (!wrap) return;
 
@@ -119,7 +127,9 @@ export default function LiverCursor() {
             document.documentElement.removeEventListener("mouseleave", onLeave);
             document.documentElement.removeEventListener("mouseenter", onEnter);
         };
-    }, []);
+    }, [enabled]);
+
+    if (!enabled) return null;
 
     return (
         <>

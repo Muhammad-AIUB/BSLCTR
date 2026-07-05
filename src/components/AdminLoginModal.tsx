@@ -48,7 +48,7 @@ export default function AdminLoginModal() {
                 </Button>
             </DialogTrigger>
 
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md max-h-[85dvh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Admin Login</DialogTitle>
                 </DialogHeader>

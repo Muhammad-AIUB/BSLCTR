@@ -54,7 +54,7 @@ export default function MemberLoginModal({ open, onClose, onSuccess }: Props) {
 
     return (
         <Dialog open={open} onOpenChange={handleClose}>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md max-h-[85dvh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Member Login</DialogTitle>
                 </DialogHeader>

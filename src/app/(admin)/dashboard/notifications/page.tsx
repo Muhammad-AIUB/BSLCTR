@@ -55,7 +55,7 @@ export default function NotificationsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 px-6 py-8">
+        <div className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
             <div className="max-w-2xl mx-auto">
 
                 {/* Back to Site */}
@@ -123,13 +123,13 @@ export default function NotificationsPage() {
                                 <div className="flex gap-2 mt-4">
                                     <button
                                         onClick={() => handleStatus(item, "APPROVED")}
-                                        className="flex-1 flex items-center justify-center gap-1.5 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-xl transition-colors"
+                                        className="flex-1 flex items-center justify-center gap-1.5 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 px-4 py-2 max-lg:py-2.5 rounded-xl transition-colors"
                                     >
                                         <Check className="h-4 w-4" /> Approve
                                     </button>
                                     <button
                                         onClick={() => handleStatus(item, "REJECTED")}
-                                        className="flex-1 flex items-center justify-center gap-1.5 text-sm font-semibold text-white bg-red-500 hover:bg-red-600 px-4 py-2 rounded-xl transition-colors"
+                                        className="flex-1 flex items-center justify-center gap-1.5 text-sm font-semibold text-white bg-red-500 hover:bg-red-600 px-4 py-2 max-lg:py-2.5 rounded-xl transition-colors"
                                     >
                                         <X className="h-4 w-4" /> Reject
                                     </button>

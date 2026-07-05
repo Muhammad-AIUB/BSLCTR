@@ -68,14 +68,14 @@ export default function Dashboard() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 px-6 py-8">
+        <div className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
             <div className="max-w-4xl mx-auto">
                 <div className="inline-flex items-center bg-slate-200 rounded-xl p-1 gap-1 mb-6">
                     {(["ALL", "APPROVED", "REJECTED"] as const).map((f) => (
                         <button
                             key={f}
                             onClick={() => setFilter(f)}
-                            className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
+                            className={`px-4 sm:px-5 py-2 max-lg:py-2.5 rounded-lg text-sm font-semibold transition-all ${
                                 filter === f ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"
                             }`}
                         >
@@ -101,20 +101,20 @@ export default function Dashboard() {
 
                                 <div className="p-5">
                                     {/* Header row */}
-                                    <div className="flex items-start justify-between gap-3 mb-4">
-                                        <div className="flex items-center gap-3">
+                                    <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
+                                        <div className="flex items-center gap-3 min-w-0">
                                             {m.profilePicture ? (
                                                 <img
                                                     src={m.profilePicture}
                                                     alt={m.name}
-                                                    className="w-14 h-14 rounded-full object-cover border-2 border-white shadow"
+                                                    className="w-14 h-14 rounded-full object-cover border-2 border-white shadow shrink-0"
                                                 />
                                             ) : (
                                                 <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xl shrink-0">
                                                     {m.name.charAt(0)}
                                                 </div>
                                             )}
-                                            <div>
+                                            <div className="min-w-0">
                                                 <div className="font-semibold text-slate-800 text-lg">{m.name}</div>
                                                 <div className="text-sm text-slate-500">
                                                     {m.designation} &bull; {SPECIALTY_LABELS[m.specialtySubject] ?? m.specialtySubject}
@@ -225,7 +225,7 @@ function Info({ label, value }: { label: string; value: string }) {
     return (
         <div>
             <span className="font-medium text-slate-600">{label}: </span>
-            <span className="text-slate-700">{value}</span>
+            <span className="text-slate-700 break-words">{value}</span>
         </div>
     );
 }

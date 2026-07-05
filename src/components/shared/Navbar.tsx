@@ -104,7 +104,7 @@ const Navbar = () => {
         <>
             <nav className="flex items-center justify-between px-4 py-2 bg-primary shadow-md">
                 <Link href="/" className="flex items-center gap-1">
-                    <img src="/Logo1.png" alt="Logo" className="h-20 lg:h-24" />
+                    <img src="/Logo1.png" alt="Logo" className="h-14 sm:h-20 lg:h-24" />
                     <div className="hidden lg:block text-6xl font-bold text-white">
                         BSLCTR
                     </div>
@@ -216,7 +216,7 @@ const Navbar = () => {
                             <div className="relative" ref={memberMenuRef}>
                                 <button
                                     onClick={() => setMemberMenuOpen((p) => !p)}
-                                    className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm font-medium border border-white/30 transition-colors"
+                                    className="px-3 sm:px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm font-medium border border-white/30 transition-colors"
                                 >
                                     Member
                                 </button>

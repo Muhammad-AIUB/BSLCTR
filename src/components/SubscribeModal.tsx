@@ -38,7 +38,7 @@ const SubscribeModal = ({ isOpen, onClose }: SubscribeModalProps) => {
         }
       }}
     >
-      <DialogContent className="sm:max-w-[500px] overflow-y-auto max-h-dvh">
+      <DialogContent className="sm:max-w-[500px] overflow-y-auto max-h-[calc(100dvh-2rem)]">
         <DialogHeader>
           <DialogTitle className="font-bold">Subscribe</DialogTitle>
           <DialogDescription>
@@ -47,7 +47,7 @@ const SubscribeModal = ({ isOpen, onClose }: SubscribeModalProps) => {
         </DialogHeader>
 
         {userType === "none" && (
-          <div className="grid grid-cols-2 gap-4 py-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4">
             <Button
               //   variant="outline"
               className="h-20 text-lg bg-red-700 text-white hover:bg-red-800 rounded-full"

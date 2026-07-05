@@ -356,7 +356,7 @@ const PhotoGallery = () => {
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="absolute top-4 right-4 text-white hover:bg-white/10 z-10"
+                            className="absolute top-4 right-4 text-white hover:bg-white/10 max-sm:bg-black/40 z-10"
                             onClick={closeLightbox}
                         >
                             <X className="w-6 h-6" />
@@ -366,7 +366,7 @@ const PhotoGallery = () => {
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/10 z-10"
+                            className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/10 max-sm:bg-black/40 z-10"
                             onClick={(e) => {
                                 e.stopPropagation();
                                 prevImage();
@@ -379,7 +379,7 @@ const PhotoGallery = () => {
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/10 z-10"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/10 max-sm:bg-black/40 z-10"
                             onClick={(e) => {
                                 e.stopPropagation();
                                 nextImage();
@@ -394,10 +394,10 @@ const PhotoGallery = () => {
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.9, opacity: 0 }}
                             transition={{ duration: 0.2 }}
-                            className="relative max-w-6xl w-full max-h-[90vh] flex flex-col"
+                            className="relative max-w-6xl w-full max-h-[90vh] flex flex-col overflow-y-auto"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <div className="relative flex-1 flex items-center justify-center mb-4">
+                            <div className="relative flex-1 min-h-0 flex items-center justify-center mb-4">
                                 <img
                                     src={selectedImage.src}
                                     alt={selectedImage.alt}
@@ -416,7 +416,7 @@ const PhotoGallery = () => {
                                             {selectedImage.title}
                                         </h3>
                                     </div>
-                                    <p className="text-sm text-white/70">
+                                    <p className="text-sm text-white/70 shrink-0 whitespace-nowrap ml-3">
                                         {currentImageIndex + 1} /{" "}
                                         {filteredPhotos.length}
                                     </p>

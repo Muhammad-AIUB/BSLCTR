@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { Users, LogOut, Radio, Video, Image as ImageIcon, ArrowLeft, Bell, BookOpen } from "lucide-react";
+import { Users, LogOut, Radio, Video, Image as ImageIcon, ArrowLeft, Bell, BookOpen, Presentation, Menu } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const router = useRouter();
@@ -11,6 +11,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const [adminEmail, setAdminEmail] = useState<string | null>(null);
     const [ready, setReady] = useState(false);
     const [pendingCount, setPendingCount] = useState(0);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    useEffect(() => {
+        setSidebarOpen(false);
+    }, [pathname]);
 
     useEffect(() => {
         try {
@@ -62,11 +67,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { href: "/dashboard/videos", label: "Videos", icon: Video },
         { href: "/dashboard/photos", label: "Images", icon: ImageIcon },
         { href: "/dashboard/guidelines", label: "Guidelines", icon: BookOpen },
+        { href: "/dashboard/case-presentations", label: "Case Presentations", icon: Presentation },
     ];
 
     return (
         <div className="flex min-h-screen bg-slate-100">
-            <aside className="w-64 bg-primary text-white flex flex-col shrink-0">
+            <aside
+                className={`fixed inset-y-0 left-0 z-50 w-64 bg-primary text-white flex flex-col shrink-0 overflow-y-auto transition-transform duration-200 lg:static lg:translate-x-0 ${
+                    sidebarOpen ? "translate-x-0" : "-translate-x-full"
+                }`}
+            >
                 <div className="px-6 py-5 border-b border-white/20">
                     <div className="text-2xl font-bold tracking-wide">BSLCTR</div>
                     <div className="text-xs text-white/60 mt-0.5">Admin Panel</div>
@@ -120,7 +130,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </div>
             </aside>
 
-            <main className="flex-1 overflow-y-auto">
+            {sidebarOpen && (
+                <div
+                    className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+                    onClick={() => setSidebarOpen(false)}
+                />
+            )}
+
+            <main className="flex-1 min-w-0 overflow-y-auto">
+                <header className="sticky top-0 z-30 flex items-center gap-3 bg-primary px-4 py-3 text-white lg:hidden">
+                    <button
+                        onClick={() => setSidebarOpen(true)}
+                        aria-label="Open menu"
+                        className="p-2 -ml-2 rounded-lg hover:bg-white/10"
+                    >
+                        <Menu className="h-6 w-6" />
+                    </button>
+                    <span className="text-lg font-bold tracking-wide">BSLCTR Admin</span>
+                </header>
                 {children}
             </main>
         </div>

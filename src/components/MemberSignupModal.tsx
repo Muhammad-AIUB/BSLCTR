@@ -123,7 +123,7 @@ export default function MemberSignupModal({ open, onClose }: Props) {
 
     return (
         <Dialog open={open} onOpenChange={handleClose}>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-h-[90dvh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-bold text-primary">
                         Member Sign Up
@@ -388,7 +388,7 @@ export default function MemberSignupModal({ open, onClose }: Props) {
                                             <button
                                                 type="button"
                                                 onClick={() => removeIntervention(tag)}
-                                                className="hover:text-red-500"
+                                                className="p-1.5 -m-1.5 hover:text-red-500"
                                             >
                                                 <X className="h-3 w-3" />
                                             </button>

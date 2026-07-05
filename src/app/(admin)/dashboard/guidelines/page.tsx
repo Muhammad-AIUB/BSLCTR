@@ -114,13 +114,13 @@ function PdfField({ pdfs, onChange }: { pdfs: string[]; onChange: (p: string[]) 
                         placeholder="Paste PDF URL..."
                         className="text-sm"
                     />
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                         <span className="text-xs text-slate-400">or upload:</span>
                         <input
                             type="file"
                             accept=".pdf"
                             onChange={e => { const f = e.target.files?.[0]; if (f) uploadFile(f, i); }}
-                            className="block text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
+                            className="block max-w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
                         />
                         {uploading === i && <span className="text-xs text-slate-400">Uploading...</span>}
                     </div>
@@ -243,7 +243,7 @@ export default function GuidelinesPage() {
     const cancelEdit = () => { setEditingId(null); setEditForm(null); setError(""); };
 
     return (
-        <div className="min-h-screen bg-slate-50 px-6 py-8">
+        <div className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 sm:py-8">
             <TabToggle tab={tab} onChange={t => { setTab(t); if (t === "list") cancelEdit(); }} />
 
             {tab === "add" && (
@@ -289,8 +289,8 @@ function GuidelineCard({ guideline: g, onEdit, onDelete }: { guideline: Guidelin
 
     return (
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-            <div className="flex items-start justify-between gap-3 mb-3">
-                <h3 className="font-semibold text-slate-800">{g.title}</h3>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3 mb-3">
+                <h3 className="font-semibold text-slate-800 min-w-0 break-words">{g.title}</h3>
                 <div className="flex items-center gap-1 shrink-0">
                     {confirm ? (
                         <>
@@ -311,8 +311,8 @@ function GuidelineCard({ guideline: g, onEdit, onDelete }: { guideline: Guidelin
             </div>
 
             {g.link && (
-                <a href={g.link} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-sm text-primary hover:underline mb-3">
-                    <LinkIcon className="h-3.5 w-3.5" /> {g.link}
+                <a href={g.link} target="_blank" rel="noreferrer" className="flex items-start gap-1 text-sm text-primary hover:underline mb-3 break-all">
+                    <LinkIcon className="h-3.5 w-3.5 shrink-0 mt-0.5" /> {g.link}
                 </a>
             )}
 

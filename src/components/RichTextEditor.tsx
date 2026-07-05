@@ -56,7 +56,7 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
             type="button"
             title={title}
             onClick={onClick}
-            className={`p-1.5 rounded transition-colors ${
+            className={`p-2.5 sm:p-1.5 rounded transition-colors ${
                 active
                     ? "bg-primary text-white"
                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-800"
@@ -79,7 +79,7 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
     return (
         <div className="border border-slate-200 rounded-lg overflow-hidden">
             {/* Toolbar */}
-            <div className="flex flex-wrap items-center gap-0.5 px-2 py-1.5 border-b border-slate-200 bg-slate-50">
+            <div className="flex flex-wrap items-center gap-1 sm:gap-0.5 px-2 py-1.5 border-b border-slate-200 bg-slate-50">
                 <ToolButton onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive("bold")} title="Bold">
                     <Bold className="h-3.5 w-3.5" />
                 </ToolButton>
