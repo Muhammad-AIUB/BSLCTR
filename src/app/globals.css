@@ -161,3 +161,38 @@
 .animate-slide-in {
     animation: slide-in 0.3s ease-out;
 }
+
+/* Rendered output of RichTextEditor (tiptap) content — preflight strips default element styles */
+.rich-text p {
+    margin: 0.5em 0;
+}
+.rich-text h1 {
+    font-size: 1.35em;
+    font-weight: 700;
+    margin: 0.8em 0 0.4em;
+}
+.rich-text h2 {
+    font-size: 1.15em;
+    font-weight: 600;
+    margin: 0.8em 0 0.4em;
+}
+.rich-text ul {
+    list-style: disc;
+    padding-left: 1.4em;
+    margin: 0.5em 0;
+}
+.rich-text ol {
+    list-style: decimal;
+    padding-left: 1.4em;
+    margin: 0.5em 0;
+}
+.rich-text blockquote {
+    border-left: 3px solid var(--border);
+    padding-left: 0.9em;
+    margin: 0.6em 0;
+    color: var(--muted-foreground);
+}
+.rich-text a {
+    color: var(--primary);
+    text-decoration: underline;
+}

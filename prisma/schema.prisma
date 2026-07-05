@@ -68,6 +68,16 @@ enum MemberStatus {
     REJECTED
 }
 
+model CasePresentation {
+    id          String   @id @default(cuid())
+    title       String
+    files       String[]
+    description String   @default("")
+    tags        String[]
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+}
+
 model Guideline {
     id        String   @id @default(cuid())
     title     String
