@@ -6,6 +6,8 @@ import { Play, X, Minimize2, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 
 const videos = [
+    { id: "5ljrzDlq0Qg", title: "World Hepatitis Day 2025 উপলক্ষে আরটিভির বিশেষ স্বাস্থ্য বিষয়ক অনুষ্ঠান | Rtv", date: "July 2025" },
+    { id: "OeXDYUIv0t4", title: "রোজায় সুস্থতা: লিভার সিরোসিস প্রতিরোধে ডাক্তারের পরামর্শ | Somoy TV", date: "April 2023" },
     { id: "F4AE1PgmlOE", title: "BSLCTR Video Highlights", date: "March 2024" },
     { id: "y-f3A21nT3A", title: "Medical Education Session", date: "February 2024" },
     { id: "Qz1REw087GE", title: "Healthcare Event Coverage", date: "January 2024" },

@@ -17,7 +17,9 @@ interface MemberApplication {
     academicQualifications: string;
     specializedTraining: string | null;
     currentPosting: string | null;
+    pastPostings: string[];
     chamberAddresses: string[];
+    shortIntroduction: string | null;
     shortBiography: string | null;
     journals: string | null;
     profilePicture: string | null;
@@ -152,10 +154,24 @@ export default function Dashboard() {
                                         )}
                                     </div>
 
+                                    {m.pastPostings.length > 0 && (
+                                        <div className="text-sm mb-2">
+                                            <span className="font-medium text-slate-600">Past Posting / Institution: </span>
+                                            <span className="text-slate-700">{m.pastPostings.join(" | ")}</span>
+                                        </div>
+                                    )}
+
                                     {m.chamberAddresses.length > 0 && (
                                         <div className="text-sm mb-2">
                                             <span className="font-medium text-slate-600">Chamber Address: </span>
                                             <span className="text-slate-700">{m.chamberAddresses.join(" | ")}</span>
+                                        </div>
+                                    )}
+
+                                    {m.shortIntroduction && (
+                                        <div className="text-sm mb-2">
+                                            <span className="font-medium text-slate-600">Short Introduction: </span>
+                                            <span className="text-slate-700 whitespace-pre-line">{m.shortIntroduction}</span>
                                         </div>
                                     )}
 

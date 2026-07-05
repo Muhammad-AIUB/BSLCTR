@@ -2,6 +2,19 @@ import PhotoGallery from "@/components/PhotoGallery";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
+const photos = [
+    {
+        id: 1,
+        src: "/80.jpeg",
+        alt: "BSLCTR surgical team in the operating theatre",
+        title: "Surgical Team in the Operating Theatre",
+        date: "",
+        location: "",
+        attendees: "",
+        category: "Surgery",
+    },
+];
+
 export default function PhotoGalleryPage() {
     return (
         <div>
@@ -10,7 +23,7 @@ export default function PhotoGalleryPage() {
                     <ChevronLeft className="h-4 w-4" /> Back to Gallery
                 </Link>
             </div>
-            <PhotoGallery />
+            <PhotoGallery photos={photos} />
         </div>
     );
 }

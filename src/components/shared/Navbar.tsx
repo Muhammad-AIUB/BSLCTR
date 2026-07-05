@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import AdminLoginModal from "../AdminLoginModal";
-import MemberSignupModal from "../MemberSignupModal";
 import MemberLoginModal from "../MemberLoginModal";
 import { LayoutDashboard, LogOut, Bell } from "lucide-react";
 
@@ -14,7 +13,6 @@ const Navbar = () => {
     const [memberName, setMemberName] = useState<string | null>(null);
     const [adminMenuOpen, setAdminMenuOpen] = useState(false);
     const [memberMenuOpen, setMemberMenuOpen] = useState(false);
-    const [signupOpen, setSignupOpen] = useState(false);
     const [loginOpen, setLoginOpen] = useState(false);
     const [pendingCount, setPendingCount] = useState(0);
     const adminMenuRef = useRef<HTMLDivElement>(null);
@@ -222,12 +220,13 @@ const Navbar = () => {
                                 </button>
                                 {memberMenuOpen && (
                                     <div className="absolute right-0 mt-2 w-40 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-[9999]">
-                                        <button
-                                            className="w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 font-medium transition-colors"
-                                            onClick={() => { setMemberMenuOpen(false); setSignupOpen(true); }}
+                                        <Link
+                                            href="/member-signup"
+                                            className="block w-full px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 font-medium transition-colors"
+                                            onClick={() => setMemberMenuOpen(false)}
                                         >
                                             Sign Up
-                                        </button>
+                                        </Link>
                                         <div className="h-px bg-slate-100" />
                                         <button
                                             className="w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 font-medium transition-colors"
@@ -243,7 +242,6 @@ const Navbar = () => {
                 </div>
             </nav>
 
-            <MemberSignupModal open={signupOpen} onClose={() => setSignupOpen(false)} />
             <MemberLoginModal
                 open={loginOpen}
                 onClose={() => setLoginOpen(false)}

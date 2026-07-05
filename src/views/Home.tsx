@@ -10,9 +10,9 @@ const Home = () => {
         <div className="flex flex-col">
             <HeroSection />
             <HeroSlider />
+            <MessageFromChairman />
             <PhotoGallery />
             <RecentUpdates />
-            <MessageFromChairman />
             <MessageFromTreasurer />
         </div>
     );

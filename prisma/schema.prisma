@@ -101,7 +101,9 @@ model Member {
     academicQualifications String
     specializedTraining    String?
     currentPosting         String?
+    pastPostings           String[]
     chamberAddresses       String[]
+    shortIntroduction      String?
     shortBiography         String?
     journals               String?
     profilePicture         String?

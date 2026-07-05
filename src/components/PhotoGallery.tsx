@@ -25,7 +25,7 @@ interface Photo {
     category: string;
 }
 
-const PhotoGallery = () => {
+const PhotoGallery = ({ photos: photosProp }: { photos?: Photo[] }) => {
     const [selectedCategory, setSelectedCategory] = useState<string>("All");
     const [selectedImage, setSelectedImage] = useState<Photo | null>(null);
     const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
@@ -34,7 +34,7 @@ const PhotoGallery = () => {
 
     // Enhanced photos data with categories
     const photos = useMemo<Photo[]>(
-        () => [
+        () => photosProp ?? [
             {
                 id: 1,
                 src: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=1200&h=800&fit=crop",
@@ -116,7 +116,7 @@ const PhotoGallery = () => {
                 category: "Symposium",
             },
         ],
-        []
+        [photosProp]
     );
 
     // Get unique categories
@@ -236,6 +236,7 @@ const PhotoGallery = () => {
                 </motion.div>
 
                 {/* Category Filter */}
+                {photos.length > 1 && (
                 <motion.div
                     className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-12"
                     initial="hidden"
@@ -259,6 +260,7 @@ const PhotoGallery = () => {
                         </motion.button>
                     ))}
                 </motion.div>
+                )}
 
                 {/* Gallery Grid */}
                 <motion.div
@@ -306,20 +308,26 @@ const PhotoGallery = () => {
                                             {photo.title}
                                         </h3>
                                         <div className="space-y-1.5 text-xs text-slate-600">
-                                            <div className="flex items-center gap-1.5">
-                                                <Calendar className="w-3.5 h-3.5 text-primary flex-shrink-0" />
-                                                <span>{photo.date}</span>
-                                            </div>
-                                            <div className="flex items-center gap-1.5">
-                                                <MapPin className="w-3.5 h-3.5 text-primary flex-shrink-0" />
-                                                <span className="line-clamp-1">
-                                                    {photo.location}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center gap-1.5">
-                                                <Users className="w-3.5 h-3.5 text-primary flex-shrink-0" />
-                                                <span>{photo.attendees}</span>
-                                            </div>
+                                            {photo.date && (
+                                                <div className="flex items-center gap-1.5">
+                                                    <Calendar className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                                                    <span>{photo.date}</span>
+                                                </div>
+                                            )}
+                                            {photo.location && (
+                                                <div className="flex items-center gap-1.5">
+                                                    <MapPin className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                                                    <span className="line-clamp-1">
+                                                        {photo.location}
+                                                    </span>
+                                                </div>
+                                            )}
+                                            {photo.attendees && (
+                                                <div className="flex items-center gap-1.5">
+                                                    <Users className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                                                    <span>{photo.attendees}</span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -422,18 +430,24 @@ const PhotoGallery = () => {
                                     </p>
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-                                    <div className="flex items-center gap-2">
-                                        <Calendar className="w-4 h-4 text-secondary" />
-                                        <span>{selectedImage.date}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <MapPin className="w-4 h-4 text-secondary" />
-                                        <span>{selectedImage.location}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <Users className="w-4 h-4 text-secondary" />
-                                        <span>{selectedImage.attendees}</span>
-                                    </div>
+                                    {selectedImage.date && (
+                                        <div className="flex items-center gap-2">
+                                            <Calendar className="w-4 h-4 text-secondary" />
+                                            <span>{selectedImage.date}</span>
+                                        </div>
+                                    )}
+                                    {selectedImage.location && (
+                                        <div className="flex items-center gap-2">
+                                            <MapPin className="w-4 h-4 text-secondary" />
+                                            <span>{selectedImage.location}</span>
+                                        </div>
+                                    )}
+                                    {selectedImage.attendees && (
+                                        <div className="flex items-center gap-2">
+                                            <Users className="w-4 h-4 text-secondary" />
+                                            <span>{selectedImage.attendees}</span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </motion.div>

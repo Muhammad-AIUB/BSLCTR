@@ -9,12 +9,16 @@ export async function POST(req: NextRequest) {
         const {
             name, mobileNo, email, password, bmdcNo, designation,
             specialtySubject, academicQualifications, specializedTraining,
-            currentPosting, chamberAddresses, shortBiography, journals,
-            profilePicture, backgroundPicture, interventions,
+            currentPosting, pastPostings, chamberAddresses, shortIntroduction,
+            shortBiography, journals, profilePicture, backgroundPicture, interventions,
         } = body;
 
         if (!name || !mobileNo || !email || !password || !bmdcNo || !designation || !specialtySubject || !academicQualifications) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+        }
+
+        if (!/^\d{11}$/.test(mobileNo)) {
+            return NextResponse.json({ error: "Mobile number must be 11 digits" }, { status: 400 });
         }
 
         const existing = await prisma.member.findUnique({ where: { email } });
@@ -37,12 +41,14 @@ export async function POST(req: NextRequest) {
                 academicQualifications,
                 specializedTraining: specializedTraining || null,
                 currentPosting: isOther ? null : (currentPosting || null),
+                pastPostings: isOther ? [] : (pastPostings || []),
                 chamberAddresses: isOther ? [] : (chamberAddresses || []),
+                shortIntroduction: shortIntroduction || null,
                 shortBiography: isOther ? null : (shortBiography || null),
-                journals: isOther ? null : (journals || null),
-                profilePicture: profilePicture || null,
+                journals: journals || null,
+                profilePicture: isOther ? null : (profilePicture || null),
                 backgroundPicture: isOther ? null : (backgroundPicture || null),
-                interventions: isOther ? [] : (interventions || []),
+                interventions: interventions || [],
             },
         });
 
