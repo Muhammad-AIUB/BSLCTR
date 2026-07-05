@@ -1,23 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
 
-const moments = [
-    { src: "/bslctrcon/moments/moment-1.jpeg", alt: "Faculty members seated on stage at BSLCTR CON" },
-    { src: "/bslctrcon/moments/moment-2.jpeg", alt: "Delegates discussing the conference program" },
-    { src: "/bslctrcon/moments/moment-3.jpeg", alt: "Panel discussion at BSLCTR CON 2026" },
-    { src: "/bslctrcon/moments/moment-4.jpeg", alt: "Presenting a bouquet at the annual conference" },
-    { src: "/bslctrcon/moments/moment-5.jpeg", alt: "Surgical team in the operating theatre" },
-    { src: "/bslctrcon/moments/moment-6.jpeg", alt: "Crest presentation at the international annual conference" },
-    { src: "/bslctrcon/moments/moment-7.jpeg", alt: "Felicitation with flowers on stage" },
-    { src: "/bslctrcon/moments/moment-8.jpeg", alt: "Raffle draw session at BSLCTR CON" },
-];
+// Photos are scoped per conference year. Add other years here as they become available.
+const momentsByYear: Record<string, { src: string; alt: string }[]> = {
+    "2025": [
+        { src: "/bslctrcon/moments/moment-1.jpeg", alt: "Faculty members seated on stage at BSLCTR CON" },
+        { src: "/bslctrcon/moments/moment-2.jpeg", alt: "Delegates discussing the conference program" },
+        { src: "/bslctrcon/moments/moment-3.jpeg", alt: "Panel discussion at BSLCTR CON 2025" },
+        { src: "/bslctrcon/moments/moment-4.jpeg", alt: "Presenting a bouquet at the annual conference" },
+        { src: "/bslctrcon/moments/moment-5.jpeg", alt: "Surgical team in the operating theatre" },
+        { src: "/bslctrcon/moments/moment-6.jpeg", alt: "Crest presentation at the international annual conference" },
+        { src: "/bslctrcon/moments/moment-7.jpeg", alt: "Felicitation with flowers on stage" },
+        { src: "/bslctrcon/moments/moment-8.jpeg", alt: "Raffle draw session at BSLCTR CON" },
+    ],
+};
 
-export default function MomentsPage() {
+function MomentsContent() {
+    const searchParams = useSearchParams();
+    const year = searchParams.get("year") ?? "2025";
+    const moments = momentsByYear[year] ?? [];
+
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
     const next = () => setLightboxIndex((i) => (i === null ? null : (i + 1) % moments.length));
@@ -35,47 +43,59 @@ export default function MomentsPage() {
 
                 <div className="text-center mt-6 mb-10">
                     <h1 className="text-3xl md:text-4xl font-bold text-slate-800 mb-2">
-                        Some Moments from BSLCTR CON
+                        Some Moments from BSLCTRCON {year}
                     </h1>
                     <p className="text-slate-500 text-sm max-w-2xl mx-auto">
                         Glimpses of the BSLCTR International Annual Conference — sessions, felicitations, and memorable moments
                     </p>
                 </div>
 
-                <motion.div
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6"
-                    initial="hidden"
-                    animate="visible"
-                    variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
-                >
-                    {moments.map((photo, index) => (
-                        <motion.div
-                            key={photo.src}
-                            variants={{
-                                hidden: { opacity: 0, scale: 0.9 },
-                                visible: { opacity: 1, scale: 1, transition: { duration: 0.4 } },
-                            }}
-                            className="group relative cursor-pointer"
-                            onClick={() => setLightboxIndex(index)}
-                        >
-                            <div className="relative aspect-[3/2] overflow-hidden rounded-xl bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
-                                <img
-                                    src={photo.src}
-                                    alt={photo.alt}
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                    loading="lazy"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                    <ZoomIn className="w-10 h-10 text-white scale-75 group-hover:scale-100 transition-transform duration-300" />
+                {moments.length === 0 ? (
+                    <div className="flex items-center justify-center py-16">
+                        <div className="text-center border border-dashed border-slate-300 rounded-2xl px-8 py-12 sm:px-12 bg-white/70 max-w-md w-full">
+                            <div className="text-4xl mb-3">📷</div>
+                            <p className="text-slate-600 font-medium">
+                                No photos published for BSLCTRCON {year} yet.
+                            </p>
+                            <p className="text-slate-400 text-sm mt-1">Check back soon.</p>
+                        </div>
+                    </div>
+                ) : (
+                    <motion.div
+                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6"
+                        initial="hidden"
+                        animate="visible"
+                        variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
+                    >
+                        {moments.map((photo, index) => (
+                            <motion.div
+                                key={photo.src}
+                                variants={{
+                                    hidden: { opacity: 0, scale: 0.9 },
+                                    visible: { opacity: 1, scale: 1, transition: { duration: 0.4 } },
+                                }}
+                                className="group relative cursor-pointer"
+                                onClick={() => setLightboxIndex(index)}
+                            >
+                                <div className="relative aspect-[3/2] overflow-hidden rounded-xl bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
+                                    <img
+                                        src={photo.src}
+                                        alt={photo.alt}
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                        loading="lazy"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                        <ZoomIn className="w-10 h-10 text-white scale-75 group-hover:scale-100 transition-transform duration-300" />
+                                    </div>
                                 </div>
-                            </div>
-                        </motion.div>
-                    ))}
-                </motion.div>
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                )}
             </div>
 
             <AnimatePresence>
-                {lightboxIndex !== null && (
+                {lightboxIndex !== null && moments[lightboxIndex] && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -131,5 +151,13 @@ export default function MomentsPage() {
                 )}
             </AnimatePresence>
         </div>
+    );
+}
+
+export default function MomentsPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200" />}>
+            <MomentsContent />
+        </Suspense>
     );
 }
