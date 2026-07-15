@@ -55,9 +55,9 @@ export default function VideoGalleryPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200 px-4 py-12">
+        <div className="min-h-screen bg-gradient-to-br from-slate-100 via-primary/5 to-slate-200 px-4 py-12">
             <div className="max-w-6xl mx-auto">
-                <Link href="/gallery" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-blue-600 text-sm py-2 -mt-2 mb-6 transition-colors">
+                <Link href="/gallery" className="inline-flex items-center gap-1.5 rounded-md text-slate-500 hover:text-primary text-sm py-2 -mt-2 mb-6 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2">
                     <ChevronLeft className="h-4 w-4" /> Back to Gallery
                 </Link>
 
@@ -74,7 +74,7 @@ export default function VideoGalleryPage() {
                                 initial={{ opacity: 0, y: 24 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.4, delay: index * 0.08 }}
-                                className="bg-white rounded-2xl overflow-hidden shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300"
+                                className="bg-white rounded-xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-lg transition-all duration-300"
                             >
                                 {isPlaying ? (
                                     <div className="relative aspect-video bg-black">
@@ -104,7 +104,7 @@ export default function VideoGalleryPage() {
                                         />
                                         <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
                                         <div className="absolute inset-0 flex items-center justify-center">
-                                            <div className="w-16 h-16 bg-blue-600 hover:bg-blue-500 rounded-full flex items-center justify-center shadow-xl transition-all group-hover:scale-110">
+                                            <div className="w-16 h-16 bg-primary hover:bg-primary/90 rounded-full flex items-center justify-center shadow-xl transition-all group-hover:scale-110">
                                                 <Play className="w-7 h-7 text-white ml-1" fill="white" />
                                             </div>
                                         </div>
@@ -113,7 +113,7 @@ export default function VideoGalleryPage() {
 
                                 <div className="p-4">
                                     <h3 className="font-semibold text-slate-800">{video.title}</h3>
-                                    <p className="text-slate-400 text-xs mt-1">{video.date}</p>
+                                    <p className="text-slate-500 text-xs mt-1">{video.date}</p>
                                 </div>
                             </motion.div>
                         );
@@ -129,7 +129,7 @@ export default function VideoGalleryPage() {
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.85, y: 24 }}
                         transition={{ duration: 0.2 }}
-                        className="fixed bottom-6 right-6 z-50 w-[300px] max-w-[calc(100vw-3rem)] bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+                        className="fixed bottom-6 right-6 z-50 w-[300px] max-w-[calc(100vw-3rem)] bg-black rounded-xl overflow-hidden shadow-2xl border border-white/10"
                         style={{ aspectRatio: "16/9" }}
                     >
                         <iframe

@@ -35,7 +35,7 @@ function TabToggle({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) 
         <div className="inline-flex items-center bg-slate-200 rounded-xl p-1 gap-1 mb-6">
             <button
                 onClick={() => onChange("add")}
-                className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
+                className={`flex items-center gap-2 px-5 py-2 rounded-md text-sm font-semibold transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 ${
                     tab === "add" ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"
                 }`}
             >
@@ -43,7 +43,7 @@ function TabToggle({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) 
             </button>
             <button
                 onClick={() => onChange("list")}
-                className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
+                className={`flex items-center gap-2 px-5 py-2 rounded-md text-sm font-semibold transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 ${
                     tab === "list" ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"
                 }`}
             >
@@ -74,7 +74,7 @@ function TagsInput({ tags, onChange }: { tags: string[]; onChange: (tags: string
                     {tags.map((tag) => (
                         <span key={tag} className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">
                             <Tag className="h-3 w-3" />{tag}
-                            <button type="button" onClick={() => removeTag(tag)} className="hover:text-red-500"><X className="h-3 w-3" /></button>
+                            <button type="button" onClick={() => removeTag(tag)} className="hover:text-red-500 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-destructive/40 focus-visible:ring-offset-2"><X className="h-3 w-3" /></button>
                         </span>
                     ))}
                 </div>
@@ -190,7 +190,7 @@ export default function VideosPage() {
             <TabToggle tab={tab} onChange={(t) => { setTab(t); if (t === "list") cancelEdit(); }} />
 
             {tab === "add" && (
-                <div className="max-w-2xl mx-auto bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                <div className="max-w-2xl mx-auto bg-white rounded-xl border border-slate-200 shadow-sm p-6">
                     <h3 className="text-base font-semibold text-slate-800 mb-5">{editingId ? "Edit Video" : "Add Video"}</h3>
                     <VideoForm
                         key={editingId ?? "new"}
@@ -207,7 +207,7 @@ export default function VideosPage() {
             {tab === "list" && (
                 <div className="max-w-4xl mx-auto">
                     {loading ? (
-                        <div className="text-center py-16 text-slate-400">Loading...</div>
+                        <div className="text-center py-16 text-slate-500">Loading...</div>
                     ) : (
                         <>
                             {pending.length > 0 && (
@@ -220,7 +220,7 @@ export default function VideosPage() {
                                 </div>
                             )}
                             {rest.length === 0 && pending.length === 0 ? (
-                                <div className="text-center py-16 text-slate-400">No videos yet.</div>
+                                <div className="text-center py-16 text-slate-500">No videos yet.</div>
                             ) : (
                                 <div className="space-y-4">
                                     {rest.map((v) => (
@@ -244,7 +244,7 @@ function PendingVideoCard({ video: v, onApprove, onReject }: { video: Video; onA
             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3 mb-2">
                 <div className="min-w-0">
                     <h3 className="font-semibold text-slate-800 break-words">{v.title}</h3>
-                    {v.uploadedByName && <p className="text-xs text-slate-400 mt-0.5">Submitted by {v.uploadedByName}</p>}
+                    {v.uploadedByName && <p className="text-xs text-slate-500 mt-0.5">Submitted by {v.uploadedByName}</p>}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                     <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={onApprove}>
@@ -255,7 +255,7 @@ function PendingVideoCard({ video: v, onApprove, onReject }: { video: Video; onA
                     </Button>
                 </div>
             </div>
-            <a href={v.link} target="_blank" rel="noreferrer" className="flex items-start gap-1 text-sm text-primary hover:underline mb-2 break-all">
+            <a href={v.link} target="_blank" rel="noreferrer" className="flex items-start gap-1 text-sm text-primary hover:underline mb-2 break-all outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2">
                 <LinkIcon className="h-3.5 w-3.5 shrink-0 mt-0.5" /> {v.link}
             </a>
             {v.tags.length > 0 && (
@@ -288,14 +288,14 @@ function VideoCard({ video: v, onEdit, onDelete }: { video: Video; onEdit: () =>
                             <Button size="sm" variant="outline" className="text-slate-600 hover:text-primary" onClick={onEdit}>
                                 <Pencil className="h-3.5 w-3.5 mr-1" /> Edit
                             </Button>
-                            <Button size="sm" variant="outline" className="text-slate-400 hover:text-red-500 hover:border-red-300" onClick={() => setConfirm(true)}>
+                            <Button size="sm" variant="outline" className="text-slate-500 hover:text-red-500 hover:border-red-300" onClick={() => setConfirm(true)}>
                                 <Trash2 className="h-3.5 w-3.5 mr-1" /> Delete
                             </Button>
                         </>
                     )}
                 </div>
             </div>
-            <a href={v.link} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-sm text-primary hover:underline mb-3">
+            <a href={v.link} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-sm text-primary hover:underline mb-3 outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2">
                 <LinkIcon className="h-3.5 w-3.5" /> Link
             </a>
             {v.tags.length > 0 && (

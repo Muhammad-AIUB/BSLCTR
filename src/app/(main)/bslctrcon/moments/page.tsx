@@ -32,11 +32,11 @@ function MomentsContent() {
     const prev = () => setLightboxIndex((i) => (i === null ? null : (i - 1 + moments.length) % moments.length));
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200 px-4 sm:px-6 lg:px-8 py-10">
+        <div className="min-h-screen bg-gradient-to-br from-slate-100 via-primary/5 to-slate-200 px-4 sm:px-6 lg:px-8 py-10">
             <div className="max-w-6xl mx-auto">
                 <Link
                     href="/bslctrcon"
-                    className="inline-flex items-center gap-1.5 text-slate-500 hover:text-blue-600 text-sm py-2 -my-2 transition-colors"
+                    className="inline-flex items-center gap-1.5 rounded-md text-slate-500 hover:text-primary text-sm py-2 -my-2 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2"
                 >
                     <ChevronLeft className="h-4 w-4" /> Back to BSLCTR CON
                 </Link>
@@ -52,12 +52,12 @@ function MomentsContent() {
 
                 {moments.length === 0 ? (
                     <div className="flex items-center justify-center py-16">
-                        <div className="text-center border border-dashed border-slate-300 rounded-2xl px-8 py-12 sm:px-12 bg-white/70 max-w-md w-full">
+                        <div className="text-center border border-dashed border-slate-300 rounded-xl px-8 py-12 sm:px-12 bg-white/70 max-w-md w-full">
                             <div className="text-4xl mb-3">📷</div>
                             <p className="text-slate-600 font-medium">
                                 No photos published for BSLCTRCON {year} yet.
                             </p>
-                            <p className="text-slate-400 text-sm mt-1">Check back soon.</p>
+                            <p className="text-slate-500 text-sm mt-1">Check back soon.</p>
                         </div>
                     </div>
                 ) : (
@@ -77,7 +77,7 @@ function MomentsContent() {
                                 className="group relative cursor-pointer"
                                 onClick={() => setLightboxIndex(index)}
                             >
-                                <div className="relative aspect-[3/2] overflow-hidden rounded-xl bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
+                                <div className="relative aspect-[3/2] overflow-hidden rounded-xl bg-white shadow-sm hover:shadow-lg transition-all duration-300 border border-slate-200">
                                     <img
                                         src={photo.src}
                                         alt={photo.alt}
@@ -141,7 +141,7 @@ function MomentsContent() {
                             <img
                                 src={moments[lightboxIndex].src}
                                 alt={moments[lightboxIndex].alt}
-                                className="max-w-full max-h-[82vh] object-contain rounded-lg shadow-2xl"
+                                className="max-w-full max-h-[82vh] object-contain rounded-xl shadow-2xl"
                             />
                             <p className="text-white/70 text-sm mt-3">
                                 {lightboxIndex + 1} / {moments.length}
@@ -156,7 +156,7 @@ function MomentsContent() {
 
 export default function MomentsPage() {
     return (
-        <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200" />}>
+        <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-slate-100 via-primary/5 to-slate-200" />}>
             <MomentsContent />
         </Suspense>
     );

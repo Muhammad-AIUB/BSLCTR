@@ -49,15 +49,13 @@ const SubscribeModal = ({ isOpen, onClose }: SubscribeModalProps) => {
         {userType === "none" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4">
             <Button
-              //   variant="outline"
-              className="h-20 text-lg bg-red-700 text-white hover:bg-red-800 rounded-full"
+              className="h-20 rounded-full bg-secondary text-lg text-white hover:bg-secondary/90 active:scale-[0.98]"
               onClick={() => setUserType("patient")}
             >
               <Users /> Patient
             </Button>
             <Button
-              //   variant="outline"
-              className="h-20 text-lg bg-blue-800 text-white hover:bg-blue-900 rounded-full"
+              className="h-20 rounded-full bg-primary text-lg text-white hover:bg-primary/90 active:scale-[0.98]"
               onClick={() => setUserType("physician")}
             >
               <Stethoscope /> Physician

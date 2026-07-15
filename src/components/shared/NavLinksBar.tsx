@@ -62,7 +62,7 @@ const NavLinksBar = () => {
                         </SheetTrigger>
                         <SheetContent
                             side="left"
-                            className="bg-sky-500 text-white border-none overflow-y-auto"
+                            className="overflow-y-auto border-none bg-secondary text-white"
                         >
                             <div className="flex flex-col gap-4 mt-8">
                                 {links.map((link, index) => {
@@ -86,13 +86,13 @@ const NavLinksBar = () => {
                                                 variant="ghost"
                                                 className={`relative w-full justify-start text-white whitespace-normal h-auto text-left ${
                                                     pathname === link.path
-                                                        ? "bg-sky-400"
+                                                        ? "bg-white/20"
                                                         : ""
                                                 }`}
                                             >
                                                 {link.name}
                                                 {link.path === "/live-webinars" && (
-                                                    <span className={`ml-2 inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full border transition-all duration-300 ${
+                                                    <span className={`ml-2 inline-flex items-center gap-1 text-2xs font-bold px-1.5 py-0.5 rounded-full border transition-all duration-300 ${
                                                         hasUpcoming
                                                             ? "bg-amber-400 border-amber-300 text-amber-900"
                                                             : "bg-white/10 border-white/20 text-white/40"
@@ -123,8 +123,8 @@ const NavLinksBar = () => {
                     <Link href={homeLink.path} className="shrink-0">
                         <Button
                             variant="ghost"
-                            className={`rounded-none px-4 lg:px-6 text-white hover:bg-sky-400 hover:text-white h-full text-sm font-medium ${
-                                pathname === homeLink.path ? "bg-sky-400" : ""
+                            className={`rounded-none px-4 lg:px-6 text-white hover:bg-white/10 hover:text-white h-full text-sm font-medium ${
+                                pathname === homeLink.path ? "bg-white/20" : ""
                             }`}
                         >
                             {homeLink.name}
@@ -132,7 +132,7 @@ const NavLinksBar = () => {
                     </Link>
 
                     {/* Divider after Home */}
-                    <div className="w-px bg-primary self-stretch shrink-0" />
+                    <div className="w-px shrink-0 self-stretch bg-white/15" />
 
                     {/* Rest of links — slide in on hover */}
                     <AnimatePresence>
@@ -154,9 +154,9 @@ const NavLinksBar = () => {
                                     {link.name === "Subscribe" ? (
                                         <Button
                                             variant="ghost"
-                                            className={`rounded-none px-3 lg:px-4 text-white hover:bg-sky-400 hover:text-white h-full text-[10px] md:text-xs lg:text-sm font-medium whitespace-nowrap ${
+                                            className={`rounded-none px-3 lg:px-4 text-white hover:bg-white/10 hover:text-white h-full text-2xs md:text-xs lg:text-sm font-medium whitespace-nowrap ${
                                                 pathname === link.path
-                                                    ? "bg-sky-400"
+                                                    ? "bg-white/20"
                                                     : ""
                                             }`}
                                             onClick={() =>
@@ -172,15 +172,15 @@ const NavLinksBar = () => {
                                         >
                                             <Button
                                                 variant="ghost"
-                                                className={`relative rounded-none px-3 lg:px-4 text-white hover:bg-sky-400 hover:text-white h-full text-[10px] md:text-xs lg:text-sm font-medium whitespace-nowrap ${
+                                                className={`relative rounded-none px-3 lg:px-4 text-white hover:bg-white/10 hover:text-white h-full text-2xs md:text-xs lg:text-sm font-medium whitespace-nowrap ${
                                                     pathname === link.path
-                                                        ? "bg-sky-400"
+                                                        ? "bg-white/20"
                                                         : ""
                                                 }`}
                                             >
                                                 {link.name}
                                                 {link.path === "/live-webinars" && (
-                                                    <span className={`ml-1.5 inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded-full border transition-all duration-300 ${
+                                                    <span className={`ml-1.5 inline-flex items-center gap-1 text-2xs font-bold px-1.5 py-0.5 rounded-full border transition-all duration-300 ${
                                                         hasUpcoming
                                                             ? "bg-amber-400 border-amber-300 text-amber-900"
                                                             : "bg-white/10 border-white/20 text-white/40"
@@ -194,7 +194,7 @@ const NavLinksBar = () => {
                                             </Button>
                                         </Link>
                                     )}
-                                    <div className="w-px bg-primary self-stretch" />
+                                    <div className="w-px self-stretch bg-white/15" />
                                 </motion.div>
                             ))}
                     </AnimatePresence>

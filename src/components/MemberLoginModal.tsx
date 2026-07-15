@@ -80,7 +80,7 @@ export default function MemberLoginModal({ open, onClose, onSuccess }: Props) {
                         />
                     </div>
                     {error && (
-                        <p className="text-sm text-red-500 bg-red-50 border border-red-200 rounded px-3 py-2">
+                        <p className="rounded-md border border-destructive/20 bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
                             {error}
                         </p>
                     )}

@@ -20,11 +20,11 @@ function LecturesContent() {
     const [playingId, setPlayingId] = useState<string | null>(null);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200 px-4 sm:px-6 lg:px-8 py-10">
+        <div className="min-h-screen bg-gradient-to-br from-slate-100 via-primary/5 to-slate-200 px-4 sm:px-6 lg:px-8 py-10">
             <div className="max-w-6xl mx-auto">
                 <Link
                     href="/bslctrcon"
-                    className="inline-flex items-center gap-1.5 text-slate-500 hover:text-blue-600 text-sm py-2 -my-2 transition-colors"
+                    className="inline-flex items-center gap-1.5 rounded-md text-slate-500 hover:text-primary text-sm py-2 -my-2 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2"
                 >
                     <ChevronLeft className="h-4 w-4" /> Back to BSLCTR CON
                 </Link>
@@ -43,10 +43,10 @@ function LecturesContent() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
-                        className="flex flex-col items-center justify-center bg-white rounded-2xl shadow-lg border border-slate-100 py-24 px-6 text-center"
+                        className="flex flex-col items-center justify-center bg-white rounded-xl shadow-sm border border-slate-100 py-24 px-6 text-center"
                     >
-                        <div className="bg-blue-50 rounded-full p-6 mb-6">
-                            <Presentation className="h-12 w-12 text-blue-600" />
+                        <div className="bg-primary/10 rounded-full p-6 mb-6">
+                            <Presentation className="h-12 w-12 text-primary" />
                         </div>
                         <h2 className="text-xl font-bold text-slate-800 mb-2">Lectures coming soon</h2>
                         <p className="text-slate-500 text-sm max-w-md">
@@ -63,7 +63,7 @@ function LecturesContent() {
                                     initial={{ opacity: 0, y: 24 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.4, delay: index * 0.08 }}
-                                    className="bg-white rounded-2xl overflow-hidden shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300"
+                                    className="bg-white rounded-xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-lg transition-all duration-300"
                                 >
                                     {isPlaying ? (
                                         <div className="relative aspect-video bg-black">
@@ -93,7 +93,7 @@ function LecturesContent() {
                                             />
                                             <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
                                             <div className="absolute inset-0 flex items-center justify-center">
-                                                <div className="w-16 h-16 bg-blue-600 hover:bg-blue-500 rounded-full flex items-center justify-center shadow-xl transition-all group-hover:scale-110">
+                                                <div className="w-16 h-16 bg-primary hover:bg-primary/90 rounded-full flex items-center justify-center shadow-xl transition-all group-hover:scale-110">
                                                     <Play className="w-7 h-7 text-white ml-1" fill="white" />
                                                 </div>
                                             </div>
@@ -102,7 +102,7 @@ function LecturesContent() {
 
                                     <div className="p-4">
                                         <h3 className="font-semibold text-slate-800">{video.title}</h3>
-                                        <p className="text-slate-400 text-xs mt-1">{video.date}</p>
+                                        <p className="text-slate-500 text-xs mt-1">{video.date}</p>
                                     </div>
                                 </motion.div>
                             );
@@ -116,7 +116,7 @@ function LecturesContent() {
 
 export default function LecturesPage() {
     return (
-        <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200" />}>
+        <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-slate-100 via-primary/5 to-slate-200" />}>
             <LecturesContent />
         </Suspense>
     );

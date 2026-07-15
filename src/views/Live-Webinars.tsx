@@ -36,7 +36,7 @@ export default function LiveWebinars() {
     const upcoming = webinars.filter((w) => w.date > today);
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white">
+        <div className="min-h-screen bg-gradient-to-b from-primary/5 to-white">
             <div className="container mx-auto py-12 px-4 md:px-6 max-w-5xl space-y-14">
 
                 {/* Live / Recent Webinars */}
@@ -60,10 +60,10 @@ export default function LiveWebinars() {
                         <div className="text-center py-10 text-muted-foreground">Loading...</div>
                     ) : upcoming.length === 0 ? (
                         <div className="flex items-center justify-center py-12">
-                            <div className="text-center border border-dashed border-slate-300 rounded-2xl px-6 py-10 sm:px-10 bg-white max-w-sm w-full">
+                            <div className="text-center border border-dashed border-slate-300 rounded-xl px-6 py-10 sm:px-10 bg-white max-w-sm w-full">
                                 <div className="text-4xl mb-3">📅</div>
                                 <p className="text-slate-600 font-medium">No upcoming webinars scheduled yet.</p>
-                                <p className="text-slate-400 text-sm mt-1">Check back soon for new sessions.</p>
+                                <p className="text-slate-500 text-sm mt-1">Check back soon for new sessions.</p>
                             </div>
                         </div>
                     ) : (
@@ -94,10 +94,10 @@ function SectionHeading({ title, dot }: { title: string; dot?: boolean }) {
 }
 
 const gradients = [
-    "from-blue-600 to-sky-400",
-    "from-indigo-600 to-blue-400",
-    "from-sky-600 to-cyan-400",
-    "from-blue-700 to-indigo-400",
+    "from-teal-600 to-cyan-400",
+    "from-cyan-600 to-teal-400",
+    "from-teal-700 to-cyan-500",
+    "from-cyan-700 to-teal-500",
 ];
 
 function WebinarCard({ webinar: w, index, upcoming }: { webinar: Webinar; index: number; upcoming?: boolean }) {
@@ -111,7 +111,7 @@ function WebinarCard({ webinar: w, index, upcoming }: { webinar: Webinar; index:
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: index * 0.08 }}
             whileHover={{ y: -3 }}
-            className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:shadow-sky-100/60 transition-all duration-300 overflow-hidden"
+            className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 overflow-hidden"
         >
             <div className="flex flex-col md:flex-row">
                 {/* Preview panel */}
@@ -165,7 +165,7 @@ function WebinarCard({ webinar: w, index, upcoming }: { webinar: Webinar; index:
                         {w.sponsors && w.sponsors.length > 0 && (
                             <div className="flex flex-wrap gap-2 mt-4">
                                 {w.sponsors.map((s, i) => (
-                                    <div key={i} className="flex items-center gap-2 bg-slate-50 border rounded-lg px-3 py-1.5">
+                                    <div key={i} className="flex items-center gap-2 bg-muted border rounded-md px-3 py-1.5">
                                         {s.logo && <img src={s.logo} alt={s.name} className="h-5 object-contain" />}
                                         <span className="text-xs text-slate-600">{s.name}</span>
                                     </div>
@@ -177,7 +177,7 @@ function WebinarCard({ webinar: w, index, upcoming }: { webinar: Webinar; index:
                     <div className="flex items-center justify-between gap-4 flex-wrap">
                         <ShareButtons url={w.link} title={w.headline} />
                         <a href={w.link} target="_blank" rel="noreferrer">
-                            <Button className="bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 shadow-sm hover:shadow-md transition-all duration-300 px-8">
+                            <Button className="bg-secondary text-white hover:bg-secondary/90 shadow-sm hover:shadow-md transition-all duration-300 px-8">
                                 Join Now
                                 <ExternalLink className="h-4 w-4 ml-2" />
                             </Button>

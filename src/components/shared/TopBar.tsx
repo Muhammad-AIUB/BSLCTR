@@ -1,9 +1,9 @@
 const TopBar = () => {
   return (
-    <div className="bg-cyan-100 text-gray-900 py-1 px-4 text-base font-medium text-center shadow-md">
-      <span className="text-center">
-        🚧 <strong>Notice:</strong> This website is currently under
-        construction. Some features may not work as expected.
+    <div className="border-b border-primary/20 bg-primary/10 px-4 py-2 text-center text-sm font-medium text-foreground">
+      <span>
+        🚧 <strong className="font-semibold">Notice:</strong> This website is
+        currently under construction. Some features may not work as expected.
       </span>
     </div>
   );

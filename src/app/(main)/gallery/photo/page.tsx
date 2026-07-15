@@ -19,7 +19,7 @@ export default function PhotoGalleryPage() {
     return (
         <div>
             <div className="px-6 pt-6">
-                <Link href="/gallery" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-blue-600 text-sm py-2 -my-2 transition-colors">
+                <Link href="/gallery" className="inline-flex items-center gap-1.5 rounded-md text-slate-500 hover:text-primary text-sm py-2 -my-2 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2">
                     <ChevronLeft className="h-4 w-4" /> Back to Gallery
                 </Link>
             </div>

@@ -53,8 +53,8 @@ function TagsInput({ tags, onChange }: { tags: string[]; onChange: (t: string[])
             <div className="flex gap-2">
                 <input value={input} onChange={e => setInput(e.target.value)}
                     onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); add(); } }}
-                    placeholder="Add tag..." className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
-                <button type="button" onClick={add} className="border border-slate-200 rounded-lg px-3 py-1.5 hover:bg-slate-50">
+                    placeholder="Add tag..." className="flex-1 border border-slate-200 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+                <button type="button" onClick={add} className="border border-slate-200 rounded-md px-3 py-1.5 hover:bg-slate-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2">
                     <Plus className="h-4 w-4 text-slate-500" />
                 </button>
             </div>
@@ -63,7 +63,7 @@ function TagsInput({ tags, onChange }: { tags: string[]; onChange: (t: string[])
                     {tags.map(t => (
                         <span key={t} className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full">
                             <Tag className="h-3 w-3" />{t}
-                            <button type="button" className="p-1 -m-1" onClick={() => onChange(tags.filter(x => x !== t))}><X className="h-3 w-3 hover:text-red-500" /></button>
+                            <button type="button" className="p-1 -m-1 outline-none focus-visible:ring-2 focus-visible:ring-destructive/40 focus-visible:ring-offset-2" onClick={() => onChange(tags.filter(x => x !== t))}><X className="h-3 w-3 hover:text-red-500 transition-colors" /></button>
                         </span>
                     ))}
                 </div>
@@ -179,7 +179,7 @@ export default function MemberDashboard() {
                         <div className="text-xs text-white/60 mt-0.5">Member Panel</div>
                     </div>
                     <button type="button" onClick={() => setSidebarOpen(o => !o)} aria-label="Toggle menu"
-                        className="lg:hidden p-2 -m-2 text-white/80 hover:text-white">
+                        className="lg:hidden p-2 -m-2 text-white/80 hover:text-white transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2">
                         {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                     </button>
                 </div>
@@ -191,16 +191,16 @@ export default function MemberDashboard() {
                 <nav className={`flex-1 px-3 py-4 space-y-1 ${sidebarOpen ? "block" : "hidden"} lg:block`}>
                     {navItems.map(({ key, label, icon: Icon }) => (
                         <button key={key} onClick={() => { setActiveTab(key); setSidebarOpen(false); }}
-                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors ${activeTab === key ? "bg-white/15 text-white cursor-default" : "text-white/70 hover:bg-white/10 hover:text-white"}`}>
+                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md font-medium text-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 ${activeTab === key ? "bg-white/15 text-white cursor-default" : "text-white/70 hover:bg-white/10 hover:text-white"}`}>
                             <Icon className="h-4 w-4 shrink-0" />{label}
                         </button>
                     ))}
                 </nav>
                 <div className={`px-3 py-4 border-t border-white/20 space-y-1 ${sidebarOpen ? "block" : "hidden"} lg:block`}>
-                    <Link href="/" className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition-colors text-sm">
+                    <Link href="/" className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-white/80 hover:bg-white/10 hover:text-white transition-colors text-sm outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2">
                         <ArrowLeft className="h-4 w-4 shrink-0" />Back to Site
                     </Link>
-                    <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition-colors text-sm">
+                    <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-white/80 hover:bg-white/10 hover:text-white transition-colors text-sm outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2">
                         <LogOut className="h-4 w-4 shrink-0" />Log Out
                     </button>
                 </div>
@@ -214,8 +214,8 @@ export default function MemberDashboard() {
                         <>
                             <h2 className="text-2xl font-bold text-slate-800 mb-1">Webinars</h2>
                             <p className="text-slate-500 text-sm mb-6">Upcoming and recent live sessions.</p>
-                            {loadingWebinars ? <div className="text-center py-16 text-slate-400">Loading...</div>
-                                : webinars.length === 0 ? <div className="text-center py-16 text-slate-400">No webinars available.</div>
+                            {loadingWebinars ? <div className="text-center py-16 text-slate-500">Loading...</div>
+                                : webinars.length === 0 ? <div className="text-center py-16 text-slate-500">No webinars available.</div>
                                 : (
                                     <div className="grid gap-4">
                                         {webinars.map(w => (
@@ -224,7 +224,7 @@ export default function MemberDashboard() {
                                                 <div className="flex flex-wrap gap-4 text-sm text-slate-600 mb-3">
                                                     <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" />{w.date}</span>
                                                     <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{w.time}</span>
-                                                    <a href={w.link} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-primary hover:underline font-medium">
+                                                    <a href={w.link} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-primary hover:underline font-medium outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2">
                                                         <LinkIcon className="h-3.5 w-3.5" /> Join
                                                     </a>
                                                 </div>
@@ -237,7 +237,7 @@ export default function MemberDashboard() {
                                                 {w.sponsors.length > 0 && (
                                                     <div className="flex flex-wrap gap-3 mt-2">
                                                         {w.sponsors.map((s, i) => (
-                                                            <div key={i} className="flex items-center gap-2 bg-slate-50 border rounded-lg px-3 py-1.5">
+                                                            <div key={i} className="flex items-center gap-2 bg-slate-50 border rounded-md px-3 py-1.5">
                                                                 {s.logo && <img src={s.logo} alt={s.name} className="h-6 object-contain" />}
                                                                 <span className="text-sm text-slate-700">{s.name}</span>
                                                             </div>
@@ -260,14 +260,14 @@ export default function MemberDashboard() {
                                     <p className="text-sm font-semibold text-slate-700 mb-4">Submit Video</p>
                                     <form onSubmit={submitVideo} className="space-y-3">
                                         <input required value={vForm.title} onChange={e => setVForm(f => ({ ...f, title: e.target.value }))}
-                                            placeholder="Title" className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+                                            placeholder="Title" className="w-full border border-slate-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
                                         <input required type="url" value={vForm.link} onChange={e => setVForm(f => ({ ...f, link: e.target.value }))}
-                                            placeholder="Video URL" className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+                                            placeholder="Video URL" className="w-full border border-slate-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
                                         <RichTextEditor value={vForm.description} onChange={v => setVForm(f => ({ ...f, description: v }))} placeholder="Description..." />
                                         <TagsInput tags={vForm.tags} onChange={t => setVForm(f => ({ ...f, tags: t }))} />
                                         {vError && <p className="text-xs text-red-500 bg-red-50 border border-red-200 rounded px-3 py-2">{vError}</p>}
                                         <button type="submit" disabled={vSubmitting}
-                                            className="w-full bg-primary text-white rounded-lg py-2 text-sm font-medium hover:bg-primary/90 disabled:opacity-50 transition-colors">
+                                            className="w-full bg-primary text-white rounded-md py-2 text-sm font-medium hover:bg-primary/90 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2">
                                             {vSubmitting ? "Submitting..." : "Submit for Review"}
                                         </button>
                                     </form>
@@ -277,8 +277,8 @@ export default function MemberDashboard() {
                             {/* My uploads */}
                             <div className="flex-1 min-w-0">
                                 <p className="text-sm font-semibold text-slate-700 mb-4">My Uploads</p>
-                                {loadingVideos ? <div className="text-center py-16 text-slate-400">Loading...</div>
-                                    : videos.length === 0 ? <div className="text-center py-16 text-slate-400">No uploads yet.</div>
+                                {loadingVideos ? <div className="text-center py-16 text-slate-500">Loading...</div>
+                                    : videos.length === 0 ? <div className="text-center py-16 text-slate-500">No uploads yet.</div>
                                     : (
                                         <div className="grid gap-4">
                                             {videos.map(v => (
@@ -303,7 +303,7 @@ export default function MemberDashboard() {
                                                     {v.status === "APPROVED" && (
                                                         <div className="flex items-center justify-between flex-wrap gap-3 mt-2">
                                                             <a href={v.link} target="_blank" rel="noreferrer"
-                                                                className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline font-medium">
+                                                                className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline font-medium outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2">
                                                                 <LinkIcon className="h-3.5 w-3.5" /> Watch Video
                                                             </a>
                                                             <ShareButtons url={v.link} title={v.title} />
@@ -326,21 +326,21 @@ export default function MemberDashboard() {
                                     <p className="text-sm font-semibold text-slate-700 mb-4">Submit Photo</p>
                                     <form onSubmit={submitPhoto} className="space-y-3">
                                         <input required value={pForm.title} onChange={e => setPForm(f => ({ ...f, title: e.target.value }))}
-                                            placeholder="Title" className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+                                            placeholder="Title" className="w-full border border-slate-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
                                         <input type="url" value={pForm.link} onChange={e => setPForm(f => ({ ...f, link: e.target.value }))}
-                                            placeholder="Image URL (optional)" className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+                                            placeholder="Image URL (optional)" className="w-full border border-slate-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
                                         <div>
-                                            <span className="text-xs text-slate-400">or upload file:</span>
+                                            <span className="text-xs text-slate-500">or upload file:</span>
                                             <input type="file" accept="image/*" onChange={e => handlePhotoFile(e.target.files?.[0] ?? null)}
                                                 className="block w-full mt-1 text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-primary/10 file:text-primary cursor-pointer" />
-                                            {pUploading && <span className="text-xs text-slate-400">Uploading...</span>}
+                                            {pUploading && <span className="text-xs text-slate-500">Uploading...</span>}
                                         </div>
                                         {pForm.link && <img src={pForm.link} alt="preview" className="h-20 w-auto object-cover rounded border border-slate-200" onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />}
                                         <RichTextEditor value={pForm.description} onChange={v => setPForm(f => ({ ...f, description: v }))} placeholder="Description..." />
                                         <TagsInput tags={pForm.tags} onChange={t => setPForm(f => ({ ...f, tags: t }))} />
                                         {pError && <p className="text-xs text-red-500 bg-red-50 border border-red-200 rounded px-3 py-2">{pError}</p>}
                                         <button type="submit" disabled={pSubmitting || pUploading}
-                                            className="w-full bg-primary text-white rounded-lg py-2 text-sm font-medium hover:bg-primary/90 disabled:opacity-50 transition-colors">
+                                            className="w-full bg-primary text-white rounded-md py-2 text-sm font-medium hover:bg-primary/90 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2">
                                             {pSubmitting ? "Submitting..." : "Submit for Review"}
                                         </button>
                                     </form>
@@ -350,8 +350,8 @@ export default function MemberDashboard() {
                             {/* My uploads */}
                             <div className="flex-1 min-w-0">
                                 <p className="text-sm font-semibold text-slate-700 mb-4">My Uploads</p>
-                                {loadingPhotos ? <div className="text-center py-16 text-slate-400">Loading...</div>
-                                    : photos.length === 0 ? <div className="text-center py-16 text-slate-400">No uploads yet.</div>
+                                {loadingPhotos ? <div className="text-center py-16 text-slate-500">Loading...</div>
+                                    : photos.length === 0 ? <div className="text-center py-16 text-slate-500">No uploads yet.</div>
                                     : (
                                         <div className="grid gap-4">
                                             {photos.map(p => (

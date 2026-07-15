@@ -89,7 +89,7 @@ export function PhysicianForm({ onBack }: PhysicianFormProps) {
                     type="button"
                     variant="ghost"
                     onClick={onBack}
-                    className="mb-2 p-0 h-auto max-sm:px-3 max-sm:py-2 bg-destructive/10 text-destructive hover:bg-destructive/20 hover:text-destructive rounded-md"
+                    className="mb-2 h-auto rounded-md px-3 py-2 text-muted-foreground hover:bg-muted hover:text-foreground"
                     aria-label="Back"
                 >
                     <ChevronLeft className="h-4 w-4 mr-1" /> Back
@@ -182,7 +182,7 @@ export function PhysicianForm({ onBack }: PhysicianFormProps) {
                     <Button
                         type="submit"
                         disabled={isSubmitting}
-                        className="rounded-full bg-blue-800 hover:bg-blue-900"
+                        className="rounded-full bg-secondary text-white hover:bg-secondary/90"
                     >
                         {isSubmitting ? "Submitting..." : "Subscribe"}
                     </Button>

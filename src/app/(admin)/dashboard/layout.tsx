@@ -79,11 +79,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             >
                 <div className="px-6 py-5 border-b border-white/20">
                     <div className="text-2xl font-bold tracking-wide">BSLCTR</div>
-                    <div className="text-xs text-white/60 mt-0.5">Admin Panel</div>
+                    <div className="text-xs text-white/70 mt-0.5">Admin Panel</div>
                 </div>
 
                 <div className="px-6 py-4 border-b border-white/20">
-                    <div className="text-xs text-white/50 uppercase tracking-widest mb-1">Logged in as</div>
+                    <div className="text-xs text-white/70 uppercase tracking-widest mb-1">Logged in as</div>
                     <div className="text-sm font-medium truncate">{adminEmail}</div>
                 </div>
 
@@ -103,7 +103,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                 <Icon className="h-4 w-4 shrink-0" />
                                 <span className="flex-1">{label}</span>
                                 {badge != null && badge > 0 && (
-                                    <span className="min-w-[20px] h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center px-1">
+                                    <span className="min-w-5 h-5 rounded-full bg-destructive text-white text-2xs font-bold flex items-center justify-center px-1">
                                         {badge}
                                     </span>
                                 )}
@@ -142,7 +142,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <button
                         onClick={() => setSidebarOpen(true)}
                         aria-label="Open menu"
-                        className="p-2 -ml-2 rounded-lg hover:bg-white/10"
+                        className="p-2 -ml-2 rounded-lg outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/70"
                     >
                         <Menu className="h-6 w-6" />
                     </button>

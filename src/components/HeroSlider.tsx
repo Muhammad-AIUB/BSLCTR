@@ -44,7 +44,7 @@ export default function HeroSlider() {
                         key={i}
                         onClick={() => setCurrent(i)}
                         aria-label={`Go to slide ${i + 1}`}
-                        className="p-2 -m-1 flex items-center justify-center"
+                        className="flex items-center justify-center rounded-full p-2 -m-1 outline-none transition-transform focus-visible:ring-2 focus-visible:ring-white/80 active:scale-90"
                     >
                         <span
                             className={`rounded-full transition-all duration-300 ${

@@ -247,9 +247,9 @@ const PhotoGallery = ({ photos: photosProp }: { photos?: Photo[] }) => {
                         <motion.button
                             key={category}
                             onClick={() => setSelectedCategory(category)}
-                            className={`px-4 sm:px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                            className={`px-4 sm:px-6 py-2 rounded-full text-sm font-medium outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 ${
                                 selectedCategory === category
-                                    ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30"
+                                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/30"
                                     : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200"
                             }`}
                             variants={scaleIn}
@@ -281,7 +281,7 @@ const PhotoGallery = ({ photos: photosProp }: { photos?: Photo[] }) => {
                                 className="group relative cursor-pointer"
                                 onClick={() => openLightbox(photo, index)}
                             >
-                                <div className="relative overflow-hidden rounded-xl bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
+                                <div className="relative overflow-hidden rounded-xl bg-white shadow-sm hover:shadow-lg transition-all duration-300 border border-slate-200">
                                     {/* Image */}
                                     <div className="relative aspect-[4/3] overflow-hidden">
                                         <img
@@ -409,12 +409,12 @@ const PhotoGallery = ({ photos: photosProp }: { photos?: Photo[] }) => {
                                 <img
                                     src={selectedImage.src}
                                     alt={selectedImage.alt}
-                                    className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-2xl"
+                                    className="max-w-full max-h-[70vh] object-contain rounded-xl shadow-2xl"
                                 />
                             </div>
 
                             {/* Image Info */}
-                            <div className="bg-white/10 backdrop-blur-md rounded-lg p-6 text-white">
+                            <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 text-white">
                                 <div className="flex items-start justify-between mb-3">
                                     <div>
                                         <Badge className="bg-primary text-primary-foreground border-0 mb-2">

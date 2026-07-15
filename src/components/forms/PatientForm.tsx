@@ -81,7 +81,7 @@ export function PatientForm({ onBack }: PatientFormProps) {
                     type="button"
                     variant="ghost"
                     onClick={onBack}
-                    className="mb-2 p-0 h-auto max-sm:px-3 max-sm:py-2 bg-destructive/10 text-destructive hover:bg-destructive/20 hover:text-destructive rounded-md"
+                    className="mb-2 h-auto rounded-md px-3 py-2 text-muted-foreground hover:bg-muted hover:text-foreground"
                     aria-label="Back"
                 >
                     <ChevronLeft className="h-4 w-4 mr-1" /> Back
@@ -259,7 +259,7 @@ export function PatientForm({ onBack }: PatientFormProps) {
                     />
                 )}
 
-                <div className="mt-6 text-sm text-muted-foreground bg-slate-50 p-3 rounded-md">
+                <div className="mt-6 rounded-md bg-muted p-3 text-sm leading-relaxed text-muted-foreground">
                     This will allow us to send you notifications (awareness
                     video or email or SMS) according to your disease. Your
                     information will never be shared with third party.
@@ -269,7 +269,7 @@ export function PatientForm({ onBack }: PatientFormProps) {
                     <Button
                         type="submit"
                         disabled={isSubmitting}
-                        className="rounded-full bg-blue-800 hover:bg-blue-900"
+                        className="rounded-full bg-secondary text-white hover:bg-secondary/90"
                     >
                         {isSubmitting ? "Submitting..." : "Subscribe"}
                     </Button>

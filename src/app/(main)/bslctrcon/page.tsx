@@ -11,7 +11,7 @@ export default function BslctrConPage() {
     const [year, setYear] = useState<string | null>(null);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200 flex items-center justify-center px-4 py-20">
+        <div className="min-h-screen bg-gradient-to-br from-slate-100 via-primary/5 to-slate-200 flex items-center justify-center px-4 py-20">
             <div className="w-full max-w-3xl">
                 <h1 className="text-3xl md:text-4xl font-bold text-center text-slate-800 mb-2">BSLCTR CON</h1>
                 <p className="text-center text-slate-500 mb-12 text-sm">
@@ -30,7 +30,7 @@ export default function BslctrConPage() {
                     <div>
                         <button
                             onClick={() => setYear(null)}
-                            className="inline-flex items-center gap-1.5 text-slate-500 hover:text-blue-600 text-sm mb-6 transition-colors"
+                            className="inline-flex items-center gap-1.5 rounded-md text-slate-500 hover:text-primary text-sm mb-6 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2"
                         >
                             <ChevronLeft className="h-4 w-4" /> Back to years
                         </button>
@@ -42,18 +42,18 @@ export default function BslctrConPage() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                             <ConCard
                                 href={`/bslctrcon/moments?year=${year}`}
-                                icon={<Camera className="h-12 w-12 text-blue-600" />}
+                                icon={<Camera className="h-12 w-12 text-white" />}
                                 title="Some Moments from BSLCTR CON"
                                 description="Photo highlights of speakers, sessions, and ceremonies from the conference"
-                                gradient="from-blue-600 to-sky-400"
+                                gradient="from-teal-600 to-cyan-400"
                                 index={0}
                             />
                             <ConCard
                                 href={`/bslctrcon/lectures?year=${year}`}
-                                icon={<Presentation className="h-12 w-12 text-indigo-600" />}
+                                icon={<Presentation className="h-12 w-12 text-white" />}
                                 title="Lectures from BSLCTR"
                                 description="Scientific lectures and presentations delivered at BSLCTR CON"
-                                gradient="from-indigo-600 to-blue-400"
+                                gradient="from-cyan-600 to-teal-400"
                                 index={1}
                             />
                         </div>
@@ -78,16 +78,16 @@ function YearCard({
             transition={{ duration: 0.5, delay: index * 0.12 }}
             whileHover={{ y: -6 }}
             onClick={onClick}
-            className="block w-full text-left group"
+            className="block w-full text-left group rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2"
         >
-            <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:shadow-blue-200/50 border border-slate-100 overflow-hidden transition-all duration-300">
-                <div className="bg-gradient-to-br from-blue-600 to-sky-400 h-32 flex items-center justify-center">
+            <div className="bg-white rounded-xl shadow-sm hover:shadow-lg hover:shadow-primary/10 border border-slate-100 overflow-hidden transition-all duration-300">
+                <div className="bg-gradient-to-br from-teal-600 to-cyan-400 h-32 flex items-center justify-center">
                     <div className="bg-white/20 rounded-full p-4 group-hover:scale-110 transition-transform duration-300">
                         <Calendar className="h-9 w-9 text-white" />
                     </div>
                 </div>
                 <div className="p-5 text-center">
-                    <h2 className="text-lg font-bold text-slate-800 group-hover:text-blue-600 transition-colors">
+                    <h2 className="text-lg font-bold text-slate-800 group-hover:text-primary transition-colors">
                         BSLCTRCON {year}
                     </h2>
                 </div>
@@ -113,15 +113,15 @@ function ConCard({
             transition={{ duration: 0.5, delay: index * 0.15 }}
             whileHover={{ y: -6 }}
         >
-            <Link href={href} className="block group">
-                <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:shadow-blue-200/50 border border-slate-100 overflow-hidden transition-all duration-300">
+            <Link href={href} className="block group rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2">
+                <div className="bg-white rounded-xl shadow-sm hover:shadow-lg hover:shadow-primary/10 border border-slate-100 overflow-hidden transition-all duration-300">
                     <div className={`bg-gradient-to-br ${gradient} h-44 flex items-center justify-center`}>
                         <div className="bg-white/20 rounded-full p-5 group-hover:scale-110 transition-transform duration-300">
                             {icon}
                         </div>
                     </div>
                     <div className="p-6 text-center">
-                        <h2 className="text-xl font-bold text-slate-800 mb-2 group-hover:text-blue-600 transition-colors">{title}</h2>
+                        <h2 className="text-xl font-bold text-slate-800 mb-2 group-hover:text-primary transition-colors">{title}</h2>
                         <p className="text-slate-500 text-sm leading-relaxed">{description}</p>
                     </div>
                 </div>

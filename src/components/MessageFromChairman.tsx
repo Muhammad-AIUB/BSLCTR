@@ -192,7 +192,7 @@ Thank you.`,
 
                                     {/* Content Section */}
                                     <div className="flex-1">
-                                        <div className="relative bg-white rounded-2xl shadow-lg border border-slate-200 p-5 sm:p-8 lg:p-10 hover:shadow-xl transition-shadow duration-300">
+                                        <div className="relative bg-white rounded-xl shadow-lg border border-slate-200 p-6 sm:p-8 lg:p-10 hover:shadow-xl transition-shadow duration-300">
                                             {/* Quote icon */}
                                             <Quote className="absolute -top-3 left-8 w-12 h-12 text-primary/20" />
 

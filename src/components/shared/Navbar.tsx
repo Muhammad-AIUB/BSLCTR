@@ -114,35 +114,35 @@ const Navbar = () => {
                             {/* Avatar button with notification badge */}
                             <button
                                 onClick={() => setAdminMenuOpen((p) => !p)}
-                                className="relative w-11 h-11 rounded-full bg-blue-700 hover:bg-blue-600 text-white font-bold text-lg flex items-center justify-center shadow-md border-2 border-white/30 transition-colors"
+                                className="focus-ring relative flex size-11 items-center justify-center rounded-full border-2 border-white/30 bg-secondary text-lg font-bold text-white shadow-md transition-colors hover:bg-secondary/90 active:scale-95"
                                 title={adminEmail}
                             >
                                 {adminInitial}
                                 {pendingCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center px-1 border border-white shadow">
+                                    <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full border border-white bg-destructive px-1 text-2xs font-bold text-white shadow">
                                         {pendingCount}
                                     </span>
                                 )}
                             </button>
 
                             {adminMenuOpen && (
-                                <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 z-[9999] overflow-hidden">
+                                <div className="menu-panel absolute right-0 mt-2 w-56">
                                     {/* Header */}
-                                    <div className="px-4 py-3 border-b border-slate-100">
-                                        <p className="text-xs text-slate-400">Logged in as</p>
-                                        <p className="text-sm font-semibold text-slate-700 truncate">{adminEmail}</p>
+                                    <div className="border-b border-border px-4 py-3">
+                                        <p className="text-xs text-muted-foreground">Logged in as</p>
+                                        <p className="truncate text-sm font-semibold text-foreground">{adminEmail}</p>
                                     </div>
 
                                     {/* Notifications link */}
                                     <Link
                                         href="/dashboard/notifications"
-                                        className="flex items-center gap-2 px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 font-medium transition-colors"
+                                        className="menu-item"
                                         onClick={() => setAdminMenuOpen(false)}
                                     >
                                         <Bell className="h-4 w-4 text-primary" />
                                         <span className="flex-1">Notifications</span>
                                         {pendingCount > 0 && (
-                                            <span className="min-w-[20px] h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center px-1">
+                                            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1 text-2xs font-bold text-white">
                                                 {pendingCount}
                                             </span>
                                         )}
@@ -151,19 +151,19 @@ const Navbar = () => {
                                     {/* Dashboard link */}
                                     <Link
                                         href="/dashboard"
-                                        className="flex items-center gap-2 px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 font-medium transition-colors"
+                                        className="menu-item"
                                         onClick={() => setAdminMenuOpen(false)}
                                     >
                                         <LayoutDashboard className="h-4 w-4 text-primary" />
                                         Dashboard
                                     </Link>
 
-                                    <div className="h-px bg-slate-100" />
+                                    <div className="h-px bg-border" />
 
                                     {/* Logout */}
                                     <button
                                         onClick={handleAdminLogout}
-                                        className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-600 hover:bg-red-50 font-medium transition-colors"
+                                        className="menu-item text-destructive hover:bg-destructive/10 hover:text-destructive"
                                     >
                                         <LogOut className="h-4 w-4" />
                                         Log Out
@@ -176,30 +176,30 @@ const Navbar = () => {
                         <div className="relative" ref={memberMenuRef}>
                             <button
                                 onClick={() => setMemberMenuOpen((p) => !p)}
-                                className="w-11 h-11 rounded-full bg-teal-600 hover:bg-teal-500 text-white font-bold text-lg flex items-center justify-center shadow-md border-2 border-white/30 transition-colors"
+                                className="focus-ring flex size-11 items-center justify-center rounded-full border-2 border-white/30 bg-teal-600 text-lg font-bold text-white shadow-md transition-colors hover:bg-teal-500 active:scale-95"
                                 title={memberName}
                             >
                                 {memberInitial}
                             </button>
 
                             {memberMenuOpen && (
-                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-[9999]">
-                                    <div className="px-4 py-3 border-b border-slate-100">
-                                        <p className="text-xs text-slate-400">Logged in as</p>
-                                        <p className="text-sm font-semibold text-slate-700 truncate">{memberName}</p>
+                                <div className="menu-panel absolute right-0 mt-2 w-48">
+                                    <div className="border-b border-border px-4 py-3">
+                                        <p className="text-xs text-muted-foreground">Logged in as</p>
+                                        <p className="truncate text-sm font-semibold text-foreground">{memberName}</p>
                                     </div>
                                     <Link
                                         href="/member-dashboard"
-                                        className="flex items-center gap-2 px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 font-medium transition-colors"
+                                        className="menu-item"
                                         onClick={() => setMemberMenuOpen(false)}
                                     >
                                         <LayoutDashboard className="h-4 w-4 text-teal-600" />
                                         Dashboard
                                     </Link>
-                                    <div className="h-px bg-slate-100" />
+                                    <div className="h-px bg-border" />
                                     <button
                                         onClick={handleMemberLogout}
-                                        className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-600 hover:bg-red-50 font-medium transition-colors"
+                                        className="menu-item text-destructive hover:bg-destructive/10 hover:text-destructive"
                                     >
                                         <LogOut className="h-4 w-4" />
                                         Log Out
@@ -214,22 +214,22 @@ const Navbar = () => {
                             <div className="relative" ref={memberMenuRef}>
                                 <button
                                     onClick={() => setMemberMenuOpen((p) => !p)}
-                                    className="px-3 sm:px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm font-medium border border-white/30 transition-colors"
+                                    className="focus-ring rounded-full border border-white/30 bg-white/10 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-white/20 active:scale-95 sm:px-4"
                                 >
                                     Member
                                 </button>
                                 {memberMenuOpen && (
-                                    <div className="absolute right-0 mt-2 w-40 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-[9999]">
+                                    <div className="menu-panel absolute right-0 mt-2 w-40">
                                         <Link
                                             href="/member-signup"
-                                            className="block w-full px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 font-medium transition-colors"
+                                            className="menu-item"
                                             onClick={() => setMemberMenuOpen(false)}
                                         >
                                             Sign Up
                                         </Link>
-                                        <div className="h-px bg-slate-100" />
+                                        <div className="h-px bg-border" />
                                         <button
-                                            className="w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 font-medium transition-colors"
+                                            className="menu-item"
                                             onClick={() => { setMemberMenuOpen(false); setLoginOpen(true); }}
                                         >
                                             Log In

@@ -33,11 +33,11 @@ function TabToggle({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) 
     return (
         <div className="inline-flex items-center bg-slate-200 rounded-xl p-1 gap-1 mb-6">
             <button onClick={() => onChange("add")}
-                className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all ${tab === "add" ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
+                className={`flex items-center gap-2 px-5 py-2 rounded-md text-sm font-semibold transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 ${tab === "add" ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
                 <PlusCircle className="h-4 w-4" /> Add
             </button>
             <button onClick={() => onChange("list")}
-                className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all ${tab === "list" ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
+                className={`flex items-center gap-2 px-5 py-2 rounded-md text-sm font-semibold transition-all outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 ${tab === "list" ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
                 <List className="h-4 w-4" /> List View
             </button>
         </div>
@@ -66,7 +66,7 @@ function TagsInput({ tags, onChange }: { tags: string[]; onChange: (t: string[])
                     {tags.map(t => (
                         <span key={t} className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">
                             <Tag className="h-3 w-3" />{t}
-                            <button type="button" onClick={() => onChange(tags.filter(x => x !== t))}><X className="h-3 w-3 hover:text-red-500" /></button>
+                            <button type="button" onClick={() => onChange(tags.filter(x => x !== t))} className="outline-none focus-visible:ring-2 focus-visible:ring-destructive/40 focus-visible:ring-offset-2"><X className="h-3 w-3 hover:text-red-500 transition-colors" /></button>
                         </span>
                     ))}
                 </div>
@@ -109,7 +109,7 @@ function FilesField({ files, onChange }: { files: string[]; onChange: (f: string
                         <span className="text-xs text-slate-500 font-medium flex items-center gap-1">
                             <FileText className="h-3 w-3" /> File {i + 1}
                         </span>
-                        <button type="button" onClick={() => removeEntry(i)} className="text-red-400 hover:text-red-600">
+                        <button type="button" onClick={() => removeEntry(i)} className="text-red-400 hover:text-red-600 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-destructive/40 focus-visible:ring-offset-2">
                             <X className="h-4 w-4" />
                         </button>
                     </div>
@@ -120,18 +120,18 @@ function FilesField({ files, onChange }: { files: string[]; onChange: (f: string
                         className="text-sm"
                     />
                     <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-xs text-slate-400">or upload:</span>
+                        <span className="text-xs text-slate-500">or upload:</span>
                         <input
                             type="file"
                             accept=".pdf,.ppt,.pptx"
                             onChange={e => { const f = e.target.files?.[0]; if (f) uploadFile(f, i); }}
                             className="block max-w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
                         />
-                        {uploading === i && <span className="text-xs text-slate-400">Uploading...</span>}
+                        {uploading === i && <span className="text-xs text-slate-500">Uploading...</span>}
                     </div>
                     {file && (
                         <a href={file} target="_blank" rel="noreferrer"
-                            className="text-xs text-primary hover:underline flex items-center gap-1">
+                            className="text-xs text-primary hover:underline flex items-center gap-1 outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2">
                             <FileText className="h-3 w-3" /> View {getFileType(file)}
                         </a>
                     )}
@@ -164,7 +164,7 @@ function CaseForm({ initial, onSave, onCancel, submitting, error, editMode }: {
             </div>
 
             <div className="space-y-2">
-                <Label>Upload <span className="text-slate-400 text-xs">(PDF / PPT)</span></Label>
+                <Label>Upload <span className="text-slate-500 text-xs">(PDF / PPT)</span></Label>
                 <FilesField files={form.files} onChange={v => set("files", v)} />
             </div>
 
@@ -260,7 +260,7 @@ export default function CasePresentationsPage() {
             <TabToggle tab={tab} onChange={t => { setTab(t); if (t === "list") cancelEdit(); }} />
 
             {tab === "add" && (
-                <div className="max-w-2xl mx-auto bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                <div className="max-w-2xl mx-auto bg-white rounded-xl border border-slate-200 shadow-sm p-6">
                     <h3 className="text-base font-semibold text-slate-800 mb-5">
                         {editingId ? "Edit Case Presentation" : "Add Case Presentation"}
                     </h3>
@@ -279,9 +279,9 @@ export default function CasePresentationsPage() {
             {tab === "list" && (
                 <div className="max-w-4xl mx-auto">
                     {loading ? (
-                        <div className="text-center py-16 text-slate-400">Loading...</div>
+                        <div className="text-center py-16 text-slate-500">Loading...</div>
                     ) : cases.length === 0 ? (
-                        <div className="text-center py-16 text-slate-400">No case presentations yet.</div>
+                        <div className="text-center py-16 text-slate-500">No case presentations yet.</div>
                     ) : (
                         <div className="space-y-4">
                             {cases.map(c => (
@@ -322,7 +322,7 @@ function CaseCard({ caseItem: c, onEdit, onDelete }: { caseItem: CasePresentatio
                             <Button size="sm" variant="outline" className="text-slate-600 hover:text-primary" onClick={onEdit}>
                                 <Pencil className="h-3.5 w-3.5 mr-1" /> Edit
                             </Button>
-                            <Button size="sm" variant="outline" className="text-slate-400 hover:text-red-500 hover:border-red-300" onClick={() => setConfirm(true)}>
+                            <Button size="sm" variant="outline" className="text-slate-500 hover:text-red-500 hover:border-red-300" onClick={() => setConfirm(true)}>
                                 <Trash2 className="h-3.5 w-3.5 mr-1" /> Delete
                             </Button>
                         </>
@@ -334,7 +334,7 @@ function CaseCard({ caseItem: c, onEdit, onDelete }: { caseItem: CasePresentatio
                 <div className="flex flex-wrap gap-2 mb-3">
                     {c.files.map((f, i) => (
                         <a key={i} href={f} target="_blank" rel="noreferrer"
-                            className={`inline-flex items-center gap-1.5 text-xs border px-3 py-1.5 rounded-lg transition-colors ${getFileColor(f)}`}>
+                            className={`inline-flex items-center gap-1.5 text-xs border px-3 py-1.5 rounded-md transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 ${getFileColor(f)}`}>
                             <FileText className="h-3.5 w-3.5" /> {getFileLabel(f, i)}
                         </a>
                     ))}

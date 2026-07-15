@@ -19,8 +19,8 @@ export function Footer() {
     const [showSubscribe, setShowSubscribe] = useState(false);
 
     return (
-        <footer className="w-full bg-blue-900 text-white">
-            <div className="container mx-auto px-4 py-10">
+        <footer className="w-full bg-teal-900 text-white">
+            <div className="page-container py-12">
                 <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
                     {/* Brand */}
                     <div className="flex max-w-sm flex-col items-center text-center md:items-start md:text-left">
@@ -38,7 +38,7 @@ export function Footer() {
 
                     {/* Quick links + Subscribe */}
                     <div className="flex flex-col items-center gap-4 md:items-end">
-                        <h4 className="text-xs font-semibold uppercase tracking-wider text-white/50">
+                        <h4 className="text-xs font-semibold uppercase tracking-wider text-white/60">
                             Quick Links
                         </h4>
                         <nav className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm font-medium md:justify-end">
@@ -46,7 +46,7 @@ export function Footer() {
                                 <Link
                                     key={link.path}
                                     href={link.path}
-                                    className="text-white/80 transition-colors hover:text-white hover:underline"
+                                    className="text-white/80 outline-none transition-colors hover:text-white hover:underline focus-visible:text-white focus-visible:underline"
                                 >
                                     {link.name}
                                 </Link>
@@ -55,7 +55,7 @@ export function Footer() {
                         <button
                             type="button"
                             onClick={() => setShowSubscribe(true)}
-                            className="mt-1 rounded-full bg-white px-5 py-2 text-sm font-semibold text-blue-900 transition-colors hover:bg-white/90"
+                            className="mt-1 rounded-full bg-white px-5 py-2 text-sm font-semibold text-teal-900 outline-none transition-all duration-200 hover:bg-white/90 focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent active:scale-95"
                         >
                             Subscribe
                         </button>
@@ -65,7 +65,7 @@ export function Footer() {
                 <Separator className="my-6 bg-white/20" />
 
                 {/* Bottom */}
-                <p className="text-center text-xs text-white/50">
+                <p className="text-center text-xs text-white/60">
                     © {new Date().getFullYear()} BSLCTR [Bangladesh Society for
                     Liver Cancer Treatment &amp; Research] – All Rights Reserved
                 </p>

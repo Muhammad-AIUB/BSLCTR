@@ -61,7 +61,7 @@ export default function NotificationsPage() {
                 {/* Back to Site */}
                 <Link
                     href="/"
-                    className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-primary mb-6 transition-colors"
+                    className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-primary mb-6 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2"
                 >
                     <ArrowLeft className="h-4 w-4" /> Back to Site
                 </Link>
@@ -73,10 +73,10 @@ export default function NotificationsPage() {
                     </div>
                     <div>
                         <h1 className="text-xl font-bold text-slate-800">Notifications</h1>
-                        <p className="text-sm text-slate-400">Member upload requests</p>
+                        <p className="text-sm text-slate-500">Member upload requests</p>
                     </div>
                     {items.length > 0 && (
-                        <span className="ml-auto inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-500 text-white text-xs font-bold">
+                        <span className="ml-auto inline-flex items-center justify-center w-6 h-6 rounded-full bg-destructive text-white text-xs font-bold">
                             {items.length}
                         </span>
                     )}
@@ -84,28 +84,28 @@ export default function NotificationsPage() {
 
                 {/* Content */}
                 {loading ? (
-                    <div className="text-center py-16 text-slate-400">Loading...</div>
+                    <div className="text-center py-16 text-slate-500">Loading...</div>
                 ) : items.length === 0 ? (
-                    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-12 text-center">
+                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-12 text-center">
                         <Bell className="h-10 w-10 text-slate-200 mx-auto mb-3" />
-                        <p className="text-slate-400 font-medium">No pending uploads</p>
+                        <p className="text-slate-500 font-medium">No pending uploads</p>
                         <p className="text-slate-300 text-sm mt-1">Member submissions will appear here</p>
                     </div>
                 ) : (
                     <div className="space-y-3">
                         {items.map((item) => (
-                            <div key={`${item.type}-${item.id}`} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                            <div key={`${item.type}-${item.id}`} className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
                                 <div className="flex items-start gap-3">
-                                    <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${item.type === "video" ? "bg-blue-100" : "bg-purple-100"}`}>
+                                    <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${item.type === "video" ? "bg-primary/10" : "bg-purple-100"}`}>
                                         {item.type === "video"
-                                            ? <Video className="h-4 w-4 text-blue-600" />
+                                            ? <Video className="h-4 w-4 text-primary" />
                                             : <ImageIcon className="h-4 w-4 text-purple-600" />
                                         }
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="font-semibold text-slate-800 truncate">{item.title}</p>
                                         {item.uploadedByName && (
-                                            <p className="text-xs text-slate-400 mt-0.5">
+                                            <p className="text-xs text-slate-500 mt-0.5">
                                                 Submitted by <span className="font-medium text-slate-600">{item.uploadedByName}</span>
                                             </p>
                                         )}
@@ -113,7 +113,7 @@ export default function NotificationsPage() {
                                             href={item.link}
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="text-xs text-primary hover:underline mt-1 inline-block truncate max-w-full"
+                                            className="text-xs text-primary hover:underline mt-1 inline-block truncate max-w-full outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2"
                                         >
                                             {item.link}
                                         </a>
@@ -123,13 +123,13 @@ export default function NotificationsPage() {
                                 <div className="flex gap-2 mt-4">
                                     <button
                                         onClick={() => handleStatus(item, "APPROVED")}
-                                        className="flex-1 flex items-center justify-center gap-1.5 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 px-4 py-2 max-lg:py-2.5 rounded-xl transition-colors"
+                                        className="flex-1 flex items-center justify-center gap-1.5 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 px-4 py-2 max-lg:py-2.5 rounded-md transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2"
                                     >
                                         <Check className="h-4 w-4" /> Approve
                                     </button>
                                     <button
                                         onClick={() => handleStatus(item, "REJECTED")}
-                                        className="flex-1 flex items-center justify-center gap-1.5 text-sm font-semibold text-white bg-red-500 hover:bg-red-600 px-4 py-2 max-lg:py-2.5 rounded-xl transition-colors"
+                                        className="flex-1 flex items-center justify-center gap-1.5 text-sm font-semibold text-white bg-red-500 hover:bg-red-600 px-4 py-2 max-lg:py-2.5 rounded-md transition-colors outline-none focus-visible:ring-2 focus-visible:ring-destructive/40 focus-visible:ring-offset-2"
                                     >
                                         <X className="h-4 w-4" /> Reject
                                     </button>

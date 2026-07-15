@@ -189,7 +189,7 @@ export default function MemberSignupPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white">
+        <div className="min-h-screen bg-gradient-to-b from-primary/5 to-white">
             {/* Header */}
             <header className="border-b border-slate-200 bg-white/70 backdrop-blur-sm">
                 <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
@@ -208,7 +208,7 @@ export default function MemberSignupPage() {
 
             <div className="mx-auto max-w-2xl px-4 py-10 sm:py-14">
                 {submitted ? (
-                    <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+                    <div className="rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
                         <div className="flex flex-col items-center gap-4 py-6 text-center">
                             <CheckCircle className="h-16 w-16 text-green-500" />
                             <h1 className="text-2xl font-bold text-slate-800">
@@ -237,7 +237,7 @@ export default function MemberSignupPage() {
 
                         <form
                             onSubmit={handleSubmit}
-                            className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8"
+                            className="space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8"
                         >
                             {/* 1. Name — letters and "." only */}
                             <div className="space-y-1">
@@ -371,7 +371,7 @@ export default function MemberSignupPage() {
                                 <Label>Chamber address</Label>
                                 <div className="space-y-2">
                                     {chambers.map((c, i) => (
-                                        <div key={i} className="space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
+                                        <div key={i} className="space-y-2 rounded-md border border-slate-200 bg-muted p-3">
                                             <div className="flex items-center justify-between">
                                                 <span className="text-xs font-medium text-slate-500">
                                                     Chamber {i + 1}
@@ -380,7 +380,7 @@ export default function MemberSignupPage() {
                                                     <button
                                                         type="button"
                                                         onClick={() => removeChamber(i)}
-                                                        className="text-red-400 hover:text-red-600"
+                                                        className="rounded text-destructive/70 outline-none transition-colors hover:text-destructive focus-visible:ring-2 focus-visible:ring-destructive/40"
                                                     >
                                                         <X className="h-4 w-4" />
                                                     </button>
@@ -421,7 +421,7 @@ export default function MemberSignupPage() {
                             <div className="space-y-1">
                                 <Label htmlFor="shortIntroduction">
                                     Short Introduction{" "}
-                                    <span className="text-xs text-slate-400">
+                                    <span className="text-xs text-slate-500">
                                         (as written on your prescription)
                                     </span>
                                 </Label>
@@ -525,7 +525,7 @@ export default function MemberSignupPage() {
                             </div>
 
                             {error && (
-                                <p className="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-500">
+                                <p className="rounded-md border border-destructive/20 bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
                                     {error}
                                 </p>
                             )}

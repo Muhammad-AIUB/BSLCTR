@@ -43,7 +43,7 @@ export default function AdminLoginModal() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="bg-blue-800 hover:bg-blue-900 rounded-full">
+                <Button className="rounded-full border border-white/30 bg-white/10 text-white hover:bg-white/20">
                     Admin Login
                 </Button>
             </DialogTrigger>

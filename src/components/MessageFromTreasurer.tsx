@@ -29,12 +29,12 @@ const MessageFromTreasurer = () => {
     return (
         <section ref={ref} className="relative overflow-hidden py-16 lg:py-24">
             {/* Simple Light Background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-purple-50/30 to-white">
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-primary/5 to-white">
                 {/* Subtle pattern overlay */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(139,69,190,0.1)_1px,transparent_0)] bg-[size:30px_30px] opacity-40" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(0,162,183,0.08)_1px,transparent_0)] bg-[size:30px_30px] opacity-40" />
 
                 {/* Single subtle accent */}
-                <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-purple-200/20 rounded-full blur-3xl" />
+                <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
             </div>
 
             <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -51,7 +51,7 @@ const MessageFromTreasurer = () => {
                         variants={fadeInUp}
                         transition={{ duration: 0.6, ease: "easeOut" }}
                     >
-                        <span className="bg-gradient-to-r from-purple-600 via-slate-700 to-purple-600 bg-clip-text text-transparent">
+                        <span className="bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
                             Message from Treasurer
                         </span>
                     </motion.h2>
@@ -64,7 +64,7 @@ const MessageFromTreasurer = () => {
                     animate={isInView ? "visible" : "hidden"}
                     transition={{ delay: 0.3 }}
                 >
-                    <Card className="overflow-hidden shadow-lg border border-gray-200 bg-white">
+                    <Card className="overflow-hidden border border-slate-200 bg-white shadow-lg">
                         <div className="p-6 sm:p-8 lg:p-12 text-center">
                             <motion.div
                                 variants={fadeInUp}
