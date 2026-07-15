@@ -81,7 +81,7 @@ Legend: ✅ done · 🔧 in progress · ⬜ pending
 - ✅ `views/Live-Webinars.tsx` · `views/Live.tsx`
 - ✅ `app/(main)/cases` · `app/(main)/gallery` (+ `photo`, `video`) · `app/(main)/bslctrcon` (+ `lectures`, `moments`)
 - ✅ misc components: `Search.tsx` · `ShareButtons.tsx` · `RecentUpdates.tsx` (done in Phase 2)
-- ⏭️ `views/Gallery.tsx`, `views/Webinar.tsx` — **unused/dead code** (no route imports them); skipped intentionally. `AutoplayCarousel`, `YoutubeLive`, `RichTextEditor`, `LiverCursor` — pending (low visual priority).
+- 🗑️ `views/Gallery.tsx`, `views/Webinar.tsx` — **deleted** (dead code, imported by no route). `AutoplayCarousel`, `YoutubeLive`, `RichTextEditor`, `LiverCursor` — pending (low visual priority).
 
 ### Phase 5 — Admin & member dashboards
 - ✅ `app/(admin)/dashboard/layout.tsx` (shared admin chrome)
@@ -98,9 +98,9 @@ Legend: ✅ done · 🔧 in progress · ⬜ pending
 
 ## Status: ✅ Complete
 
-Every rendered component/page has been brought onto one design system. Not touched (intentional):
-- `views/Gallery.tsx`, `views/Webinar.tsx` — **dead code**, imported by no route (still contain old blue/sky styling; delete candidates).
-- `LiverCursor.tsx`, `AutoplayCarousel.tsx`, `YoutubeLive.tsx`, `RichTextEditor.tsx` — behavior/util components with negligible standalone styling.
+Every rendered component/page has been brought onto one design system.
+- `views/Gallery.tsx`, `views/Webinar.tsx` — **deleted** (dead code, imported by no route; had confirmed no static/dynamic references).
+- `LiverCursor.tsx`, `AutoplayCarousel.tsx`, `YoutubeLive.tsx`, `RichTextEditor.tsx` — not touched (behavior/util components with negligible standalone styling).
 
 Note: the in-app screenshot tool couldn't capture frames because the site runs continuous animations (custom cursor + `animate-pulse`); verification was done via HTTP status, `tsc -b`, and computed-style probes instead.
 
