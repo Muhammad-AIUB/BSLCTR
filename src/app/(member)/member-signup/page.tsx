@@ -14,21 +14,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { X, Plus, CheckCircle, ArrowLeft } from "lucide-react";
-
-const DISTRICTS = [
-    "Bagerhat", "Bandarban", "Barguna", "Barishal", "Bhola", "Bogura",
-    "Brahmanbaria", "Chandpur", "Chapainawabganj", "Chattogram", "Chuadanga",
-    "Cox's Bazar", "Cumilla", "Dhaka", "Dinajpur", "Faridpur", "Feni",
-    "Gaibandha", "Gazipur", "Gopalganj", "Habiganj", "Jamalpur", "Jashore",
-    "Jhalokati", "Jhenaidah", "Joypurhat", "Khagrachhari", "Khulna",
-    "Kishoreganj", "Kurigram", "Kushtia", "Lakshmipur", "Lalmonirhat",
-    "Madaripur", "Magura", "Manikganj", "Meherpur", "Moulvibazar", "Munshiganj",
-    "Mymensingh", "Naogaon", "Narail", "Narayanganj", "Narsingdi", "Natore",
-    "Netrokona", "Nilphamari", "Noakhali", "Pabna", "Panchagarh", "Patuakhali",
-    "Pirojpur", "Rajbari", "Rajshahi", "Rangamati", "Rangpur", "Satkhira",
-    "Shariatpur", "Sherpur", "Sirajganj", "Sunamganj", "Sylhet", "Tangail",
-    "Thakurgaon",
-];
+import DistrictCombobox from "@/components/DistrictCombobox";
 
 const uploadFile = async (file: File): Promise<string> => {
     const fd = new FormData();
@@ -386,20 +372,11 @@ export default function MemberSignupPage() {
                                                     </button>
                                                 )}
                                             </div>
-                                            <Select
+                                            <DistrictCombobox
                                                 value={c.district}
-                                                onValueChange={(v) => updateChamber(i, "district", v)}
+                                                onChange={(v) => updateChamber(i, "district", v)}
                                                 disabled={isOther}
-                                            >
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select district..." />
-                                                </SelectTrigger>
-                                                <SelectContent className="max-h-60">
-                                                    {DISTRICTS.map((d) => (
-                                                        <SelectItem key={d} value={d}>{d}</SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
+                                            />
                                             <Input
                                                 value={c.address}
                                                 onChange={(e) => updateChamber(i, "address", e.target.value)}
