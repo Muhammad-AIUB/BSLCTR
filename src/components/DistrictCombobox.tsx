@@ -26,6 +26,9 @@ export default function DistrictCombobox({
 }: DistrictComboboxProps) {
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState("");
+    // False until the user actually types, so opening with a district already
+    // chosen still shows the whole list instead of just that one match.
+    const [typed, setTyped] = useState(false);
     const [active, setActive] = useState(0);
 
     const wrapRef = useRef<HTMLDivElement>(null);
@@ -36,11 +39,19 @@ export default function DistrictCombobox({
     const inputId = id ?? `district-${autoId}`;
     const listId = `${inputId}-list`;
 
-    // While closed the input shows the selection; while open it shows what the
-    // user is typing, so the whole list stays reachable after a pick.
-    const results = useMemo(() => searchDistricts(query), [query]);
+    const results = useMemo(
+        () => searchDistricts(typed ? query : ""),
+        [query, typed],
+    );
 
     useEffect(() => setActive(0), [query]);
+
+    // Runs after the open state is committed, so React re-rendering the input
+    // cannot clobber the selection. Preselecting means the first keystroke
+    // replaces the current district instead of appending to it.
+    useEffect(() => {
+        if (open) inputRef.current?.select();
+    }, [open]);
 
     useEffect(() => {
         if (!open) return;
@@ -64,8 +75,16 @@ export default function DistrictCombobox({
             ?.scrollIntoView({ block: "nearest" });
     }, [active, open]);
 
+    function openMenu() {
+        if (disabled || open) return;
+        setOpen(true);
+        setTyped(false);
+        setQuery(value);
+    }
+
     function close() {
         setOpen(false);
+        setTyped(false);
         setQuery("");
     }
 
@@ -79,7 +98,7 @@ export default function DistrictCombobox({
         if (e.key === "ArrowDown" || e.key === "ArrowUp") {
             e.preventDefault();
             if (!open) {
-                setOpen(true);
+                openMenu();
                 return;
             }
             if (results.length === 0) return;
@@ -89,9 +108,12 @@ export default function DistrictCombobox({
                     : (i - 1 + results.length) % results.length,
             );
         } else if (e.key === "Enter") {
-            if (open && results[active]) {
+            // Always swallow Enter while open, even with no matches: this
+            // combobox sits inside the signup form, and an unhandled Enter
+            // would submit it.
+            if (open) {
                 e.preventDefault();
-                pick(results[active]);
+                if (results[active]) pick(results[active]);
             }
         } else if (e.key === "Escape") {
             if (open) {
@@ -124,16 +146,19 @@ export default function DistrictCombobox({
                     placeholder={placeholder}
                     value={open ? query : value}
                     onChange={(e) => {
+                        setTyped(true);
                         setQuery(e.target.value);
                         if (!open) setOpen(true);
                     }}
-                    onFocus={() => setOpen(true)}
-                    onClick={() => setOpen(true)}
+                    onFocus={openMenu}
+                    onClick={openMenu}
                     onKeyDown={onKeyDown}
                     className="flex h-9 w-full min-w-0 rounded-md border border-input bg-transparent py-1 pl-3 pr-16 text-base shadow-xs outline-none transition-[color,box-shadow] selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                 />
 
-                <div className="absolute inset-y-0 right-0 flex items-center gap-0.5 pr-2">
+                {/* pointer-events-none so clicking the chevron falls through to
+                    the input and opens the menu; the clear button opts back in. */}
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center gap-0.5 pr-2">
                     {value && !disabled && (
                         <button
                             type="button"
@@ -141,9 +166,10 @@ export default function DistrictCombobox({
                             onClick={() => {
                                 onChange("");
                                 setQuery("");
+                                setTyped(false);
                                 inputRef.current?.focus();
                             }}
-                            className="rounded p-1 text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
+                            className="pointer-events-auto rounded p-1 text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
                         >
                             <X className="h-3.5 w-3.5" />
                         </button>
