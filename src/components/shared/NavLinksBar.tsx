@@ -8,14 +8,31 @@ import SubscribeModal from "../SubscribeModal";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
-const links = [
+type NavLink = {
+    name: string;
+    path: string;
+    /** Shown on hover (desktop) or as sub-text (mobile) when the short label needs unpacking. */
+    detail?: string[];
+};
+
+const links: NavLink[] = [
     { name: "Home", path: "/" },
     { name: "Live Webinars", path: "/live-webinars" },
     { name: "BSLCTRcon", path: "/bslctrcon" },
     {
-        name: "All Hepatologists, Hepatobiliary Surgeons, Interventional Lists",
+        name: "Doctors",
         path: "/hepatologist-surgeon-interventiona",
+        detail: [
+            "All Hepatologists",
+            "Hepatobiliary Surgeons",
+            "Interventional Lists",
+        ],
     },
     { name: "Guidelines", path: "/guidelines" },
     { name: "Case Presentations", path: "/cases" },
@@ -24,6 +41,7 @@ const links = [
     { name: "Donation", path: "/donate" },
     { name: "Subscribe", path: "/subscribe" },
     { name: "About US", path: "/about" },
+    { name: "Patients Guidelines", path: "/patients-guidelines" },
 ];
 
 const homeLink = links[0];
@@ -90,7 +108,14 @@ const NavLinksBar = () => {
                                                         : ""
                                                 }`}
                                             >
-                                                {link.name}
+                                                <span className="flex flex-col items-start gap-0.5">
+                                                    <span>{link.name}</span>
+                                                    {link.detail && (
+                                                        <span className="text-2xs font-normal text-white/60">
+                                                            {link.detail.join(" · ")}
+                                                        </span>
+                                                    )}
+                                                </span>
                                                 {link.path === "/live-webinars" && (
                                                     <span className={`ml-2 inline-flex items-center gap-1 text-2xs font-bold px-1.5 py-0.5 rounded-full border transition-all duration-300 ${
                                                         hasUpcoming
@@ -166,33 +191,64 @@ const NavLinksBar = () => {
                                             {link.name}
                                         </Button>
                                     ) : (
-                                        <Link
-                                            href={link.path}
-                                            className="flex items-stretch"
-                                        >
-                                            <Button
-                                                variant="ghost"
-                                                className={`relative rounded-none px-3 lg:px-4 text-white hover:bg-white/10 hover:text-white h-full text-2xs md:text-xs lg:text-sm font-medium whitespace-nowrap ${
-                                                    pathname === link.path
-                                                        ? "bg-white/20"
-                                                        : ""
-                                                }`}
-                                            >
-                                                {link.name}
-                                                {link.path === "/live-webinars" && (
-                                                    <span className={`ml-1.5 inline-flex items-center gap-1 text-2xs font-bold px-1.5 py-0.5 rounded-full border transition-all duration-300 ${
-                                                        hasUpcoming
-                                                            ? "bg-amber-400 border-amber-300 text-amber-900"
-                                                            : "bg-white/10 border-white/20 text-white/40"
-                                                    }`}>
-                                                        <span className={`inline-flex rounded-full h-1.5 w-1.5 ${
-                                                            hasUpcoming ? "bg-amber-700 animate-pulse" : "bg-white/30"
-                                                        }`} />
-                                                        Upcoming
-                                                    </span>
-                                                )}
-                                            </Button>
-                                        </Link>
+                                        (() => {
+                                            const navLink = (
+                                                <Link
+                                                    href={link.path}
+                                                    className="flex items-stretch"
+                                                >
+                                                    <Button
+                                                        variant="ghost"
+                                                        className={`relative rounded-none px-3 lg:px-4 text-white hover:bg-white/10 hover:text-white h-full text-2xs md:text-xs lg:text-sm font-medium whitespace-nowrap ${
+                                                            pathname === link.path
+                                                                ? "bg-white/20"
+                                                                : ""
+                                                        }`}
+                                                    >
+                                                        {link.name}
+                                                        {link.path === "/live-webinars" && (
+                                                            <span className={`ml-1.5 inline-flex items-center gap-1 text-2xs font-bold px-1.5 py-0.5 rounded-full border transition-all duration-300 ${
+                                                                hasUpcoming
+                                                                    ? "bg-amber-400 border-amber-300 text-amber-900"
+                                                                    : "bg-white/10 border-white/20 text-white/40"
+                                                            }`}>
+                                                                <span className={`inline-flex rounded-full h-1.5 w-1.5 ${
+                                                                    hasUpcoming ? "bg-amber-700 animate-pulse" : "bg-white/30"
+                                                                }`} />
+                                                                Upcoming
+                                                            </span>
+                                                        )}
+                                                    </Button>
+                                                </Link>
+                                            );
+
+                                            if (!link.detail) return navLink;
+
+                                            return (
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        {navLink}
+                                                    </TooltipTrigger>
+                                                    <TooltipContent
+                                                        side="bottom"
+                                                        sideOffset={4}
+                                                        className="pointer-events-none px-3 py-2 shadow-lg"
+                                                    >
+                                                        <ul className="flex flex-col gap-1 text-left">
+                                                            {link.detail.map((item) => (
+                                                                <li
+                                                                    key={item}
+                                                                    className="flex items-center gap-2 text-xs whitespace-nowrap"
+                                                                >
+                                                                    <span className="h-1 w-1 shrink-0 rounded-full bg-current opacity-60" />
+                                                                    {item}
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            );
+                                        })()
                                     )}
                                     <div className="w-px self-stretch bg-white/15" />
                                 </motion.div>
