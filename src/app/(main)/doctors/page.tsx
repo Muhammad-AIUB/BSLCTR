@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { BadgeCheck, MapPin, Stethoscope, User } from "lucide-react";
+import DistrictCombobox from "@/components/DistrictCombobox";
+import { districtFromChamber } from "@/lib/districts";
 
 interface Member {
     id: string;
@@ -48,6 +50,7 @@ export default function DoctorsPage() {
     const [members, setMembers] = useState<Member[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState("all");
+    const [district, setDistrict] = useState("");
 
     useEffect(() => {
         fetch("/api/members")
@@ -57,20 +60,31 @@ export default function DoctorsPage() {
             .finally(() => setLoading(false));
     }, []);
 
+    // District narrows the pool first, so the specialty counts below always
+    // describe what is actually reachable from the current district.
+    const inDistrict = useMemo(() => {
+        if (!district) return members;
+        return members.filter((m) =>
+            m.chamberAddresses.some(
+                (a) => districtFromChamber(a) === district,
+            ),
+        );
+    }, [members, district]);
+
     const counts = useMemo(() => {
-        const c: Record<string, number> = { all: members.length };
-        for (const m of members) {
+        const c: Record<string, number> = { all: inDistrict.length };
+        for (const m of inDistrict) {
             c[m.specialtySubject] = (c[m.specialtySubject] ?? 0) + 1;
         }
         return c;
-    }, [members]);
+    }, [inDistrict]);
 
     const visible = useMemo(
         () =>
             filter === "all"
-                ? members
-                : members.filter((m) => m.specialtySubject === filter),
-        [members, filter],
+                ? inDistrict
+                : inDistrict.filter((m) => m.specialtySubject === filter),
+        [inDistrict, filter],
     );
 
     return (
@@ -84,6 +98,22 @@ export default function DoctorsPage() {
                     Hepatologists, hepatobiliary surgeons and intervention
                     hepatologists registered with the society.
                 </p>
+
+                {/* District filter */}
+                <div className="mb-4 max-w-xs">
+                    <label
+                        htmlFor="district-filter"
+                        className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500"
+                    >
+                        Filter by district
+                    </label>
+                    <DistrictCombobox
+                        id="district-filter"
+                        value={district}
+                        onChange={setDistrict}
+                        placeholder="All districts"
+                    />
+                </div>
 
                 {/* Specialty filter */}
                 <div className="mb-8 flex flex-wrap gap-2">
@@ -128,12 +158,16 @@ export default function DoctorsPage() {
                             <p className="font-medium text-slate-600">
                                 {members.length === 0
                                     ? "No doctors listed yet."
-                                    : "No doctors in this specialty."}
+                                    : district && inDistrict.length === 0
+                                      ? `No doctors in ${district}.`
+                                      : "No doctors in this specialty."}
                             </p>
                             <p className="mt-1 text-sm text-slate-500">
                                 {members.length === 0
                                     ? "Approved members will appear here."
-                                    : "Try a different specialty filter."}
+                                    : district && inDistrict.length === 0
+                                      ? "Try another district."
+                                      : "Try a different specialty filter."}
                             </p>
                         </div>
                     </div>

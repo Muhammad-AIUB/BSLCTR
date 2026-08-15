@@ -66,6 +66,20 @@ export const DISTRICTS = [
     "Thakurgaon",
 ] as const;
 
+const DISTRICT_SET: ReadonlySet<string> = new Set(DISTRICTS);
+
+/**
+ * Pull the district out of a stored chamber address.
+ *
+ * Signup saves chambers as `"<district> — <address>"`, but the district is
+ * optional there, so the leading segment is only trusted when it is actually
+ * a known district name.
+ */
+export function districtFromChamber(chamberAddress: string): string | null {
+    const head = chamberAddress.split("—")[0].trim();
+    return DISTRICT_SET.has(head) ? head : null;
+}
+
 /**
  * Common alternative spellings, so typing a familiar older name still finds
  * the district. Keys are lowercase; values are the canonical district name.
