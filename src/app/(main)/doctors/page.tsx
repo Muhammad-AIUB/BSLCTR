@@ -32,15 +32,6 @@ const SPECIALTY_LABELS: Record<string, string> = {
     other: "Other",
 };
 
-// No "Other" chip: members who picked that specialty still appear under "All",
-// but it isn't offered as a filter of its own.
-const FILTERS = [
-    { key: "all", label: "All Doctors" },
-    { key: "hepatologist", label: "Hepatologists" },
-    { key: "hepatobiliary_surgeon", label: "Hepatobiliary Surgeons" },
-    { key: "intervention_hepatologist", label: "Intervention Hepatologists" },
-];
-
 const specialtyLabel = (m: Member) =>
     m.specialtySubject === "other" && m.otherSpecialty
         ? m.otherSpecialty
@@ -49,7 +40,6 @@ const specialtyLabel = (m: Member) =>
 export default function DoctorsPage() {
     const [members, setMembers] = useState<Member[]>([]);
     const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState("all");
     const [district, setDistrict] = useState("");
 
     useEffect(() => {
@@ -60,9 +50,7 @@ export default function DoctorsPage() {
             .finally(() => setLoading(false));
     }, []);
 
-    // District narrows the pool first, so the specialty counts below always
-    // describe what is actually reachable from the current district.
-    const inDistrict = useMemo(() => {
+    const visible = useMemo(() => {
         if (!district) return members;
         return members.filter((m) =>
             m.chamberAddresses.some(
@@ -70,22 +58,6 @@ export default function DoctorsPage() {
             ),
         );
     }, [members, district]);
-
-    const counts = useMemo(() => {
-        const c: Record<string, number> = { all: inDistrict.length };
-        for (const m of inDistrict) {
-            c[m.specialtySubject] = (c[m.specialtySubject] ?? 0) + 1;
-        }
-        return c;
-    }, [inDistrict]);
-
-    const visible = useMemo(
-        () =>
-            filter === "all"
-                ? inDistrict
-                : inDistrict.filter((m) => m.specialtySubject === filter),
-        [inDistrict, filter],
-    );
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-primary/5 to-white">
@@ -100,7 +72,7 @@ export default function DoctorsPage() {
                 </p>
 
                 {/* District filter */}
-                <div className="mb-4 max-w-xs">
+                <div className="mb-8 max-w-xs">
                     <label
                         htmlFor="district-filter"
                         className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500"
@@ -115,38 +87,6 @@ export default function DoctorsPage() {
                     />
                 </div>
 
-                {/* Specialty filter */}
-                <div className="mb-8 flex flex-wrap gap-2">
-                    {FILTERS.map((f) => {
-                        const n = counts[f.key] ?? 0;
-                        const active = filter === f.key;
-                        return (
-                            <button
-                                key={f.key}
-                                type="button"
-                                onClick={() => setFilter(f.key)}
-                                aria-pressed={active}
-                                className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 ${
-                                    active
-                                        ? "border-secondary bg-secondary text-white"
-                                        : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
-                                }`}
-                            >
-                                {f.label}
-                                <span
-                                    className={`rounded-full px-1.5 py-0.5 text-xs ${
-                                        active
-                                            ? "bg-white/20"
-                                            : "bg-slate-100 text-slate-600"
-                                    }`}
-                                >
-                                    {n}
-                                </span>
-                            </button>
-                        );
-                    })}
-                </div>
-
                 {loading ? (
                     <div className="py-10 text-center text-muted-foreground">
                         Loading...
@@ -158,16 +98,12 @@ export default function DoctorsPage() {
                             <p className="font-medium text-slate-600">
                                 {members.length === 0
                                     ? "No doctors listed yet."
-                                    : district && inDistrict.length === 0
-                                      ? `No doctors in ${district}.`
-                                      : "No doctors in this specialty."}
+                                    : `No doctors in ${district}.`}
                             </p>
                             <p className="mt-1 text-sm text-slate-500">
                                 {members.length === 0
                                     ? "Approved members will appear here."
-                                    : district && inDistrict.length === 0
-                                      ? "Try another district."
-                                      : "Try a different specialty filter."}
+                                    : "Try another district."}
                             </p>
                         </div>
                     </div>
