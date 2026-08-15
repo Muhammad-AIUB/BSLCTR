@@ -30,11 +30,11 @@ const links: NavLink[] = [
     { name: "BSLCTRcon", path: "/bslctrcon" },
     {
         name: "Doctors",
-        path: "/hepatologist-surgeon-interventiona",
+        path: "/doctors",
         detail: [
-            "All Hepatologists",
+            "Hepatologists",
             "Hepatobiliary Surgeons",
-            "Interventional Lists",
+            "Intervention Hepatologists",
         ],
     },
     {
