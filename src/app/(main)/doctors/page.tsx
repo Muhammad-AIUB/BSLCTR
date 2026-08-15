@@ -30,12 +30,13 @@ const SPECIALTY_LABELS: Record<string, string> = {
     other: "Other",
 };
 
+// No "Other" chip: members who picked that specialty still appear under "All",
+// but it isn't offered as a filter of its own.
 const FILTERS = [
     { key: "all", label: "All" },
     { key: "hepatologist", label: "Hepatologists" },
     { key: "hepatobiliary_surgeon", label: "Hepatobiliary Surgeons" },
     { key: "intervention_hepatologist", label: "Intervention Hepatologists" },
-    { key: "other", label: "Other" },
 ];
 
 const specialtyLabel = (m: Member) =>
