@@ -107,6 +107,20 @@ Simple localStorage-based authentication for admin access:
 - Strict mode enabled in app config
 - Build command runs `tsc -b` before Vite build
 
+## Git & Version Control
+
+- **Push identity**: All pushes to this repository must always be made as:
+  - Name: `Muhammad-AIUB`
+  - Email: `mjubayer.aiub@gmail.com`
+- Remote: `origin` → https://github.com/Muhammad-AIUB/BSLCTR.git
+- Set the identity locally for this repo before pushing:
+
+```bash
+git config user.name "Muhammad-AIUB" && git config user.email "mjubayer.aiub@gmail.com"
+```
+
+- **Never push automatically.** Commits and pushes only happen when the user explicitly asks for them; otherwise keep all changes local.
+
 ## Important Implementation Notes
 
 - **No Backend Integration**: Form submissions are client-side only with console logging
