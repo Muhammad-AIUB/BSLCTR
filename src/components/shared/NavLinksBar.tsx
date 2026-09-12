@@ -98,7 +98,9 @@ const NavLinksBar = () => {
 
     return (
         <>
-            <nav className="sticky top-0 z-50 w-full bg-secondary shadow-sm">
+            {/* Not sticky: the Navbar above now owns the sticky top-0 slot, and
+                two stuck elements at top-0 would overlap. */}
+            <nav className="w-full bg-secondary shadow-sm">
                 {/* Mobile: hamburger */}
                 <div className="flex items-center justify-between px-4 py-3 lg:hidden">
                     <Sheet>
@@ -140,7 +142,7 @@ const NavLinksBar = () => {
                                                     variant="ghost"
                                                     className={`h-auto min-h-11 w-full justify-start whitespace-normal text-left text-white ${
                                                         pathname === link.path
-                                                            ? "bg-white/20"
+                                                            ? "bg-primary"
                                                             : ""
                                                     }`}
                                                 >
@@ -170,7 +172,7 @@ const NavLinksBar = () => {
                                                         className={`h-auto min-h-11 w-full justify-start whitespace-normal pl-8 text-left text-sm font-normal text-white/80 ${
                                                             pathname ===
                                                             child.path
-                                                                ? "bg-white/20"
+                                                                ? "bg-primary"
                                                                 : ""
                                                         }`}
                                                     >
@@ -188,23 +190,19 @@ const NavLinksBar = () => {
                 </div>
 
                 {/* Desktop: all links always visible, no scroll */}
-                <div className="hidden items-stretch justify-center bg-secondary px-4 lg:flex">
+                <div className="hidden items-stretch justify-center gap-1.5 bg-secondary px-4 py-2 lg:flex">
                     {links.map((link) => {
                         const current = isCurrent(link, pathname);
                         // Type and padding step down between lg and xl so all 11
                         // links fit a 1024px viewport without overflowing.
-                        const base = `relative rounded-none px-2 text-xs font-medium text-white hover:bg-white/10 hover:text-white xl:px-4 xl:text-sm ${
-                            current ? "bg-white/10" : ""
+                        const base = `relative rounded-md px-3 py-2 text-xs font-medium transition-colors xl:px-4 xl:text-sm ${
+                            current
+                                ? "bg-primary text-white hover:bg-primary/90"
+                                : "text-white/90 hover:bg-white/10 hover:text-white"
                         }`;
-                        // Underline marks the current section — stronger "you are
-                        // here" signal than a background tint alone.
-                        const marker = (
-                            <span
-                                className={`absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-white transition-opacity ${
-                                    current ? "opacity-100" : "opacity-0"
-                                }`}
-                            />
-                        );
+                        // The solid orange fill is now the "you are here" signal;
+                        // the old underline on top of it was redundant.
+                        const marker = null;
 
                         if (link.isModal) {
                             return (

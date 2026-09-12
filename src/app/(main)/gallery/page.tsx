@@ -3,21 +3,23 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Film, Images } from "lucide-react";
+import { Section } from "@/components/ui/section";
 
 export default function GalleryPage() {
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-100 via-primary/5 to-slate-200 flex items-center justify-center px-4 py-20">
+        <Section watermark="Gallery" eyebrow="Media" title="Gallery">
             <div className="w-full max-w-3xl">
-                <h1 className="text-3xl md:text-4xl font-bold text-center text-slate-800 mb-2">Gallery</h1>
-                <p className="text-center text-slate-500 mb-12 text-sm">Browse our video and photo collections</p>
+                <p className="mb-12 text-body">
+                    Browse our video and photo collections
+                </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
                     <GalleryCard
                         href="/gallery/video"
                         icon={<Film className="h-12 w-12 text-white" />}
                         title="Video Gallery"
                         description="Watch recorded webinars, events, and educational sessions"
-                        gradient="from-teal-600 to-cyan-400"
+                        gradient="from-primary to-secondary"
                         index={0}
                     />
                     <GalleryCard
@@ -25,12 +27,12 @@ export default function GalleryPage() {
                         icon={<Images className="h-12 w-12 text-white" />}
                         title="Photo Gallery"
                         description="View photos from our conferences, seminars, and events"
-                        gradient="from-cyan-600 to-teal-400"
+                        gradient="from-primary to-secondary"
                         index={1}
                     />
                 </div>
             </div>
-        </div>
+        </Section>
     );
 }
 
@@ -59,7 +61,7 @@ function GalleryCard({
                         </div>
                     </div>
                     <div className="p-6 text-center">
-                        <h2 className="text-xl font-bold text-slate-800 mb-2 group-hover:text-primary transition-colors">{title}</h2>
+                        <h2 className="text-xl font-medium mb-2 group-hover:text-primary transition-colors">{title}</h2>
                         <p className="text-slate-500 text-sm leading-relaxed">{description}</p>
                     </div>
                 </div>

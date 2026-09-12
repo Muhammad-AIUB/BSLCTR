@@ -187,49 +187,21 @@ const PhotoGallery = ({ photos: photosProp }: { photos?: Photo[] }) => {
     };
 
     return (
-        <section
-            ref={ref}
-            className="relative min-h-screen overflow-hidden bg-gradient-to-b from-slate-100 via-slate-50 to-slate-100"
-        >
-            {/* Background Elements */}
-            <div className="absolute inset-0 z-0">
-                {/* Primary gradient wash */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.06] via-slate-100/50 to-accent/[0.08]" />
-
-                {/* Sophisticated dot grid pattern */}
-                <div
-                    className="absolute inset-0 opacity-50"
-                    style={{
-                        backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0,162,183) 0.6px, transparent 0)`,
-                        backgroundSize: '32px 32px'
-                    }}
-                />
-
-                {/* Diagonal lines pattern for medical/technical feel */}
-                <div className="absolute inset-0 opacity-[0.04] bg-[repeating-linear-gradient(45deg,rgb(0,162,183)_0px,rgb(0,162,183)_1px,transparent_1px,transparent_12px)]" />
-
-                {/* Soft gradient orbs for depth */}
-                <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-gradient-to-bl from-primary/15 via-primary/8 to-transparent rounded-full blur-3xl animate-pulse" style={{ animationDuration: '8s' }} />
-                <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] bg-gradient-to-tr from-accent/20 via-accent/10 to-transparent rounded-full blur-3xl animate-pulse" style={{ animationDuration: '10s' }} />
-                <div className="absolute top-1/3 left-1/3 w-[400px] h-[400px] bg-gradient-to-r from-secondary/8 to-transparent rounded-full blur-2xl" />
-
-                {/* Subtle overlay for depth */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-100/40 via-transparent to-slate-100/30" />
-            </div>
-
-            <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-                {/* Header */}
+        // Decorative dot-grid / orb background removed with the ILCA restyle —
+        // it was built on the retired teal (rgb(0,162,183)). The old h1 here
+        // also competed with the hero's, so the heading and page container now
+        // come from the wrapping <Section>.
+        <div ref={ref}>
+            <div className="relative z-10 w-full">
+                {/* Intro */}
                 <motion.div
-                    className="text-center mb-12"
+                    className="mb-12"
                     initial="hidden"
                     animate={isInView ? "visible" : "hidden"}
                     variants={fadeInUp}
                     transition={{ duration: 0.6 }}
                 >
-                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
-                        Event Gallery
-                    </h1>
-                    <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
+                    <p className="max-w-2xl text-base text-body sm:text-lg">
                         Documenting our commitment to advancing liver disease
                         research and medical education
                     </p>
@@ -304,7 +276,7 @@ const PhotoGallery = ({ photos: photosProp }: { photos?: Photo[] }) => {
 
                                     {/* Content */}
                                     <div className="p-4">
-                                        <h3 className="font-semibold text-slate-900 text-sm mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                                        <h3 className="font-medium text-sm mb-2 line-clamp-2 group-hover:text-primary transition-colors">
                                             {photo.title}
                                         </h3>
                                         <div className="space-y-1.5 text-xs text-slate-600">
@@ -420,7 +392,7 @@ const PhotoGallery = ({ photos: photosProp }: { photos?: Photo[] }) => {
                                         <Badge className="bg-primary text-primary-foreground border-0 mb-2">
                                             {selectedImage.category}
                                         </Badge>
-                                        <h3 className="text-xl font-bold">
+                                        <h3 className="text-xl font-medium">
                                             {selectedImage.title}
                                         </h3>
                                     </div>
@@ -454,7 +426,7 @@ const PhotoGallery = ({ photos: photosProp }: { photos?: Photo[] }) => {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </section>
+        </div>
     );
 };
 

@@ -100,12 +100,14 @@ const Navbar = () => {
 
     return (
         <>
-            <nav className="flex items-center justify-between px-4 py-2 bg-primary shadow-md">
-                <Link href="/" className="flex items-center gap-1">
-                    <img src="/Logo1.png" alt="Logo" className="h-14 sm:h-20 lg:h-24" />
-                    <div className="hidden lg:block text-6xl font-bold text-white">
+            {/* Sticky translucent bar, per the ILCA header treatment. NavLinksBar
+                gives up its own sticky slot so the two cannot overlap. */}
+            <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-white/10 bg-secondary/90 px-4 py-3 backdrop-blur-md">
+                <Link href="/" className="flex items-center gap-2">
+                    <img src="/Logo1.png" alt="BSLCTR" className="h-12 sm:h-14" />
+                    <span className="hidden text-2xl font-medium tracking-wide text-white lg:block">
                         BSLCTR
-                    </div>
+                    </span>
                 </Link>
 
                 <div className="flex items-center gap-3">
@@ -176,7 +178,7 @@ const Navbar = () => {
                         <div className="relative" ref={memberMenuRef}>
                             <button
                                 onClick={() => setMemberMenuOpen((p) => !p)}
-                                className="focus-ring flex size-11 items-center justify-center rounded-full border-2 border-white/30 bg-teal-600 text-lg font-bold text-white shadow-md transition-colors hover:bg-teal-500 active:scale-95"
+                                className="focus-ring flex size-11 items-center justify-center rounded-full border-2 border-white/30 bg-primary text-lg font-bold text-white shadow-md transition-colors hover:bg-primary/90 active:scale-95"
                                 title={memberName}
                             >
                                 {memberInitial}
@@ -193,7 +195,7 @@ const Navbar = () => {
                                         className="menu-item"
                                         onClick={() => setMemberMenuOpen(false)}
                                     >
-                                        <LayoutDashboard className="h-4 w-4 text-teal-600" />
+                                        <LayoutDashboard className="h-4 w-4 text-primary" />
                                         Dashboard
                                     </Link>
                                     <div className="h-px bg-border" />

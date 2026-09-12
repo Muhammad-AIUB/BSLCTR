@@ -19,7 +19,7 @@ export function Footer() {
     const [showSubscribe, setShowSubscribe] = useState(false);
 
     return (
-        <footer className="w-full bg-teal-900 text-white">
+        <footer className="w-full bg-secondary text-white">
             <div className="page-container py-12">
                 <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
                     {/* Brand */}
@@ -29,7 +29,7 @@ export function Footer() {
                             alt="BSLCTR Logo"
                             className="h-12 mb-4"
                         />
-                        <h3 className="text-lg font-semibold">BSLCTR</h3>
+                        <h3 className="text-lg font-medium text-white">BSLCTR</h3>
                         <p className="mt-2 text-sm text-white/70">
                             Dedicated to improving liver health through
                             education and care.
@@ -55,7 +55,7 @@ export function Footer() {
                         <button
                             type="button"
                             onClick={() => setShowSubscribe(true)}
-                            className="mt-1 rounded-full bg-white px-5 py-2 text-sm font-semibold text-teal-900 outline-none transition-all duration-200 hover:bg-white/90 focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent active:scale-95"
+                            className="mt-1 rounded-full bg-white px-5 py-2 text-sm font-semibold text-secondary outline-none transition-all duration-200 hover:bg-white/90 focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent active:scale-95"
                         >
                             Subscribe
                         </button>

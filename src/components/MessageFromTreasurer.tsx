@@ -27,37 +27,11 @@ const MessageFromTreasurer = () => {
     };
 
     return (
-        <section ref={ref} className="relative overflow-hidden py-16 lg:py-24">
-            {/* Simple Light Background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-primary/5 to-white">
-                {/* Subtle pattern overlay */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(0,162,183,0.08)_1px,transparent_0)] bg-[size:30px_30px] opacity-40" />
-
-                {/* Single subtle accent */}
-                <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-            </div>
-
-            <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Header */}
-                <motion.div
-                    className="text-center mb-12 lg:mb-16"
-                    variants={staggerContainer}
-                    initial="hidden"
-                    animate={isInView ? "visible" : "hidden"}
-                >
-
-                    <motion.h2
-                        className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6"
-                        variants={fadeInUp}
-                        transition={{ duration: 0.6, ease: "easeOut" }}
-                    >
-                        <span className="bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
-                            Message from Treasurer
-                        </span>
-                    </motion.h2>
-
-                </motion.div>
-
+        // Decorative pattern/orb background removed with the ILCA restyle — the
+        // dot grid was hardcoded to the retired teal rgba(0,162,183,0.08).
+        // Heading and page container now come from the wrapping <Section>.
+        <div ref={ref}>
+            <div className="relative z-10 w-full">
                 {/* Main Content */}
                 <motion.div
                     initial="hidden"
@@ -70,10 +44,10 @@ const MessageFromTreasurer = () => {
                                 variants={fadeInUp}
                                 transition={{ duration: 0.6, ease: "easeOut" }}
                             >
-                                <h3 className="text-2xl lg:text-3xl font-bold text-slate-800 mb-6">
+                                <h3 className="mb-6 text-2xl lg:text-3xl">
                                     We are building this
                                 </h3>
-                                <p className="text-lg text-slate-600 leading-relaxed">
+                                <p className="text-lg leading-relaxed text-body">
                                     This section is currently under development. 
                                     We are working to bring you the best content and experience.
                                 </p>
@@ -82,7 +56,7 @@ const MessageFromTreasurer = () => {
                     </Card>
                 </motion.div>
             </div>
-        </section>
+        </div>
     );
 };
 

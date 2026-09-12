@@ -1,12 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-    font-family: "Roboto Slab", serif;
-    line-height: 1.5;
+    font-family: var(--font-quicksand), ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.875;
     font-weight: 400;
 
     color-scheme: light;
@@ -17,38 +16,47 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    --radius: 0.625rem;
+    --radius: 0.5rem;
 
-    /* Custom Brand Colors */
-    /* Primary: #00A2B7 (Teal/Cyan) */
-    /* Secondary: #00E0FD (Bright Cyan) */
-    /* Accent: #9DC4CD (Light Blue-Gray) */
+    /* Brand palette — adopted from the ILCA design system.
+       Accent (orange) carries buttons, active nav and links.
+       Deep (navy) carries the hero, nav tiles and footer. */
 
     --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
+    --foreground: #232323;
     --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
+    --card-foreground: #232323;
     --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
+    --popover-foreground: #232323;
 
-    /* Primary Color - #00A2B7 */
-    --primary: oklch(0.62 0.12 210);
-    --primary-foreground: oklch(1 0 0);
+    /* Accent — #F16724 */
+    --primary: #f16724;
+    --primary-foreground: #ffffff;
 
-    /* Secondary Color - [#20768B] */
-    --secondary: #20768b;
-    --secondary-foreground: oklch(0.145 0 0);
+    /* Deep — #0B4E84 */
+    --secondary: #0b4e84;
+    --secondary-foreground: #ffffff;
 
-    /* Accent Color - #9DC4CD */
-    --accent: oklch(0.77 0.05 215);
-    --accent-foreground: oklch(0.145 0 0);
+    /* Pale orange tint, so hover:bg-accent reads as a warm wash */
+    --accent: #fdf0e9;
+    --accent-foreground: #232323;
+
+    /* Darkened accent for SMALL text on a light ground. The brand orange
+       #F16724 is only ~3.1:1 on white, which fails WCAG AA for normal-size
+       text; this is ~4.66:1 and passes. Use it for eyebrows, tag pills and
+       any small orange label — never scale it up to replace --primary. */
+    --primary-deep: #c4501a;
+
+    /* Body copy and the oversized watermark type */
+    --body: #616161;
+    --wash: #f6f6f6;
 
     --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
+    --muted-foreground: #616161;
     --destructive: oklch(0.577 0.245 27.325);
     --border: oklch(0.922 0 0);
     --input: oklch(0.922 0 0);
-    --ring: oklch(0.62 0.12 210);
+    --ring: #f16724;
     --chart-1: oklch(0.62 0.12 210);
     --chart-2: oklch(0.85 0.15 205);
     --chart-3: oklch(0.77 0.05 215);
@@ -74,6 +82,9 @@
     --text-2xs--line-height: 0.875rem;
     --color-background: var(--background);
     --color-foreground: var(--foreground);
+    --color-body: var(--body);
+    --color-wash: var(--wash);
+    --color-primary-deep: var(--primary-deep);
     --color-card: var(--card);
     --color-card-foreground: var(--card-foreground);
     --color-popover: var(--popover);
@@ -113,21 +124,31 @@
     --popover: oklch(0.205 0 0);
     --popover-foreground: oklch(0.985 0 0);
 
-    --primary: oklch(0.75 0.12 210);
-    --primary-foreground: oklch(0.145 0 0);
+    /* Brand hues lifted slightly so they hold up on a dark ground.
+       Dark mode is not currently activated anywhere in the app, but these
+       stay in step with :root so enabling it never resurrects the old teal. */
+    --primary: #f47c42;
+    --primary-foreground: #1a1a1a;
 
-    --secondary: oklch(0.65 0.15 205);
-    --secondary-foreground: oklch(0.985 0 0);
+    /* On a dark ground the accent must get LIGHTER, not darker, to carry
+       small text — the inverse of the light-theme adjustment. */
+    --primary-deep: #ffa06b;
 
-    --accent: oklch(0.6 0.05 215);
+    --secondary: #1b6fb0;
+    --secondary-foreground: #ffffff;
+
+    --accent: #3a2a20;
     --accent-foreground: oklch(0.985 0 0);
+
+    --body: oklch(0.708 0 0);
+    --wash: oklch(0.269 0 0);
 
     --muted: oklch(0.269 0 0);
     --muted-foreground: oklch(0.708 0 0);
     --destructive: oklch(0.704 0.191 22.216);
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.75 0.12 210);
+    --ring: #f47c42;
     --chart-1: oklch(0.75 0.12 210);
     --chart-2: oklch(0.65 0.15 205);
     --chart-3: oklch(0.6 0.05 215);
@@ -149,7 +170,22 @@
     }
     body {
         @apply bg-background text-foreground;
+        font-size: 1rem;
+        line-height: 1.875;
     }
+
+    /* ILCA sets headings at weight 500, not bold. This is deliberate and is
+       most of why the reference design reads as airy — do not "fix" it. */
+    h1, h2, h3, h4, h5, h6 {
+        font-weight: 500;
+        color: var(--foreground);
+        line-height: 1.2;
+    }
+
+    h1 { font-size: 3rem; }      /* 48px */
+    h2 { font-size: 2.5rem; }    /* 40px */
+    h3 { font-size: 1.875rem; }  /* 30px */
+    h4 { font-size: 1.5rem; }    /* 24px */
 }
 
 @layer components {
@@ -176,6 +212,14 @@
     .card-hover {
         @apply transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-md;
     }
+
+    /* Oversized pale word sitting behind a section heading — the signature
+       ILCA section device. Weight 700 is Quicksand's maximum. */
+    .watermark {
+        @apply pointer-events-none absolute left-0 top-0 max-w-full select-none
+               overflow-hidden whitespace-nowrap text-[4rem] font-bold uppercase
+               leading-none tracking-tight text-wash sm:text-[6rem] lg:text-[7.5rem];
+    }
 }
 
 @keyframes slide-in {
@@ -197,12 +241,12 @@
 }
 .rich-text h1 {
     font-size: 1.35em;
-    font-weight: 700;
+    font-weight: 500;
     margin: 0.8em 0 0.4em;
 }
 .rich-text h2 {
     font-size: 1.15em;
-    font-weight: 600;
+    font-weight: 500;
     margin: 0.8em 0 0.4em;
 }
 .rich-text ul {

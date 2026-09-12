@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { CalendarIcon, Clock, ExternalLink, Radio } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ShareButtons from "@/components/ShareButtons";
+import { Section } from "@/components/ui/section";
 
 interface Sponsor { name: string; logo: string; }
 interface Webinar {
@@ -36,12 +37,12 @@ export default function LiveWebinars() {
     const upcoming = webinars.filter((w) => w.date > today);
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-primary/5 to-white">
-            <div className="container mx-auto py-12 px-4 md:px-6 max-w-5xl space-y-14">
+        <Section watermark="Webinars" eyebrow="Events" title="Live Webinars">
+            <div className="max-w-5xl space-y-14">
 
                 {/* Live / Recent Webinars */}
                 <section>
-                    <SectionHeading title="Live Webinars" dot />
+                    <SectionHeading title="Live &amp; Recent" dot />
                     {loading ? (
                         <div className="text-center py-10 text-muted-foreground">Loading...</div>
                     ) : live.length === 0 ? (
@@ -74,7 +75,7 @@ export default function LiveWebinars() {
                 </section>
 
             </div>
-        </div>
+        </Section>
     );
 }
 
@@ -87,17 +88,17 @@ function SectionHeading({ title, dot }: { title: string; dot?: boolean }) {
                     <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
                 </span>
             )}
-            <h2 className="text-2xl font-bold text-slate-800">{title}</h2>
+            <h2 className="text-2xl font-medium">{title}</h2>
             <div className="flex-1 h-px bg-slate-200" />
         </div>
     );
 }
 
 const gradients = [
-    "from-teal-600 to-cyan-400",
-    "from-cyan-600 to-teal-400",
-    "from-teal-700 to-cyan-500",
-    "from-cyan-700 to-teal-500",
+    "from-primary to-secondary",
+    "from-primary to-secondary",
+    "from-primary to-secondary",
+    "from-primary to-secondary",
 ];
 
 function WebinarCard({ webinar: w, index, upcoming }: { webinar: Webinar; index: number; upcoming?: boolean }) {
@@ -145,7 +146,7 @@ function WebinarCard({ webinar: w, index, upcoming }: { webinar: Webinar; index:
                 {/* Details */}
                 <div className="flex-1 p-6 flex flex-col justify-between gap-4">
                     <div>
-                        <h3 className="text-xl font-bold text-slate-800 leading-snug mb-4">{w.headline}</h3>
+                        <h3 className="text-xl font-medium leading-snug mb-4">{w.headline}</h3>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-1 text-sm">
                             {w.keynoteSpeakers.length > 0 && (

@@ -1,5 +1,6 @@
 import { Download, FileText } from "lucide-react";
 import ShareMenu from "@/components/ShareMenu";
+import { Section } from "@/components/ui/section";
 
 export const metadata = {
     title: "Patients Guidelines | BSLCTR",
@@ -36,15 +37,13 @@ const guidelines: Guideline[] = [
 
 export default function PatientsGuidelinesPage() {
     return (
-        <div className="min-h-screen bg-gradient-to-b from-primary/5 to-white">
-            <div className="container mx-auto max-w-5xl px-4 py-12 md:px-6">
-                <div className="mb-2 flex items-center gap-3">
-                    <h2 className="text-2xl font-bold text-slate-800">
-                        Patients Guidelines
-                    </h2>
-                    <div className="h-px flex-1 bg-slate-200" />
-                </div>
-                <p className="mb-8 max-w-2xl text-sm text-slate-600">
+        <Section
+            watermark="Patients"
+            eyebrow="Guidance"
+            title="Patients Guidelines"
+        >
+            <div className="max-w-5xl">
+                <p className="mb-8 max-w-2xl text-body">
                     Download or share these guides with patients and carers.
                     They are general guidance and do not replace advice from
                     your treating physician.
@@ -56,7 +55,7 @@ export default function PatientsGuidelinesPage() {
                     ))}
                 </div>
             </div>
-        </div>
+        </Section>
     );
 }
 
@@ -72,7 +71,7 @@ function GuidelineCard({ guideline: g }: { guideline: Guideline }) {
                 </span>
 
                 <div className="min-w-0 flex-1">
-                    <h3 className="text-lg font-semibold text-slate-800">
+                    <h3 className="text-lg font-medium">
                         {g.title}
                     </h3>
                     <p className="mt-0.5 text-xs text-slate-500">

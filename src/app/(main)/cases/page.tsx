@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CalendarIcon, FileText, Tag } from "lucide-react";
+import { Section } from "@/components/ui/section";
 
 interface CasePresentation {
     id: string;
@@ -26,12 +27,8 @@ export default function CasePresentationsPage() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-primary/5 to-white">
-            <div className="container mx-auto py-12 px-4 md:px-6 max-w-5xl">
-                <div className="flex items-center gap-3 mb-6">
-                    <h2 className="text-2xl font-bold text-slate-800">Case Presentations</h2>
-                    <div className="flex-1 h-px bg-slate-200" />
-                </div>
+        <Section watermark="Cases" eyebrow="Clinical" title="Case Presentations">
+            <div className="max-w-5xl">
 
                 {loading ? (
                     <div className="text-center py-10 text-muted-foreground">Loading...</div>
@@ -49,7 +46,7 @@ export default function CasePresentationsPage() {
                     </div>
                 )}
             </div>
-        </div>
+        </Section>
     );
 }
 
@@ -61,7 +58,7 @@ function CaseCard({ caseItem: c }: { caseItem: CasePresentation }) {
     return (
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-6">
             <div className="flex items-start justify-between gap-3 flex-wrap mb-3">
-                <h3 className="text-lg font-semibold text-slate-800">{c.title}</h3>
+                <h3 className="text-lg font-medium">{c.title}</h3>
                 <span className="inline-flex items-center gap-1.5 text-xs text-slate-500 shrink-0 mt-1">
                     <CalendarIcon className="h-3.5 w-3.5" /> {date}
                 </span>
@@ -91,7 +88,7 @@ function CaseCard({ caseItem: c }: { caseItem: CasePresentation }) {
             {c.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1.5">
                     {c.tags.map((t) => (
-                        <span key={t} className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full">
+                        <span key={t} className="inline-flex items-center gap-1 bg-primary/10 text-primary-deep text-xs px-2 py-0.5 rounded-full">
                             <Tag className="h-3 w-3" />{t}
                         </span>
                     ))}

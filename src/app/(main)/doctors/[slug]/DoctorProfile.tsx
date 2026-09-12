@@ -33,7 +33,7 @@ export default function DoctorProfile({ doctor }: { doctor: Doctor }) {
                             className="h-32 w-32 shrink-0 rounded-full border-4 border-primary/15 object-cover"
                         />
                         <div className="min-w-0">
-                            <h1 className="text-2xl font-bold text-slate-800">
+                            <h1 className="text-2xl font-medium">
                                 {doctor.name[lang]}
                             </h1>
                             <p className="mt-1 text-sm font-medium text-secondary">
@@ -97,7 +97,7 @@ export default function DoctorProfile({ doctor }: { doctor: Doctor }) {
 
                 {/* Journals */}
                 <section className="mt-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-                    <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-800">
+                    <h2 className="mb-4 flex items-center gap-2 text-lg font-medium">
                         <BookOpen className="h-5 w-5 text-secondary" />
                         {t.journals}
                     </h2>
@@ -121,7 +121,7 @@ export default function DoctorProfile({ doctor }: { doctor: Doctor }) {
 
                 {/* Chamber address */}
                 <section className="mt-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-                    <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-800">
+                    <h2 className="mb-4 flex items-center gap-2 text-lg font-medium">
                         <MapPin className="h-5 w-5 text-secondary" />
                         {t.chamber}
                     </h2>

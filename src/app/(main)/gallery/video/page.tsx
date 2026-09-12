@@ -61,7 +61,7 @@ export default function VideoGalleryPage() {
                     <ChevronLeft className="h-4 w-4" /> Back to Gallery
                 </Link>
 
-                <h1 className="text-3xl font-bold text-slate-800 mb-8">Video Gallery</h1>
+                <h1 className="text-3xl font-medium mb-8">Video Gallery</h1>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {videos.map((video, index) => {
@@ -112,7 +112,7 @@ export default function VideoGalleryPage() {
                                 )}
 
                                 <div className="p-4">
-                                    <h3 className="font-semibold text-slate-800">{video.title}</h3>
+                                    <h3 className="font-medium">{video.title}</h3>
                                     <p className="text-slate-500 text-xs mt-1">{video.date}</p>
                                 </div>
                             </motion.div>

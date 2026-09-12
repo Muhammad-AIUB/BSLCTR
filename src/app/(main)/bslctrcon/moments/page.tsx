@@ -42,7 +42,7 @@ function MomentsContent() {
                 </Link>
 
                 <div className="text-center mt-6 mb-10">
-                    <h1 className="text-3xl md:text-4xl font-bold text-slate-800 mb-2">
+                    <h1 className="text-3xl md:text-4xl font-medium mb-2">
                         Some Moments from BSLCTRCON {year}
                     </h1>
                     <p className="text-slate-500 text-sm max-w-2xl mx-auto">

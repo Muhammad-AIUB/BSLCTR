@@ -30,7 +30,7 @@ function LecturesContent() {
                 </Link>
 
                 <div className="text-center mt-6 mb-10">
-                    <h1 className="text-3xl md:text-4xl font-bold text-slate-800 mb-2">
+                    <h1 className="text-3xl md:text-4xl font-medium mb-2">
                         Lectures from BSLCTRCON {year}
                     </h1>
                     <p className="text-slate-500 text-sm max-w-2xl mx-auto">
@@ -48,7 +48,7 @@ function LecturesContent() {
                         <div className="bg-primary/10 rounded-full p-6 mb-6">
                             <Presentation className="h-12 w-12 text-primary" />
                         </div>
-                        <h2 className="text-xl font-bold text-slate-800 mb-2">Lectures coming soon</h2>
+                        <h2 className="text-xl font-medium mb-2">Lectures coming soon</h2>
                         <p className="text-slate-500 text-sm max-w-md">
                             Recorded lectures from BSLCTRCON {year} will be published here shortly. Please check back soon.
                         </p>
@@ -101,7 +101,7 @@ function LecturesContent() {
                                     )}
 
                                     <div className="p-4">
-                                        <h3 className="font-semibold text-slate-800">{video.title}</h3>
+                                        <h3 className="font-medium">{video.title}</h3>
                                         <p className="text-slate-500 text-xs mt-1">{video.date}</p>
                                     </div>
                                 </motion.div>

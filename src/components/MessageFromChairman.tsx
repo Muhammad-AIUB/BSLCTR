@@ -75,58 +75,21 @@ Thank you.`,
     };
 
     return (
-        <section
-            ref={ref}
-            className="relative overflow-hidden py-16 lg:py-24 bg-gradient-to-b from-slate-100 via-slate-50 to-slate-100"
-        >
-            {/* Enhanced Background */}
-            <div className="absolute inset-0 z-0">
-                {/* Primary gradient wash */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.08] via-slate-100/60 to-accent/[0.1]" />
-
-                {/* Sophisticated dot grid pattern */}
-                <div
-                    className="absolute inset-0 opacity-50"
-                    style={{
-                        backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0,162,183) 0.6px, transparent 0)`,
-                        backgroundSize: "36px 36px",
-                    }}
-                />
-
-                {/* Diagonal lines pattern for medical/technical feel */}
-                <div className="absolute inset-0 opacity-[0.05] bg-[repeating-linear-gradient(45deg,rgb(0,162,183)_0px,rgb(0,162,183)_1px,transparent_1px,transparent_12px)]" />
-
-                {/* Cross-hatch pattern for additional texture */}
-                <div className="absolute inset-0 opacity-[0.03] bg-[repeating-linear-gradient(-45deg,rgb(157,196,205)_0px,rgb(157,196,205)_1px,transparent_1px,transparent_12px)]" />
-
-                {/* Soft gradient orbs for depth */}
-                <div
-                    className="absolute top-20 -right-40 w-[550px] h-[550px] bg-gradient-to-bl from-primary/20 via-primary/10 to-transparent rounded-full blur-3xl animate-pulse"
-                    style={{ animationDuration: "9s" }}
-                />
-                <div
-                    className="absolute bottom-20 -left-40 w-[550px] h-[550px] bg-gradient-to-tr from-accent/25 via-accent/12 to-transparent rounded-full blur-3xl animate-pulse"
-                    style={{ animationDuration: "11s" }}
-                />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-secondary/10 to-transparent rounded-full blur-2xl" />
-
-                {/* Subtle overlay for depth */}
-                <div className="absolute inset-0 bg-gradient-to-b from-slate-100/50 via-transparent to-slate-100/40" />
-            </div>
-
-            <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Header */}
+        // The decorative dot-grid / orb background that used to live here was
+        // removed with the ILCA restyle: it was built on the retired teal
+        // (rgb(0,162,183)) and its density works against the new airy look.
+        // Heading and page container now come from the wrapping <Section>.
+        <div ref={ref}>
+            <div className="relative z-10 w-full">
+                {/* Intro */}
                 <motion.div
-                    className="text-center mb-16 lg:mb-20"
+                    className="mb-12 lg:mb-16"
                     initial="hidden"
                     animate={isInView ? "visible" : "hidden"}
                     variants={fadeInUp}
                     transition={{ duration: 0.6 }}
                 >
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
-                        Leadership Messages
-                    </h2>
-                    <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
+                    <p className="max-w-2xl text-base text-body sm:text-lg">
                         Words of commitment and vision from our distinguished
                         leadership team
                     </p>
@@ -199,7 +162,7 @@ Thank you.`,
                                             <div className="relative space-y-6">
                                                 {/* Header */}
                                                 <div className="space-y-2">
-                                                    <h3 className="text-2xl lg:text-3xl font-bold text-slate-900">
+                                                    <h3 className="text-2xl lg:text-3xl font-medium">
                                                         {section.author}
                                                     </h3>
                                                     <p className="text-base font-semibold text-primary">
@@ -248,7 +211,7 @@ Thank you.`,
                     })}
                 </motion.div>
             </div>
-        </section>
+        </div>
     );
 };
 

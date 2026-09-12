@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Camera, Presentation, Calendar, ChevronLeft } from "lucide-react";
+import { Section } from "@/components/ui/section";
 
 const YEARS = ["2025", "2024", "2023"];
 
@@ -11,10 +12,9 @@ export default function BslctrConPage() {
     const [year, setYear] = useState<string | null>(null);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-100 via-primary/5 to-slate-200 flex items-center justify-center px-4 py-20">
+        <Section watermark="Con" eyebrow="Conference" title="BSLCTR CON">
             <div className="w-full max-w-3xl">
-                <h1 className="text-3xl md:text-4xl font-bold text-center text-slate-800 mb-2">BSLCTR CON</h1>
-                <p className="text-center text-slate-500 mb-12 text-sm">
+                <p className="mb-12 text-body">
                     Highlights from the BSLCTR International Annual Conference
                 </p>
 
@@ -35,7 +35,7 @@ export default function BslctrConPage() {
                             <ChevronLeft className="h-4 w-4" /> Back to years
                         </button>
 
-                        <h2 className="text-center text-lg font-semibold text-slate-700 mb-8">
+                        <h2 className="mb-8 text-center text-lg">
                             BSLCTRCON {year}
                         </h2>
 
@@ -45,7 +45,7 @@ export default function BslctrConPage() {
                                 icon={<Camera className="h-12 w-12 text-white" />}
                                 title="Some Moments from BSLCTR CON"
                                 description="Photo highlights of speakers, sessions, and ceremonies from the conference"
-                                gradient="from-teal-600 to-cyan-400"
+                                gradient="from-primary to-secondary"
                                 index={0}
                             />
                             <ConCard
@@ -53,14 +53,14 @@ export default function BslctrConPage() {
                                 icon={<Presentation className="h-12 w-12 text-white" />}
                                 title="Lectures from BSLCTR"
                                 description="Scientific lectures and presentations delivered at BSLCTR CON"
-                                gradient="from-cyan-600 to-teal-400"
+                                gradient="from-primary to-secondary"
                                 index={1}
                             />
                         </div>
                     </div>
                 )}
             </div>
-        </div>
+        </Section>
     );
 }
 
@@ -81,13 +81,13 @@ function YearCard({
             className="block w-full text-left group rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2"
         >
             <div className="bg-white rounded-xl shadow-sm hover:shadow-lg hover:shadow-primary/10 border border-slate-100 overflow-hidden transition-all duration-300">
-                <div className="bg-gradient-to-br from-teal-600 to-cyan-400 h-32 flex items-center justify-center">
+                <div className="bg-gradient-to-br from-primary to-secondary h-32 flex items-center justify-center">
                     <div className="bg-white/20 rounded-full p-4 group-hover:scale-110 transition-transform duration-300">
                         <Calendar className="h-9 w-9 text-white" />
                     </div>
                 </div>
                 <div className="p-5 text-center">
-                    <h2 className="text-lg font-bold text-slate-800 group-hover:text-primary transition-colors">
+                    <h2 className="text-lg font-medium group-hover:text-primary transition-colors">
                         BSLCTRCON {year}
                     </h2>
                 </div>
@@ -121,7 +121,7 @@ function ConCard({
                         </div>
                     </div>
                     <div className="p-6 text-center">
-                        <h2 className="text-xl font-bold text-slate-800 mb-2 group-hover:text-primary transition-colors">{title}</h2>
+                        <h2 className="text-xl font-medium mb-2 group-hover:text-primary transition-colors">{title}</h2>
                         <p className="text-slate-500 text-sm leading-relaxed">{description}</p>
                     </div>
                 </div>

@@ -6,6 +6,7 @@ import { ChevronRight, Stethoscope } from "lucide-react";
 import DistrictCombobox from "@/components/DistrictCombobox";
 import LanguageToggle, { useLang } from "@/components/LanguageToggle";
 import { DOCTORS, UI, type Doctor, type Lang } from "@/lib/doctors";
+import { Section } from "@/components/ui/section";
 
 export default function DoctorsPage() {
     const [district, setDistrict] = useState("");
@@ -19,18 +20,14 @@ export default function DoctorsPage() {
     );
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-primary/5 to-white">
-            <div className="container mx-auto max-w-6xl px-4 py-12 md:px-6">
-                <div className="mb-2 flex flex-wrap items-center gap-3">
-                    <h2 className="text-2xl font-bold text-slate-800">
-                        {t.doctors}
-                    </h2>
-                    <div className="h-px flex-1 bg-slate-200" />
+        <Section watermark={t.doctors} eyebrow="Directory" title={t.doctors}>
+            <div className="max-w-6xl">
+                {/* The toggle used to sit in the heading row; the heading now
+                    lives on <Section>, so it moves above the intro. */}
+                <div className="mb-6 flex justify-end">
                     <LanguageToggle />
                 </div>
-                <p className="mb-6 max-w-2xl text-sm text-slate-600">
-                    {t.intro}
-                </p>
+                <p className="mb-6 max-w-2xl text-body">{t.intro}</p>
 
                 <div className="mb-8 max-w-xs">
                     <label
@@ -67,7 +64,7 @@ export default function DoctorsPage() {
                     </div>
                 )}
             </div>
-        </div>
+        </Section>
     );
 }
 
@@ -87,7 +84,7 @@ function DoctorCard({ doctor: d, lang }: { doctor: Doctor; lang: Lang }) {
                     className="h-20 w-20 shrink-0 rounded-full border-2 border-primary/15 object-cover"
                 />
                 <div className="min-w-0 flex-1">
-                    <h3 className="font-semibold text-slate-800 group-hover:text-secondary">
+                    <h3 className="font-medium group-hover:text-secondary">
                         {d.name[lang]}
                     </h3>
                     <p className="mt-1 text-xs leading-relaxed text-secondary">

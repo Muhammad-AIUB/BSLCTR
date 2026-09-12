@@ -14,7 +14,7 @@ export default function Layout({ children }: LayoutProps) {
                     <div className="flex items-center gap-2">
                         <Link href="/" className="flex items-center gap-2">
                             <Building2 className="h-6 w-6" />
-                            <h1 className="text-xl font-bold">
+                            <h1 className="text-xl font-medium">
                                 Cement Shop IMS
                             </h1>
                         </Link>
