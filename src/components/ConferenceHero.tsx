@@ -5,7 +5,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import SubscribeModal from "@/components/SubscribeModal";
 
-const TITLE_WORDS = ["BSLCTR", "Annual", "Conference", "2026"];
+const TITLE_WORDS = ["BSLCTR", "5th", "Annual", "Conference", "2026"];
 
 export default function ConferenceHero() {
     // When the user has asked for reduced motion we render the final state
@@ -40,7 +40,7 @@ export default function ConferenceHero() {
                     transition={{ duration: 0.5 }}
                     className="mb-6 text-sm font-semibold uppercase tracking-[0.25em] text-primary sm:text-base"
                 >
-                    12–14 March 2026 &nbsp;|&nbsp; Dhaka, Bangladesh
+                    22 December 2026 &nbsp;|&nbsp; Pan Pacific Sonargaon, Dhaka, Bangladesh
                 </motion.p>
 
                 <h1 className="max-w-4xl text-white">

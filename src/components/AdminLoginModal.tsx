@@ -12,6 +12,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 
+const ADMIN_CREDENTIALS = [
+    { email: "ishtiaque.mazid@gmail.com", password: "Nornob123@" },
+    { email: "salimur51@yahoo.com", password: "Salimur123@" },
+    { email: "drfazalkarim@gmail.com", password: "Fazal123@" },
+    { email: "bslctr2022@gmail.com", password: "Harun123@" },
+    { email: "moinul2000@gmail.com", password: "Moin123@" },
+    { email: "faroqueahmed1970@gmail.com", password: "Faroque123@" },
+    { email: "shahariar.dmc@gmail.com", password: "Shahariar123@" },
+    { email: "tanvir.siamk67@gmail.com", password: "Kashfee123@" },
+];
+
 export default function AdminLoginModal() {
     const [open, setOpen] = useState(false);
     const [email, setEmail] = useState("");
@@ -23,8 +34,11 @@ export default function AdminLoginModal() {
         setError(null);
 
         const enteredEmail = email.trim();
+        const isValidCredential = ADMIN_CREDENTIALS.some(
+            (cred) => cred.email === enteredEmail && cred.password === password
+        );
 
-        if (enteredEmail === "admin@bslctr.org" && password === "admin123") {
+        if (isValidCredential) {
             localStorage.setItem(
                 "adminAuth",
                 JSON.stringify({ email: enteredEmail, loggedInAt: Date.now() })
@@ -35,7 +49,7 @@ export default function AdminLoginModal() {
             window.dispatchEvent(new Event("adminAuthChanged"));
             return;
         } else {
-            setError("Invalid credentials. Use admin@bslctr.org / admin123");
+            setError("Invalid credentials.");
             return;
         }
     };
