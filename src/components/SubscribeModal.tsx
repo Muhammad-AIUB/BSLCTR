@@ -12,14 +12,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { PatientForm } from "./forms/PatientForm";
 import { PhysicianForm } from "./forms/PhysicianForm";
-import { Stethoscope, Users } from "lucide-react";
+import { ConferenceRegistrationForm } from "./forms/ConferenceRegistrationForm";
+import { Stethoscope, Users, Calendar } from "lucide-react";
 
 type SubscribeModalProps = {
   isOpen: boolean;
   onClose: () => void;
 };
 
-type UserType = "none" | "patient" | "physician";
+type UserType = "none" | "patient" | "physician" | "conference";
 
 const SubscribeModal = ({ isOpen, onClose }: SubscribeModalProps) => {
   const [userType, setUserType] = useState<UserType>("none");
@@ -60,11 +61,18 @@ const SubscribeModal = ({ isOpen, onClose }: SubscribeModalProps) => {
             >
               <Stethoscope /> Physician
             </Button>
+            <Button
+              className="h-20 rounded-full bg-primary text-lg text-white hover:bg-primary/90 active:scale-[0.98] col-span-1 sm:col-span-2"
+              onClick={() => setUserType("conference")}
+            >
+              <Calendar /> Conference Registration
+            </Button>
           </div>
         )}
 
         {userType === "patient" && <PatientForm onBack={handleReset} />}
         {userType === "physician" && <PhysicianForm onBack={handleReset} />}
+        {userType === "conference" && <ConferenceRegistrationForm onBack={handleReset} />}
 
         {/* {userType === "none" && (
           <DialogFooter>

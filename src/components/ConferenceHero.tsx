@@ -74,7 +74,7 @@ export default function ConferenceHero() {
                         size="lg"
                         onClick={() => setShowSubscribe(true)}
                     >
-                        Register now
+                        Register for conference
                     </Button>
                 </motion.div>
             </div>
