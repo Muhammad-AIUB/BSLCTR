@@ -12,45 +12,36 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 
-const ADMIN_CREDENTIALS = [
-    { email: "ishtiaque.mazid@gmail.com", password: "Nornob123@" },
-    { email: "salimur51@yahoo.com", password: "Salimur123@" },
-    { email: "drfazalkarim@gmail.com", password: "Fazal123@" },
-    { email: "bslctr2022@gmail.com", password: "Harun123@" },
-    { email: "moinul2000@gmail.com", password: "Moin123@" },
-    { email: "faroqueahmed1970@gmail.com", password: "Faroque123@" },
-    { email: "shahariar.dmc@gmail.com", password: "Shahariar123@" },
-    { email: "tanvir.siamk67@gmail.com", password: "Kashfee123@" },
-];
-
 export default function AdminLoginModal() {
     const [open, setOpen] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
+    const [submitting, setSubmitting] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
 
-        const enteredEmail = email.trim();
-        const isValidCredential = ADMIN_CREDENTIALS.some(
-            (cred) => cred.email === enteredEmail && cred.password === password
-        );
-
-        if (isValidCredential) {
-            localStorage.setItem(
-                "adminAuth",
-                JSON.stringify({ email: enteredEmail, loggedInAt: Date.now() })
-            );
+        setSubmitting(true);
+        try {
+            const res = await fetch("/api/admin/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: email.trim(), password }),
+            });
+            if (!res.ok) {
+                setError("Invalid credentials.");
+                return;
+            }
             setOpen(false);
             setEmail("");
             setPassword("");
             window.dispatchEvent(new Event("adminAuthChanged"));
-            return;
-        } else {
-            setError("Invalid credentials.");
-            return;
+        } catch {
+            setError("Could not reach the server. Try again.");
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -98,8 +89,8 @@ export default function AdminLoginModal() {
                         </div>
                     ) : null}
 
-                    <Button type="submit" className="mt-2">
-                        Log in
+                    <Button type="submit" className="mt-2" disabled={submitting}>
+                        {submitting ? "Logging in..." : "Log in"}
                     </Button>
                 </form>
 

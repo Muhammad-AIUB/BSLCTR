@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import AdminLoginModal from "../AdminLoginModal";
+import AdminNavControls from "../AdminNavControls";
 import MemberLoginModal from "../MemberLoginModal";
 
 const Navbar = () => {
@@ -36,7 +36,7 @@ const Navbar = () => {
                     dashboards they led to have been removed, so there is no logged-in
                     avatar state, no notification badge and no pending-count polling. */}
                 <div className="flex items-center gap-3">
-                    <AdminLoginModal />
+                    <AdminNavControls />
 
                     <div className="relative" ref={memberMenuRef}>
                         <button
