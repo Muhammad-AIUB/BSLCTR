@@ -14,7 +14,7 @@ const registrationSchema = z.object({
         .string()
         .regex(/^[0-9]{10,}$/, "Mobile number must be at least 10 digits"),
     email: z.string().email("Invalid email address"),
-    paymentOption: z.enum(["pay_now", "pay_later"], "Invalid payment option"),
+    paymentOption: z.enum(["pay_now", "pay_later"], { message: "Invalid payment option" }),
 });
 
 type RegistrationData = z.infer<typeof registrationSchema>;

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 const memberSignupSchema = z.object({
     fullName: z.string().min(2, "Full name must be at least 2 characters"),
@@ -51,8 +51,8 @@ export async function POST(request: NextRequest) {
         }
 
         // Check if BMDC reg no already exists
-        const existingBmdcReg = await prisma.member.findUnique({
-            where: { bmdcRegNo: data.bmdcRegNo },
+        const existingBmdcReg = await prisma.member.findFirst({
+            where: { bmdcNo: data.bmdcRegNo },
         });
 
         if (existingBmdcReg) {
@@ -67,9 +67,12 @@ export async function POST(request: NextRequest) {
             data: {
                 name: data.fullName,
                 designation: data.designation,
-                specialty: data.specialty,
-                affiliatedInstitution: data.affiliatedInstitution,
-                bmdcRegNo: data.bmdcRegNo,
+                specialtySubject: data.specialty,
+                // The signup form has no qualifications field and the column is
+                // required; an admin fills it in when reviewing the application.
+                academicQualifications: "",
+                currentPosting: data.affiliatedInstitution,
+                bmdcNo: data.bmdcRegNo,
                 mobileNo: data.mobileNumber,
                 email: data.email,
                 status: "PENDING", // Default status is PENDING until admin approves
