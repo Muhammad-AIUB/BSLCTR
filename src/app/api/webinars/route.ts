@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { deleteUpload } from "@/lib/uploads";
 
 export async function GET() {
     try {
@@ -18,6 +19,9 @@ export async function GET() {
 
         if (expiredIds.length > 0) {
             await prisma.webinar.deleteMany({ where: { id: { in: expiredIds } } });
+            await Promise.all(
+                all.filter((w) => expiredIds.includes(w.id) && w.thumbnail).map((w) => deleteUpload(w.thumbnail))
+            );
         }
 
         const active = all.filter((w) => !expiredIds.includes(w.id));

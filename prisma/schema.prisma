@@ -26,6 +26,12 @@ model Webinar {
     chairpersons    String[]
     coChairmen      String[]
     sponsors        Json     @default("[]")
+    thumbnail       String   @default("")
+    /// Free-text speakers line, styled by speakersStyle (see src/lib/text-style.ts).
+    speakers        String   @default("")
+    speakersStyle   Json     @default("{}")
+    description     String   @default("")
+    descriptionStyle Json    @default("{}")
     createdAt       DateTime @default(now())
     updatedAt       DateTime @updatedAt
 }

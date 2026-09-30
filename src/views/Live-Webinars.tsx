@@ -6,6 +6,12 @@ import { CalendarIcon, Clock, ExternalLink, Radio } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ShareButtons from "@/components/ShareButtons";
 import { Section } from "@/components/ui/section";
+import {
+    DEFAULT_DESCRIPTION_STYLE,
+    DEFAULT_SPEAKERS_STYLE,
+    parseTextStyle,
+    textStyleToCss,
+} from "@/lib/text-style";
 
 interface Sponsor { name: string; logo: string; }
 interface Webinar {
@@ -19,6 +25,11 @@ interface Webinar {
     chairpersons: string[];
     coChairmen: string[];
     sponsors: Sponsor[];
+    thumbnail: string;
+    speakers: string;
+    speakersStyle: unknown;
+    description: string;
+    descriptionStyle: unknown;
 }
 
 export default function LiveWebinars() {
@@ -116,8 +127,19 @@ function WebinarCard({ webinar: w, index, upcoming }: { webinar: Webinar; index:
         >
             <div className="flex flex-col md:flex-row">
                 {/* Preview panel */}
-                <div className={`bg-gradient-to-br ${gradient} md:w-72 shrink-0 flex flex-col justify-between p-6 min-h-[200px]`}>
-                    <div className="flex items-center gap-2">
+                <div className={`relative overflow-hidden bg-gradient-to-br ${gradient} md:w-72 shrink-0 flex flex-col justify-between p-6 min-h-[200px]`}>
+                    {w.thumbnail && (
+                        <>
+                            {/* Decorative: the headline is repeated as text beside it. */}
+                            <img
+                                src={w.thumbnail}
+                                alt=""
+                                className="absolute inset-0 h-full w-full object-cover"
+                            />
+                            <div aria-hidden="true" className="absolute inset-0 bg-secondary/60" />
+                        </>
+                    )}
+                    <div className="relative flex items-center gap-2">
                         {!upcoming && (
                             <span className="relative flex h-2.5 w-2.5">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
@@ -129,9 +151,9 @@ function WebinarCard({ webinar: w, index, upcoming }: { webinar: Webinar; index:
                         </p>
                     </div>
 
-                    <p className="text-white font-bold text-lg leading-snug line-clamp-4 my-4">{w.headline}</p>
+                    <p className="relative text-white font-bold text-lg leading-snug line-clamp-4 my-4">{w.headline}</p>
 
-                    <div className="space-y-1">
+                    <div className="relative space-y-1">
                         <div className="flex items-center gap-2 text-white/90 text-sm">
                             <CalendarIcon className="h-3.5 w-3.5 shrink-0" />
                             <span>{w.date}</span>
@@ -147,6 +169,23 @@ function WebinarCard({ webinar: w, index, upcoming }: { webinar: Webinar; index:
                 <div className="flex-1 p-6 flex flex-col justify-between gap-4">
                     <div>
                         <h3 className="text-xl font-medium leading-snug mb-4">{w.headline}</h3>
+
+                        {w.speakers && (
+                            <p
+                                className="mb-3 whitespace-pre-line"
+                                style={textStyleToCss(parseTextStyle(w.speakersStyle, DEFAULT_SPEAKERS_STYLE))}
+                            >
+                                {w.speakers}
+                            </p>
+                        )}
+                        {w.description && (
+                            <p
+                                className="mb-4 whitespace-pre-line leading-relaxed"
+                                style={textStyleToCss(parseTextStyle(w.descriptionStyle, DEFAULT_DESCRIPTION_STYLE))}
+                            >
+                                {w.description}
+                            </p>
+                        )}
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-1 text-sm">
                             {w.keynoteSpeakers.length > 0 && (
