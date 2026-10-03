@@ -2,72 +2,107 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Separator } from "@/components/ui/separator";
 import SubscribeModal from "../SubscribeModal";
 
-const quickLinks = [
-    { name: "Home", path: "/" },
-    { name: "Live Webinars", path: "/live-webinars" },
-    { name: "Guidelines", path: "/guidelines" },
-    { name: "Case Presentations", path: "/cases" },
-    { name: "Gallery", path: "/gallery" },
-    { name: "Q&A", path: "/qa" },
-    { name: "About", path: "/about" },
+// Mirrors the main nav, grouped so the footer reads as a site map.
+const linkGroups = [
+    {
+        title: "Society",
+        links: [
+            { name: "Home", path: "/" },
+            { name: "About Us", path: "/about" },
+            { name: "Doctors", path: "/doctors" },
+            { name: "BSLCTRcon", path: "/bslctrcon" },
+            { name: "Gallery", path: "/gallery" },
+        ],
+    },
+    {
+        title: "Resources",
+        links: [
+            { name: "Live Webinars", path: "/live-webinars" },
+            { name: "Clinical Guidelines", path: "/guidelines" },
+            { name: "Patients Guidelines", path: "/patients-guidelines" },
+            { name: "Case Presentations", path: "/cases" },
+            { name: "Q&A", path: "/qa" },
+        ],
+    },
 ];
+
+const linkClass =
+    "text-sm text-white/75 outline-none transition-colors hover:text-white focus-visible:text-white focus-visible:underline";
 
 export function Footer() {
     const [showSubscribe, setShowSubscribe] = useState(false);
 
     return (
         <footer className="w-full bg-secondary text-white">
-            <div className="page-container py-12">
-                <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
+            <div className="page-container py-12 lg:py-16">
+                <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr] lg:gap-12">
                     {/* Brand */}
-                    <div className="flex max-w-sm flex-col items-center text-center md:items-start md:text-left">
-                        <img
-                            src="/Logo1.png"
-                            alt="BSLCTR Logo"
-                            className="h-12 mb-4"
-                        />
-                        <h3 className="text-lg font-medium text-white">BSLCTR</h3>
-                        <p className="mt-2 text-sm text-white/70">
-                            Dedicated to improving liver health through
-                            education and care.
+                    <div className="sm:col-span-2 lg:col-span-1">
+                        <Link
+                            href="/"
+                            className="inline-flex items-center gap-3 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                        >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src="/Logo1.png" alt="" className="h-12 w-auto" />
+                            <span className="text-xl font-semibold tracking-wide">BSLCTR</span>
+                        </Link>
+                        <p className="mt-4 max-w-xs text-sm font-medium leading-relaxed text-white/90">
+                            Bangladesh Society for Liver Cancer Treatment &amp; Research
+                        </p>
+                        <p className="mt-2 max-w-xs text-sm leading-relaxed text-white/65">
+                            Dedicated to improving liver health through education and care.
                         </p>
                     </div>
 
-                    {/* Quick links + Subscribe */}
-                    <div className="flex flex-col items-center gap-4 md:items-end">
-                        <h4 className="text-xs font-semibold uppercase tracking-wider text-white/60">
-                            Quick Links
-                        </h4>
-                        <nav className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm font-medium md:justify-end">
-                            {quickLinks.map((link) => (
-                                <Link
-                                    key={link.path}
-                                    href={link.path}
-                                    className="text-white/80 outline-none transition-colors hover:text-white hover:underline focus-visible:text-white focus-visible:underline"
-                                >
-                                    {link.name}
-                                </Link>
-                            ))}
+                    {linkGroups.map((group) => (
+                        <nav key={group.title} aria-label={group.title}>
+                            <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-white/55">
+                                {group.title}
+                            </h3>
+                            <ul className="mt-4 space-y-3">
+                                {group.links.map((link) => (
+                                    <li key={link.path}>
+                                        <Link href={link.path} className={linkClass}>
+                                            {link.name}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
                         </nav>
-                        <button
-                            type="button"
-                            onClick={() => setShowSubscribe(true)}
-                            className="mt-1 rounded-full bg-white px-5 py-2 text-sm font-semibold text-secondary outline-none transition-all duration-200 hover:bg-white/90 focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent active:scale-95"
-                        >
-                            Subscribe
-                        </button>
+                    ))}
+
+                    {/* Get involved */}
+                    <div className="sm:col-span-2 lg:col-span-1">
+                        <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-white/55">
+                            Get Involved
+                        </h3>
+                        <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/75">
+                            Subscribe for updates, or register for the annual conference.
+                        </p>
+                        <div className="mt-4 flex flex-wrap gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setShowSubscribe(true)}
+                                className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground outline-none transition-all duration-200 hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-white/70 active:scale-95"
+                            >
+                                Subscribe
+                            </button>
+                            <Link
+                                href="/donate"
+                                className="rounded-full border border-white/40 px-5 py-2 text-sm font-semibold text-white outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/70"
+                            >
+                                Donate
+                            </Link>
+                        </div>
                     </div>
                 </div>
 
-                <Separator className="my-6 bg-white/20" />
-
                 {/* Bottom */}
-                <p className="text-center text-xs text-white/60">
-                    © {new Date().getFullYear()} BSLCTR [Bangladesh Society for
-                    Liver Cancer Treatment &amp; Research] – All Rights Reserved
+                <p className="mt-10 border-t border-white/15 pt-6 text-xs text-white/55 lg:mt-12">
+                    © {new Date().getFullYear()} Bangladesh Society for Liver
+                    Cancer Treatment &amp; Research. All rights reserved.
                 </p>
             </div>
 
