@@ -5,19 +5,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import SubscribeModal from "../SubscribeModal";
-import { ChevronDown, Menu } from "lucide-react";
+import { ChevronDown, ChevronRight, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { DOCTOR_CATEGORIES } from "@/lib/doctors";
 
 type NavLink = {
     name: string;
     path: string;
-    /** Shown on hover (desktop) or as sub-text (mobile) when the short label needs unpacking. */
-    detail?: string[];
     /** Sub-pages surfaced in a dropdown (desktop) or as indented items (mobile). */
     children?: { name: string; path: string }[];
     /** Opens the subscribe modal instead of navigating. */
@@ -31,11 +25,11 @@ const links: NavLink[] = [
     {
         name: "Doctors",
         path: "/doctors",
-        detail: [
-            "Hepatologists",
-            "Hepatobiliary Surgeons",
-            "Intervention Hepatologists",
-        ],
+        // Each opens the directory filtered to that kind of specialist.
+        children: DOCTOR_CATEGORIES.map((c) => ({
+            name: c.name.en,
+            path: `/doctors?type=${c.slug}`,
+        })),
     },
     {
         name: "Guidelines",
@@ -146,16 +140,7 @@ const NavLinksBar = () => {
                                                             : ""
                                                     }`}
                                                 >
-                                                    <span className="flex flex-col items-start gap-0.5">
-                                                        <span>{link.name}</span>
-                                                        {link.detail && (
-                                                            <span className="text-2xs font-normal text-white/60">
-                                                                {link.detail.join(
-                                                                    " · ",
-                                                                )}
-                                                            </span>
-                                                        )}
-                                                    </span>
+                                                    {link.name}
                                                     {link.path ===
                                                         "/live-webinars" &&
                                                         upcomingBadge(false)}
@@ -254,18 +239,22 @@ const NavLinksBar = () => {
                                     </Link>
 
                                     {open && (
-                                        <div className="absolute left-0 top-full z-50 min-w-[15rem] overflow-hidden rounded-b-md border border-black/5 bg-white py-1 shadow-lg">
+                                        <div className="absolute left-0 top-full z-50 min-w-[16rem] overflow-hidden rounded-b-lg border border-black/5 bg-white p-1.5 shadow-xl">
                                             {link.children.map((child) => (
                                                 <Link
                                                     key={child.path}
                                                     href={child.path}
-                                                    className={`block px-4 py-2.5 text-sm transition-colors hover:bg-secondary/10 ${
+                                                    // A ?type= link keeps the pathname, so the
+                                                    // route-change effect would not close the menu.
+                                                    onClick={() => setOpenMenu(null)}
+                                                    className={`group/item flex items-center justify-between gap-4 rounded-md px-3 py-2.5 text-sm outline-none transition-colors hover:bg-secondary/10 hover:text-secondary focus-visible:bg-secondary/10 ${
                                                         pathname === child.path
                                                             ? "bg-secondary/10 font-semibold text-secondary"
                                                             : "text-neutral-700"
                                                     }`}
                                                 >
                                                     {child.name}
+                                                    <ChevronRight className="h-4 w-4 text-neutral-400 transition-transform group-hover/item:translate-x-0.5 group-hover/item:text-secondary" />
                                                 </Link>
                                             ))}
                                         </div>
@@ -274,55 +263,16 @@ const NavLinksBar = () => {
                             );
                         }
 
-                        const button = (
-                            <Link href={link.path} className="flex items-stretch">
-                                <Button
-                                    variant="ghost"
-                                    className={`${base} h-12`}
-                                >
-                                    {link.name}
-                                    {link.path === "/live-webinars" &&
-                                        upcomingBadge(true)}
-                                    {marker}
-                                </Button>
-                            </Link>
-                        );
-
-                        if (!link.detail) {
-                            return (
-                                <div
-                                    key={link.path}
-                                    className="flex items-stretch"
-                                >
-                                    {button}
-                                </div>
-                            );
-                        }
-
                         return (
                             <div key={link.path} className="flex items-stretch">
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        {button}
-                                    </TooltipTrigger>
-                                    <TooltipContent
-                                        side="bottom"
-                                        sideOffset={4}
-                                        className="pointer-events-none px-3 py-2 shadow-lg"
-                                    >
-                                        <ul className="flex flex-col gap-1 text-left">
-                                            {link.detail.map((item) => (
-                                                <li
-                                                    key={item}
-                                                    className="flex items-center gap-2 whitespace-nowrap text-xs"
-                                                >
-                                                    <span className="h-1 w-1 shrink-0 rounded-full bg-current opacity-60" />
-                                                    {item}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </TooltipContent>
-                                </Tooltip>
+                                <Link href={link.path} className="flex items-stretch">
+                                    <Button variant="ghost" className={`${base} h-12`}>
+                                        {link.name}
+                                        {link.path === "/live-webinars" &&
+                                            upcomingBadge(true)}
+                                        {marker}
+                                    </Button>
+                                </Link>
                             </div>
                         );
                     })}

@@ -1,23 +1,48 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { ChevronRight, Stethoscope } from "lucide-react";
 import DistrictCombobox from "@/components/DistrictCombobox";
 import LanguageToggle, { useLang } from "@/components/LanguageToggle";
-import { DOCTORS, UI, type Doctor, type Lang } from "@/lib/doctors";
+import { DOCTORS, DOCTOR_CATEGORIES, UI, type Doctor, type Lang } from "@/lib/doctors";
 import { Section } from "@/components/ui/section";
 
+// useSearchParams needs a Suspense boundary for the page to prerender.
 export default function DoctorsPage() {
+    return (
+        <Suspense>
+            <DoctorsDirectory />
+        </Suspense>
+    );
+}
+
+function DoctorsDirectory() {
     const [district, setDistrict] = useState("");
     const { lang } = useLang();
     const t = UI[lang];
 
+    // ?type=<category slug>, set by the Doctors menu in the nav and the chips below.
+    const type = useSearchParams().get("type");
+    const category = DOCTOR_CATEGORIES.find((c) => c.slug === type);
+
     const visible = useMemo(
         () =>
-            district ? DOCTORS.filter((d) => d.district === district) : DOCTORS,
-        [district],
+            DOCTORS.filter(
+                (d) =>
+                    (!category || d.category === category.slug) &&
+                    (!district || d.district === district),
+            ),
+        [category, district],
     );
+
+    const chip = (active: boolean) =>
+        `rounded-full border px-4 py-2 text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 ${
+            active
+                ? "border-primary bg-primary text-primary-foreground"
+                : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
+        }`;
 
     return (
         <Section watermark={t.doctors} eyebrow="Directory" title={t.doctors}>
@@ -28,6 +53,26 @@ export default function DoctorsPage() {
                     <LanguageToggle />
                 </div>
                 <p className="mb-6 max-w-2xl text-body">{t.intro}</p>
+
+                <div className="mb-6 flex flex-wrap gap-2">
+                    <Link
+                        href="/doctors"
+                        aria-current={category ? undefined : "true"}
+                        className={chip(!category)}
+                    >
+                        {t.allDoctors}
+                    </Link>
+                    {DOCTOR_CATEGORIES.map((c) => (
+                        <Link
+                            key={c.slug}
+                            href={`/doctors?type=${c.slug}`}
+                            aria-current={category?.slug === c.slug ? "true" : undefined}
+                            className={chip(category?.slug === c.slug)}
+                        >
+                            {c.name[lang]}
+                        </Link>
+                    ))}
+                </div>
 
                 <div className="mb-8 max-w-xs">
                     <label
@@ -48,12 +93,20 @@ export default function DoctorsPage() {
                     <div className="flex items-center justify-center py-12">
                         <div className="w-full max-w-sm rounded-xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center sm:px-10">
                             <Stethoscope className="mx-auto mb-3 h-10 w-10 text-slate-400" />
-                            <p className="font-medium text-slate-600">
-                                {t.noneInDistrict} {district}.
-                            </p>
-                            <p className="mt-1 text-sm text-slate-500">
-                                {t.tryAnother}
-                            </p>
+                            {district ? (
+                                <>
+                                    <p className="font-medium text-slate-600">
+                                        {t.noneInDistrict} {district}.
+                                    </p>
+                                    <p className="mt-1 text-sm text-slate-500">
+                                        {t.tryAnother}
+                                    </p>
+                                </>
+                            ) : (
+                                <p className="font-medium text-slate-600">
+                                    {t.noneInCategory}
+                                </p>
+                            )}
                         </div>
                     </div>
                 ) : (

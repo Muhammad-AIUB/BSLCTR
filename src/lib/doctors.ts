@@ -21,8 +21,24 @@ export type Chamber = {
     phones: string[];
 };
 
+/** The three kinds of specialist the society lists; the slug is the /doctors?type= value. */
+export const DOCTOR_CATEGORIES = [
+    { slug: "hepatologists", name: { en: "Hepatologists", bn: "হেপাটোলজিস্ট" } },
+    {
+        slug: "hepatobiliary-surgeons",
+        name: { en: "Hepatobiliary Surgeons", bn: "হেপাটোবিলিয়ারি সার্জন" },
+    },
+    {
+        slug: "intervention-hepatologists",
+        name: { en: "Intervention Hepatologists", bn: "ইন্টারভেনশন হেপাটোলজিস্ট" },
+    },
+] as const;
+
+export type DoctorCategory = (typeof DOCTOR_CATEGORIES)[number]["slug"];
+
 export type Doctor = {
     slug: string;
+    category: DoctorCategory;
     name: Localized;
     /** Post-nominals — identical in both languages. */
     qualifications: string;
@@ -42,6 +58,7 @@ export type Doctor = {
 export const DOCTORS: Doctor[] = [
     {
         slug: "zia-hayder-bosunia",
+        category: "hepatologists",
         name: {
             en: "Asso. Prof. Dr. Zia Hayder Bosunia",
             bn: "ডাঃ মোঃ জিয়া হায়দার বসুনিয়া",
@@ -102,6 +119,7 @@ export const DOCTORS: Doctor[] = [
     },
     {
         slug: "prabhat-kumar-poddar",
+        category: "hepatologists",
         name: {
             en: "Dr. Prabhat Kumar Poddar",
             bn: "ডা. প্রভাত কুমার পোদ্দার",
@@ -151,6 +169,8 @@ export const UI: Record<Lang, Record<string, string>> = {
         intro: "Hepatologists, hepatobiliary surgeons and intervention hepatologists registered with the society.",
         filterByDistrict: "Filter by district",
         allDistricts: "All districts",
+        allDoctors: "All doctors",
+        noneInCategory: "No doctors are listed in this category yet.",
         viewDetails: "View details",
         noneInDistrict: "No doctors in",
         tryAnother: "Try another district.",
@@ -169,6 +189,8 @@ export const UI: Record<Lang, Record<string, string>> = {
         intro: "সোসাইটিতে নিবন্ধিত হেপাটোলজিস্ট, হেপাটোবিলিয়ারি সার্জন ও ইন্টারভেনশন হেপাটোলজিস্টগণ।",
         filterByDistrict: "জেলা অনুযায়ী খুঁজুন",
         allDistricts: "সব জেলা",
+        allDoctors: "সব চিকিৎসক",
+        noneInCategory: "এই বিভাগে এখনো কোনো চিকিৎসক নেই।",
         viewDetails: "বিস্তারিত দেখুন",
         noneInDistrict: "কোনো চিকিৎসক নেই",
         tryAnother: "অন্য জেলা নির্বাচন করুন।",
