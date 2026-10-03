@@ -1,20 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+// Mirrors the fields in src/components/forms/ConferenceRegistrationForm.tsx.
 const registrationSchema = z.object({
-    fullName: z.string().min(2, "Full name must be at least 2 characters"),
-    designation: z.string().min(1, "Designation is required"),
-    specialty: z.string().min(1, "Specialty is required"),
-    affiliatedInstitution: z.string().min(2, "Institution name is required"),
-    bmdcRegNo: z
-        .string()
-        .min(5, "BMDC registration number must be at least 5 characters")
-        .max(20, "BMDC registration number is too long"),
-    mobileNumber: z
-        .string()
-        .regex(/^[0-9]{10,}$/, "Mobile number must be at least 10 digits"),
-    email: z.string().email("Invalid email address"),
-    paymentOption: z.enum(["pay_now", "pay_later"], { message: "Invalid payment option" }),
+    name: z.string().trim().min(2, "Name is required").max(200),
+    degree: z.string().trim().min(1, "Degree is required").max(200),
+    speciality: z.string().trim().min(1, "Speciality is required").max(200),
+    designation: z.string().trim().min(1, "Designation is required").max(200),
+    institution: z.string().trim().min(2, "Institution is required").max(300),
+    contactNo: z.string().trim().regex(/^\+?[0-9]{10,14}$/, "Contact number is not valid"),
+    email: z.string().trim().email("Invalid email address"),
+    category: z.enum(["delegate", "student"], { message: "Invalid participant's category" }),
 });
 
 type RegistrationData = z.infer<typeof registrationSchema>;
@@ -38,14 +34,6 @@ export async function POST(request: NextRequest) {
 
         const data: RegistrationData = validation.data;
 
-        // Additional business logic validations
-        if (data.bmdcRegNo.length < 5) {
-            return NextResponse.json(
-                { message: "Invalid BMDC registration number format" },
-                { status: 400 }
-            );
-        }
-
         // TODO: Save to database or send confirmation email
         // For now, just log and return success
         console.log("Conference registration received:", {
@@ -63,7 +51,7 @@ export async function POST(request: NextRequest) {
                 message: "Registration successful",
                 data: {
                     email: data.email,
-                    fullName: data.fullName,
+                    name: data.name,
                     registeredAt: new Date().toISOString(),
                 },
             },

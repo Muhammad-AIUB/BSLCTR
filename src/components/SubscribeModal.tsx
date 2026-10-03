@@ -15,35 +15,44 @@ import { PhysicianForm } from "./forms/PhysicianForm";
 import { ConferenceRegistrationForm } from "./forms/ConferenceRegistrationForm";
 import { Stethoscope, Users, Calendar } from "lucide-react";
 
+type UserType = "none" | "patient" | "physician" | "conference";
+
 type SubscribeModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  /** Open straight on the conference form, skipping the Patient / Physician chooser. */
+  conferenceOnly?: boolean;
 };
 
-type UserType = "none" | "patient" | "physician" | "conference";
-
-const SubscribeModal = ({ isOpen, onClose }: SubscribeModalProps) => {
-  const [userType, setUserType] = useState<UserType>("none");
+const SubscribeModal = ({ isOpen, onClose, conferenceOnly = false }: SubscribeModalProps) => {
+  const initialType: UserType = conferenceOnly ? "conference" : "none";
+  const [userType, setUserType] = useState<UserType>(initialType);
 
   const handleReset = () => {
-    setUserType("none");
+    setUserType(initialType);
+  };
+
+  const close = () => {
+    onClose();
+    setTimeout(handleReset, 300); // Reset after close animation
   };
 
   return (
     <Dialog
       open={isOpen}
       onOpenChange={(open) => {
-        if (!open) {
-          onClose();
-          setTimeout(handleReset, 300); // Reset after close animation
-        }
+        if (!open) close();
       }}
     >
       <DialogContent className="sm:max-w-[500px] overflow-y-auto max-h-[calc(100dvh-2rem)]">
         <DialogHeader>
-          <DialogTitle className="font-bold">Subscribe</DialogTitle>
+          <DialogTitle className="font-bold">
+            {userType === "conference" ? "Conference Registration" : "Subscribe"}
+          </DialogTitle>
           <DialogDescription>
-            Choose your subscription type to receive relevant information.
+            {userType === "conference"
+              ? "Fill in your details to register for the conference."
+              : "Choose your subscription type to receive relevant information."}
           </DialogDescription>
         </DialogHeader>
 
@@ -72,7 +81,12 @@ const SubscribeModal = ({ isOpen, onClose }: SubscribeModalProps) => {
 
         {userType === "patient" && <PatientForm onBack={handleReset} />}
         {userType === "physician" && <PhysicianForm onBack={handleReset} />}
-        {userType === "conference" && <ConferenceRegistrationForm onBack={handleReset} />}
+        {userType === "conference" && (
+          <ConferenceRegistrationForm
+            onBack={conferenceOnly ? undefined : handleReset}
+            onDone={close}
+          />
+        )}
 
         {/* {userType === "none" && (
           <DialogFooter>

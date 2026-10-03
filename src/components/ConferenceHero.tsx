@@ -82,6 +82,7 @@ export default function ConferenceHero() {
             <SubscribeModal
                 isOpen={showSubscribe}
                 onClose={() => setShowSubscribe(false)}
+                conferenceOnly
             />
         </section>
     );
