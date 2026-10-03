@@ -1,13 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import AdminLoginModal from "./AdminLoginModal";
 
 const pill =
     "rounded-full border border-white/30 bg-white/10 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-white/20 active:scale-95 sm:px-4";
 
-/** Shows Admin Login, or Dashboard + Log out once the server confirms an admin session. */
-export default function AdminNavControls() {
+/**
+ * Shows Admin Login, or Dashboard + Log out once the server confirms an admin session.
+ * `children` are the signed-out-only controls (the Member menu): hidden for an admin.
+ */
+export default function AdminNavControls({ children }: { children?: ReactNode }) {
     const [isAdmin, setIsAdmin] = useState(false);
 
     const refresh = useCallback(async () => {
@@ -25,7 +28,14 @@ export default function AdminNavControls() {
         return () => window.removeEventListener("adminAuthChanged", refresh);
     }, [refresh]);
 
-    if (!isAdmin) return <AdminLoginModal />;
+    if (!isAdmin) {
+        return (
+            <>
+                <AdminLoginModal />
+                {children}
+            </>
+        );
+    }
 
     return (
         <>
