@@ -48,21 +48,21 @@ const SubscribeModal = ({ isOpen, onClose }: SubscribeModalProps) => {
         </DialogHeader>
 
         {userType === "none" && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 py-4">
             <Button
-              className="h-20 rounded-full bg-secondary text-lg text-white hover:bg-secondary/90 active:scale-[0.98]"
+              className="h-12 rounded-full bg-secondary text-base text-white hover:bg-secondary/90 active:scale-[0.98]"
               onClick={() => setUserType("patient")}
             >
               <Users /> Patient
             </Button>
             <Button
-              className="h-20 rounded-full bg-primary text-lg text-white hover:bg-primary/90 active:scale-[0.98]"
+              className="h-12 rounded-full bg-primary text-base text-white hover:bg-primary/90 active:scale-[0.98]"
               onClick={() => setUserType("physician")}
             >
               <Stethoscope /> Physician
             </Button>
             <Button
-              className="h-20 rounded-full bg-primary text-lg text-white hover:bg-primary/90 active:scale-[0.98] col-span-1 sm:col-span-2"
+              className="h-12 rounded-full bg-primary text-base text-white hover:bg-primary/90 active:scale-[0.98] col-span-1 sm:col-span-2"
               onClick={() => setUserType("conference")}
             >
               <Calendar /> Conference Registration
