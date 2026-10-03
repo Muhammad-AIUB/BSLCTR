@@ -35,11 +35,12 @@ export function Footer() {
     const [showSubscribe, setShowSubscribe] = useState(false);
 
     return (
-        <footer className="w-full bg-secondary text-white">
+        // The orange rule separates the footer from page content and from the same-blue nav bar.
+        <footer className="w-full border-t-4 border-primary bg-secondary text-white">
             <div className="page-container py-12 lg:py-16">
-                <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr] lg:gap-12">
+                <div className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr] lg:gap-12">
                     {/* Brand */}
-                    <div className="sm:col-span-2 lg:col-span-1">
+                    <div className="col-span-2 lg:col-span-1">
                         <Link
                             href="/"
                             className="inline-flex items-center gap-3 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-white/70"
@@ -61,10 +62,10 @@ export function Footer() {
                             <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-white/55">
                                 {group.title}
                             </h3>
-                            <ul className="mt-4 space-y-3">
+                            <ul className="mt-2">
                                 {group.links.map((link) => (
                                     <li key={link.path}>
-                                        <Link href={link.path} className={linkClass}>
+                                        <Link href={link.path} className={`block py-2.5 lg:py-2 ${linkClass}`}>
                                             {link.name}
                                         </Link>
                                     </li>
@@ -74,7 +75,7 @@ export function Footer() {
                     ))}
 
                     {/* Get involved */}
-                    <div className="sm:col-span-2 lg:col-span-1">
+                    <div className="col-span-2 lg:col-span-1">
                         <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-white/55">
                             Get Involved
                         </h3>
@@ -85,13 +86,13 @@ export function Footer() {
                             <button
                                 type="button"
                                 onClick={() => setShowSubscribe(true)}
-                                className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground outline-none transition-all duration-200 hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-white/70 active:scale-95"
+                                className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground outline-none transition-all duration-200 hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-white/70 active:scale-95"
                             >
                                 Subscribe
                             </button>
                             <Link
                                 href="/donate"
-                                className="rounded-full border border-white/40 px-5 py-2 text-sm font-semibold text-white outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/70"
+                                className="rounded-full border border-white/40 px-5 py-2.5 text-sm font-semibold text-white outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/70"
                             >
                                 Donate
                             </Link>
