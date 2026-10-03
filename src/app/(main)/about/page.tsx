@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { BookOpen, Calendar, HeartPulse, Stethoscope, Target, Eye } from "lucide-react";
 import { Section } from "@/components/ui/section";
 
@@ -107,21 +106,6 @@ export default function AboutPage() {
                             </div>
                         </div>
                     ))}
-                </div>
-
-                <div className="mt-12 flex flex-wrap gap-3">
-                    <Link
-                        href="/bslctrcon"
-                        className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
-                    >
-                        View the Conference
-                    </Link>
-                    <Link
-                        href="/doctors"
-                        className="rounded-md border border-secondary px-5 py-2.5 text-sm font-semibold text-secondary transition-colors hover:bg-secondary hover:text-secondary-foreground"
-                    >
-                        Find a Doctor
-                    </Link>
                 </div>
             </Section>
         </>
