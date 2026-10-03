@@ -4,17 +4,13 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, X, Minimize2, ChevronLeft } from "lucide-react";
 import Link from "next/link";
+import { youtubeId } from "@/lib/youtube";
 
-const videos = [
-    { id: "5ljrzDlq0Qg", title: "World Hepatitis Day 2025 উপলক্ষে আরটিভির বিশেষ স্বাস্থ্য বিষয়ক অনুষ্ঠান | Rtv", date: "July 2025" },
-    { id: "OeXDYUIv0t4", title: "রোজায় সুস্থতা: লিভার সিরোসিস প্রতিরোধে ডাক্তারের পরামর্শ | Somoy TV", date: "April 2023" },
-    { id: "F4AE1PgmlOE", title: "BSLCTR Video Highlights", date: "March 2024" },
-    { id: "y-f3A21nT3A", title: "Medical Education Session", date: "February 2024" },
-    { id: "Qz1REw087GE", title: "Healthcare Event Coverage", date: "January 2024" },
-    { id: "AaNj_bmsUDs", title: "Medical Insights", date: "December 2023" },
-];
+/** A gallery video from the database: either a YouTube id or a file to play directly. */
+type GalleryVideo = { key: string; title: string; date: string; id?: string; src?: string };
 
 export default function VideoGalleryPage() {
+    const [videos, setVideos] = useState<GalleryVideo[]>([]);
     const [playingId, setPlayingId] = useState<string | null>(null);
     const [floating, setFloating] = useState(false);
     // callback ref — fires as soon as the element mounts/unmounts
@@ -23,6 +19,36 @@ export default function VideoGalleryPage() {
     const playerRef = useCallback((node: HTMLDivElement | null) => {
         setPlayerEl(node);
     }, []);
+
+    // Videos are managed from the dashboard (Gallery tab); newest first.
+    useEffect(() => {
+        fetch("/api/videos")
+            .then((res) => (res.ok ? res.json() : []))
+            .then((rows: { id: string; title: string; link: string; createdAt: string }[]) =>
+                setVideos(
+                    rows.map((r) => {
+                        const id = youtubeId(r.link) ?? undefined;
+                        return {
+                            key: r.id,
+                            title: r.title,
+                            date: new Date(r.createdAt).toLocaleDateString("en-GB", {
+                                month: "long",
+                                year: "numeric",
+                            }),
+                            id,
+                            src: id ? undefined : r.link,
+                        };
+                    })
+                )
+            )
+            .catch(() => {});
+    }, []);
+
+    const fileVideos = videos.filter((v) => v.src);
+    // The YouTube id is the card key and the player id, so drop repeats of the same video.
+    const youtubeVideos = videos.filter(
+        (v, i) => v.id && videos.findIndex((o) => o.id === v.id) === i
+    ) as (GalleryVideo & { id: string })[];
 
     // IntersectionObserver — watch the playing card; go floating when off-screen
     useEffect(() => {
@@ -64,7 +90,24 @@ export default function VideoGalleryPage() {
                 <h1 className="text-3xl font-medium mb-8">Video Gallery</h1>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {videos.map((video, index) => {
+                    {fileVideos.map((video) => (
+                        <div
+                            key={video.key}
+                            className="bg-white rounded-xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-lg transition-all duration-300"
+                        >
+                            <video
+                                src={video.src}
+                                controls
+                                preload="metadata"
+                                className="aspect-video w-full bg-black"
+                            />
+                            <div className="p-4">
+                                <h3 className="font-medium">{video.title}</h3>
+                                <p className="text-slate-500 text-xs mt-1">{video.date}</p>
+                            </div>
+                        </div>
+                    ))}
+                    {youtubeVideos.map((video, index) => {
                         const isPlaying = playingId === video.id;
                         return (
                             <motion.div

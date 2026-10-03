@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useMemo, memo } from "react";
+import { useCallback, useEffect, useRef, useState, useMemo, memo } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,26 +10,81 @@ import {
     Users,
     X,
     ZoomIn,
+    ZoomOut,
     ChevronLeft,
     ChevronRight,
 } from "lucide-react";
 
 interface Photo {
-    id: number;
+    id: number | string;
     src: string;
     alt: string;
     title: string;
     date: string;
     location: string;
     attendees: string;
-    category: string;
+    /** Optional: photos without one get no badge, and the filter only appears when some have one. */
+    category?: string;
 }
+
+const MIN_ZOOM = 1;
+const MAX_ZOOM = 4;
+const ZOOM_STEP = 0.5;
 
 const PhotoGallery = ({ photos: photosProp }: { photos?: Photo[] }) => {
     const [selectedCategory, setSelectedCategory] = useState<string>("All");
     const [selectedImage, setSelectedImage] = useState<Photo | null>(null);
     const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+    // Lightbox zoom: scale plus the pan offset (px) applied while zoomed in.
+    const [zoom, setZoom] = useState(MIN_ZOOM);
+    const [pan, setPan] = useState({ x: 0, y: 0 });
+    const drag = useRef<{ x: number; y: number; panX: number; panY: number } | null>(null);
+    const [lightboxImg, setLightboxImg] = useState<HTMLImageElement | null>(null);
     const ref = useRef(null);
+
+    const changeZoom = useCallback((delta: number) => {
+        setZoom((z) => {
+            const next = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z + delta));
+            // Back at 100% the photo is centred again.
+            if (next === MIN_ZOOM) setPan({ x: 0, y: 0 });
+            return next;
+        });
+    }, []);
+
+    const resetZoom = useCallback(() => {
+        setZoom(MIN_ZOOM);
+        setPan({ x: 0, y: 0 });
+    }, []);
+
+    // Every photo opens at 100%.
+    useEffect(() => {
+        resetZoom();
+    }, [selectedImage, resetZoom]);
+
+    // Mouse wheel zooms. Attached natively because React's onWheel is passive
+    // and could not stop the lightbox from scrolling underneath.
+    useEffect(() => {
+        if (!lightboxImg) return;
+        const onWheel = (e: WheelEvent) => {
+            e.preventDefault();
+            changeZoom(e.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP);
+        };
+        lightboxImg.addEventListener("wheel", onWheel, { passive: false });
+        return () => lightboxImg.removeEventListener("wheel", onWheel);
+    }, [lightboxImg, changeZoom]);
+
+    // Keyboard: + / - zoom, 0 resets, Escape closes.
+    useEffect(() => {
+        if (!selectedImage) return;
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === "+" || e.key === "=") changeZoom(ZOOM_STEP);
+            else if (e.key === "-") changeZoom(-ZOOM_STEP);
+            else if (e.key === "0") resetZoom();
+            else if (e.key === "Escape") setSelectedImage(null);
+        };
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+    }, [selectedImage, changeZoom, resetZoom]);
     const isInView = useInView(ref, { once: true, margin: "-100px" });
 
     // Enhanced photos data with categories
@@ -122,7 +177,7 @@ const PhotoGallery = ({ photos: photosProp }: { photos?: Photo[] }) => {
     // Get unique categories
     const categories = useMemo(() => {
         const uniqueCategories = Array.from(
-            new Set(photos.map((photo) => photo.category))
+            new Set(photos.flatMap((photo) => photo.category ?? []))
         );
         return ["All", ...uniqueCategories];
     }, [photos]);
@@ -208,7 +263,7 @@ const PhotoGallery = ({ photos: photosProp }: { photos?: Photo[] }) => {
                 </motion.div>
 
                 {/* Category Filter */}
-                {photos.length > 1 && (
+                {categories.length > 1 && (
                 <motion.div
                     className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-12"
                     initial="hidden"
@@ -269,17 +324,19 @@ const PhotoGallery = ({ photos: photosProp }: { photos?: Photo[] }) => {
                                             </div>
                                         </div>
                                         {/* Category Badge */}
-                                        <Badge className="absolute top-3 right-3 bg-primary text-primary-foreground border-0 shadow-lg">
-                                            {photo.category}
-                                        </Badge>
+                                        {photo.category && (
+                                            <Badge className="absolute top-3 right-3 bg-primary text-primary-foreground border-0 shadow-lg">
+                                                {photo.category}
+                                            </Badge>
+                                        )}
                                     </div>
 
                                     {/* Content */}
                                     <div className="p-4">
-                                        <h3 className="font-medium text-sm mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                                        <h3 className="font-medium text-sm line-clamp-2 group-hover:text-primary transition-colors">
                                             {photo.title}
                                         </h3>
-                                        <div className="space-y-1.5 text-xs text-slate-600">
+                                        <div className="mt-2 space-y-1.5 text-xs text-slate-600 empty:hidden">
                                             {photo.date && (
                                                 <div className="flex items-center gap-1.5">
                                                     <Calendar className="w-3.5 h-3.5 text-primary flex-shrink-0" />
@@ -316,7 +373,7 @@ const PhotoGallery = ({ photos: photosProp }: { photos?: Photo[] }) => {
                         className="text-center py-20"
                     >
                         <p className="text-slate-500 text-lg">
-                            No events found in this category
+                            {photos.length === 0 ? "No photos yet" : "No events found in this category"}
                         </p>
                     </motion.div>
                 )}
@@ -332,6 +389,42 @@ const PhotoGallery = ({ photos: photosProp }: { photos?: Photo[] }) => {
                         className="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm flex items-center justify-center p-4"
                         onClick={closeLightbox}
                     >
+                        {/* Zoom controls */}
+                        <div
+                            className="absolute top-4 left-4 z-10 flex items-center gap-1 rounded-full bg-black/50 p-1 text-white backdrop-blur-sm"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="rounded-full text-white hover:bg-white/10 hover:text-white disabled:opacity-40"
+                                onClick={() => changeZoom(-ZOOM_STEP)}
+                                disabled={zoom <= MIN_ZOOM}
+                                aria-label="Zoom out"
+                            >
+                                <ZoomOut className="w-5 h-5" />
+                            </Button>
+                            <button
+                                type="button"
+                                onClick={resetZoom}
+                                className="min-w-12 rounded-full px-1 text-center text-sm tabular-nums hover:bg-white/10"
+                                aria-label="Reset zoom"
+                                title="Reset zoom"
+                            >
+                                {Math.round(zoom * 100)}%
+                            </button>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="rounded-full text-white hover:bg-white/10 hover:text-white disabled:opacity-40"
+                                onClick={() => changeZoom(ZOOM_STEP)}
+                                disabled={zoom >= MAX_ZOOM}
+                                aria-label="Zoom in"
+                            >
+                                <ZoomIn className="w-5 h-5" />
+                            </Button>
+                        </div>
+
                         {/* Close Button */}
                         <Button
                             variant="ghost"
@@ -377,11 +470,40 @@ const PhotoGallery = ({ photos: photosProp }: { photos?: Photo[] }) => {
                             className="relative max-w-6xl w-full max-h-[90vh] flex flex-col overflow-y-auto"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <div className="relative flex-1 min-h-0 flex items-center justify-center mb-4">
+                            {/* overflow-hidden keeps a zoomed photo from covering the caption and buttons */}
+                            <div className="relative flex-1 min-h-0 flex items-center justify-center mb-4 overflow-hidden rounded-xl">
                                 <img
+                                    ref={setLightboxImg}
                                     src={selectedImage.src}
                                     alt={selectedImage.alt}
-                                    className="max-w-full max-h-[70vh] object-contain rounded-xl shadow-2xl"
+                                    draggable={false}
+                                    className={`max-w-full max-h-[70vh] object-contain rounded-xl shadow-2xl select-none touch-none ${
+                                        zoom > MIN_ZOOM ? "cursor-grab active:cursor-grabbing" : "cursor-zoom-in"
+                                    }`}
+                                    style={{
+                                        transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+                                        // No easing while dragging, so the photo tracks the pointer.
+                                        transition: drag.current ? "none" : "transform 0.15s ease-out",
+                                    }}
+                                    onDoubleClick={() => (zoom > MIN_ZOOM ? resetZoom() : changeZoom(1))}
+                                    onPointerDown={(e) => {
+                                        if (zoom <= MIN_ZOOM) return;
+                                        e.currentTarget.setPointerCapture(e.pointerId);
+                                        drag.current = { x: e.clientX, y: e.clientY, panX: pan.x, panY: pan.y };
+                                    }}
+                                    onPointerMove={(e) => {
+                                        const d = drag.current;
+                                        if (!d) return;
+                                        // Keep at least part of the photo in view.
+                                        const maxX = (e.currentTarget.offsetWidth * (zoom - 1)) / 2;
+                                        const maxY = (e.currentTarget.offsetHeight * (zoom - 1)) / 2;
+                                        setPan({
+                                            x: Math.min(maxX, Math.max(-maxX, d.panX + e.clientX - d.x)),
+                                            y: Math.min(maxY, Math.max(-maxY, d.panY + e.clientY - d.y)),
+                                        });
+                                    }}
+                                    onPointerUp={() => (drag.current = null)}
+                                    onPointerCancel={() => (drag.current = null)}
                                 />
                             </div>
 
@@ -389,9 +511,11 @@ const PhotoGallery = ({ photos: photosProp }: { photos?: Photo[] }) => {
                             <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 text-white">
                                 <div className="flex items-start justify-between mb-3">
                                     <div>
-                                        <Badge className="bg-primary text-primary-foreground border-0 mb-2">
-                                            {selectedImage.category}
-                                        </Badge>
+                                        {selectedImage.category && (
+                                            <Badge className="bg-primary text-primary-foreground border-0 mb-2">
+                                                {selectedImage.category}
+                                            </Badge>
+                                        )}
                                         <h3 className="text-xl font-medium">
                                             {selectedImage.title}
                                         </h3>

@@ -1,12 +1,18 @@
+import { createWriteStream } from "fs";
 import { mkdir, unlink, writeFile } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
+import { Readable, Transform } from "stream";
+import { pipeline } from "stream/promises";
 
 /** Uploads live outside public/ so files added at runtime are served immediately, via /api/files/. */
 export const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(process.cwd(), "uploads");
 
 export const DOC_TYPES = ["pdf", "doc", "docx"];
 export const IMAGE_TYPES = ["jpg", "jpeg", "png", "webp"];
+export const VIDEO_TYPES = ["mp4", "webm"];
+/** Gallery video size cap. Videos are streamed to disk, so this is a disk-space guard, not a memory one. */
+export const MAX_VIDEO_BYTES = 2 * 1024 * 1024 * 1024;
 
 export const CONTENT_TYPES: Record<string, string> = {
     pdf: "application/pdf",
@@ -16,6 +22,8 @@ export const CONTENT_TYPES: Record<string, string> = {
     jpeg: "image/jpeg",
     png: "image/png",
     webp: "image/webp",
+    mp4: "video/mp4",
+    webm: "video/webm",
 };
 
 const FILE_URL_PREFIX = "/api/files/";
@@ -36,6 +44,58 @@ export async function saveUpload(
     await mkdir(UPLOAD_DIR, { recursive: true });
     const name = `${randomUUID()}.${ext}`;
     await writeFile(path.join(UPLOAD_DIR, name), Buffer.from(await file.arrayBuffer()));
+    return FILE_URL_PREFIX + name;
+}
+
+function sizeLabel(bytes: number): string {
+    const mb = bytes / 1024 / 1024;
+    return mb >= 1024 ? `${Math.round((mb / 1024) * 10) / 10} GB` : `${Math.round(mb)} MB`;
+}
+
+/**
+ * Like saveUpload, but streams the body to disk instead of buffering it, for
+ * files too large to hold in memory. A partial file is removed on any failure.
+ */
+export async function saveUploadStream(
+    body: ReadableStream<Uint8Array>,
+    filename: string,
+    allowed: string[],
+    maxBytes: number,
+    { declaredBytes }: { declaredBytes?: number } = {}
+): Promise<string> {
+    const ext = filename.split(".").pop()?.toLowerCase() ?? "";
+    if (!allowed.includes(ext)) {
+        throw new Error(`"${filename}" must be one of: ${allowed.join(", ")}`);
+    }
+    const tooLarge = () => new Error(`"${filename}" is larger than ${sizeLabel(maxBytes)}`);
+    // Content-Length lets an oversized upload be refused before any of it is written.
+    if (declaredBytes && declaredBytes > maxBytes) throw tooLarge();
+
+    await mkdir(UPLOAD_DIR, { recursive: true });
+    const name = `${randomUUID()}.${ext}`;
+    const target = path.join(UPLOAD_DIR, name);
+
+    let written = 0;
+    const limit = new Transform({
+        transform(chunk: Buffer, _enc, done) {
+            written += chunk.length;
+            done(written > maxBytes ? tooLarge() : null, chunk);
+        },
+    });
+    try {
+        await pipeline(
+            Readable.fromWeb(body as import("stream/web").ReadableStream),
+            limit,
+            createWriteStream(target)
+        );
+    } catch (error) {
+        await unlink(target).catch(() => {});
+        throw error;
+    }
+    if (written === 0) {
+        await unlink(target).catch(() => {});
+        throw new Error(`"${filename}" is empty`);
+    }
     return FILE_URL_PREFIX + name;
 }
 

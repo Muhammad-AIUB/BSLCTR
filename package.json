@@ -8,6 +8,7 @@
         "start": "next start",
         "lint": "next lint",
         "seed": "tsx --env-file=.env prisma/seed.ts",
+        "seed:gallery": "tsx --env-file=.env prisma/seed-gallery.ts",
         "postinstall": "prisma generate"
     },
     "prisma": {

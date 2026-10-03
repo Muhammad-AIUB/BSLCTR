@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Home, Video } from "lucide-react";
+import { BookOpen, Home, Images, Video } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Add new dashboard sections here; Guidelines is the first.
 const ITEMS = [
     { name: "Guidelines", href: "/dashboard/guidelines", icon: BookOpen },
     { name: "Webinars", href: "/dashboard/webinars", icon: Video },
+    { name: "Gallery", href: "/dashboard/gallery", icon: Images },
 ];
 
 export default function DashboardSidebar({ email }: { email: string }) {
