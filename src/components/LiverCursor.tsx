@@ -15,7 +15,7 @@ function LiverFallbackSVG() {
     /* Anatomical liver silhouette — single curved organ shape, as in medical diagrams.
        Wide horizontal teardrop/comma shape. Right side larger, left side tapers. */
     return (
-        <svg width="64" height="44" viewBox="0 0 140 88" xmlns="http://www.w3.org/2000/svg">
+        <svg width="100%" height="100%" viewBox="0 0 140 88" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <radialGradient id="lvBody" cx="65%" cy="40%" r="60%">
                     <stop offset="0%"   stopColor="#D85A48" />
@@ -64,6 +64,10 @@ function LiverFallbackSVG() {
     );
 }
 
+// Sprite size in px. The pointer hotspot is the sprite's centre.
+const WIDTH = 36;
+const HEIGHT = 27;
+
 export default function LiverCursor() {
     const wrapRef   = useRef<HTMLDivElement>(null);
     const firstMove = useRef(false);
@@ -96,7 +100,7 @@ export default function LiverCursor() {
 
         const onMove = (e: MouseEvent) => {
             wrap.style.transform =
-                `translate(${e.clientX - 32}px, ${e.clientY - 24}px)`;
+                `translate(${e.clientX - WIDTH / 2}px, ${e.clientY - HEIGHT / 2}px)`;
 
             if (!firstMove.current) {
                 firstMove.current = true;
@@ -141,8 +145,8 @@ export default function LiverCursor() {
                     position:      "fixed",
                     top:           0,
                     left:          0,
-                    width:         64,
-                    height:        48,
+                    width:         WIDTH,
+                    height:        HEIGHT,
                     opacity:       0,
                     pointerEvents: "none",
                     zIndex:        99999,
@@ -166,8 +170,8 @@ export default function LiverCursor() {
                         <img
                             src="/liver-cursor.png"
                             alt=""
-                            width={64}
-                            height={48}
+                            width={WIDTH}
+                            height={HEIGHT}
                             draggable={false}
                             onError={() => setImgFailed(true)}
                             style={{
