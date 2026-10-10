@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { CalendarIcon, Clock, ExternalLink, Radio } from "lucide-react";
+import { CalendarIcon, Clock, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ShareButtons from "@/components/ShareButtons";
 import { Section } from "@/components/ui/section";
@@ -12,7 +12,7 @@ import {
     parseTextStyle,
     textStyleToCss,
 } from "@/lib/text-style";
-import { bangladeshToday } from "@/lib/webinars";
+import { webinarHasStarted } from "@/lib/webinars";
 
 interface Sponsor { name: string; logo: string; }
 interface Webinar {
@@ -36,17 +36,40 @@ interface Webinar {
 export default function LiveWebinars() {
     const [webinars, setWebinars] = useState<Webinar[]>([]);
     const [loading, setLoading] = useState(true);
+    const [failed, setFailed] = useState(false);
+    // Re-read every minute, so a webinar moves from Upcoming to Live when it starts.
+    const [now, setNow] = useState(() => Date.now());
 
     useEffect(() => {
         fetch("/api/webinars")
-            .then((r) => r.json())
+            .then((r) => {
+                if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                return r.json();
+            })
             .then(setWebinars)
+            .catch(() => setFailed(true))
             .finally(() => setLoading(false));
     }, []);
 
-    const today = bangladeshToday(); // YYYY-MM-DD
-    const live = webinars.filter((w) => w.date <= today);
-    const upcoming = webinars.filter((w) => w.date > today);
+    useEffect(() => {
+        const timer = setInterval(() => setNow(Date.now()), 60_000);
+        return () => clearInterval(timer);
+    }, []);
+
+    // Split on the start time, not the date: a webinar at 8 pm is not live at 9 that morning.
+    const live = webinars.filter((w) => webinarHasStarted(w.date, w.time, now));
+    const upcoming = webinars.filter((w) => !webinarHasStarted(w.date, w.time, now));
+
+    // A failed load is not the same as nothing being scheduled.
+    if (failed) {
+        return (
+            <Section watermark="Webinars" eyebrow="Events" title="Live Webinars">
+                <p role="alert" className="py-10 text-center text-muted-foreground">
+                    The webinars could not be loaded. Please try again in a moment.
+                </p>
+            </Section>
+        );
+    }
 
     return (
         <Section watermark="Webinars" eyebrow="Events" title="Live Webinars">
@@ -54,7 +77,7 @@ export default function LiveWebinars() {
 
                 {/* Live / Recent Webinars */}
                 <section>
-                    <SectionHeading title="Live &amp; Recent" dot />
+                    <SectionHeading title="Live &amp; Recent" dot={live.length > 0} />
                     {loading ? (
                         <div className="text-center py-10 text-muted-foreground">Loading...</div>
                     ) : live.length === 0 ? (
@@ -161,7 +184,7 @@ function WebinarCard({ webinar: w, index, upcoming }: { webinar: Webinar; index:
                         </div>
                         <div className="flex items-center gap-2 text-white/90 text-sm">
                             <Clock className="h-3.5 w-3.5 shrink-0" />
-                            <span>{w.time}</span>
+                            <span>{w.time} (Bangladesh time)</span>
                         </div>
                     </div>
                 </div>
@@ -217,12 +240,15 @@ function WebinarCard({ webinar: w, index, upcoming }: { webinar: Webinar; index:
 
                     <div className="flex items-center justify-between gap-4 flex-wrap">
                         <ShareButtons url={w.link} title={w.headline} />
-                        <a href={w.link} target="_blank" rel="noreferrer">
-                            <Button className="bg-secondary text-white hover:bg-secondary/90 shadow-sm hover:shadow-md transition-all duration-300 px-8">
+                        <Button
+                            asChild
+                            className="bg-secondary text-white hover:bg-secondary/90 shadow-sm hover:shadow-md transition-all duration-300 px-8"
+                        >
+                            <a href={w.link} target="_blank" rel="noreferrer">
                                 Join Now
                                 <ExternalLink className="h-4 w-4 ml-2" />
-                            </Button>
-                        </a>
+                            </a>
+                        </Button>
                     </div>
                 </div>
             </div>

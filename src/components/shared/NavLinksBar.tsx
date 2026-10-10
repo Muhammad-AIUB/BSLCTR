@@ -6,9 +6,9 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import SubscribeModal from "../SubscribeModal";
 import { ChevronDown, ChevronRight, Menu } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { DOCTOR_CATEGORIES } from "@/lib/doctors";
-import { bangladeshToday } from "@/lib/webinars";
+import { webinarHasStarted } from "@/lib/webinars";
 
 type NavLink = {
     name: string;
@@ -59,24 +59,33 @@ const NavLinksBar = () => {
     // Controlled so that following a link closes the mobile sheet: the layout
     // survives navigation, so an uncontrolled sheet would stay open over the new page.
     const [sheetOpen, setSheetOpen] = useState(false);
-    const [hasUpcoming, setHasUpcoming] = useState(false);
+    const [webinars, setWebinars] = useState<{ date: string; time: string }[]>([]);
+    // Re-read every minute: this bar outlives page changes, so the badge would otherwise
+    // still say "Upcoming" after the webinar had started.
+    const [now, setNow] = useState(() => Date.now());
     const pathname = usePathname();
 
     useEffect(() => {
         fetch("/api/webinars")
             .then((r) => r.json())
-            .then((data: { date: string }[]) => {
-                const today = bangladeshToday();
-                setHasUpcoming(data.some((w) => w.date > today));
-            })
+            .then((data) => setWebinars(Array.isArray(data) ? data : []))
             .catch(() => {});
     }, []);
+
+    useEffect(() => {
+        const timer = setInterval(() => setNow(Date.now()), 60_000);
+        return () => clearInterval(timer);
+    }, []);
+
+    const hasUpcoming = webinars.some((w) => !webinarHasStarted(w.date, w.time, now));
 
     // Close any open dropdown when the route changes.
     useEffect(() => setOpenMenu(null), [pathname]);
 
     const upcomingBadge = (compact: boolean) => (
         <span
+            // Dimmed when nothing is scheduled, which only a sighted visitor can tell.
+            aria-hidden={!hasUpcoming}
             className={`${
                 compact ? "ml-1.5" : "ml-2"
             } inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-2xs font-bold transition-colors duration-300 ${
@@ -96,9 +105,13 @@ const NavLinksBar = () => {
 
     return (
         <>
-            {/* Not sticky: the Navbar above now owns the sticky top-0 slot, and
-                two stuck elements at top-0 would overlap. */}
-            <nav className="w-full bg-secondary shadow-sm">
+            {/* Sticky on phones only, so that the menu button stays in reach. From lg up
+                the Navbar above owns the sticky top-0 slot, and two stuck elements at
+                top-0 would overlap. */}
+            <nav
+                aria-label="Main"
+                className="sticky top-0 z-40 w-full bg-secondary shadow-sm lg:static"
+            >
                 {/* Mobile: hamburger */}
                 <div className="flex items-center justify-between px-4 py-3 lg:hidden">
                     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
@@ -106,7 +119,7 @@ const NavLinksBar = () => {
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-11 w-11 text-white"
+                                className="h-11 w-11 text-white focus-visible:ring-white"
                                 aria-label="Open navigation menu"
                             >
                                 <Menu className="h-6 w-6" />
@@ -114,8 +127,12 @@ const NavLinksBar = () => {
                         </SheetTrigger>
                         <SheetContent
                             side="left"
+                            // The links need no description; this tells the dialog so.
+                            aria-describedby={undefined}
                             className="overflow-y-auto border-none bg-secondary text-white"
                         >
+                            {/* A dialog needs a name for screen readers; it is not shown. */}
+                            <SheetTitle className="sr-only">Site navigation</SheetTitle>
                             <div className="mt-8 flex flex-col gap-1">
                                 {links.map((link) => {
                                     if (link.isModal) {
@@ -123,7 +140,7 @@ const NavLinksBar = () => {
                                             <Button
                                                 key={link.path}
                                                 variant="ghost"
-                                                className="h-auto min-h-11 w-full justify-start whitespace-normal text-left text-white"
+                                                className="h-auto min-h-11 w-full justify-start whitespace-normal text-left text-white focus-visible:ring-white"
                                                 onClick={() => {
                                                     setSheetOpen(false);
                                                     setShowSubscribeModal(true);
@@ -136,43 +153,45 @@ const NavLinksBar = () => {
 
                                     return (
                                         <div key={link.path}>
-                                            <Link
-                                                href={link.path}
-                                                onClick={() => setSheetOpen(false)}
+                                            <Button
+                                                asChild
+                                                variant="ghost"
+                                                className={`h-auto min-h-11 w-full justify-start whitespace-normal text-left text-white focus-visible:ring-white ${
+                                                    pathname === link.path
+                                                        ? "bg-primary"
+                                                        : ""
+                                                }`}
                                             >
-                                                <Button
-                                                    variant="ghost"
-                                                    className={`h-auto min-h-11 w-full justify-start whitespace-normal text-left text-white ${
-                                                        pathname === link.path
-                                                            ? "bg-primary"
-                                                            : ""
-                                                    }`}
+                                                <Link
+                                                    href={link.path}
+                                                    onClick={() => setSheetOpen(false)}
                                                 >
                                                     {link.name}
                                                     {link.path ===
                                                         "/live-webinars" &&
                                                         upcomingBadge(false)}
-                                                </Button>
-                                            </Link>
+                                                </Link>
+                                            </Button>
 
                                             {link.children?.map((child) => (
-                                                <Link
+                                                <Button
                                                     key={child.path}
-                                                    href={child.path}
-                                                    onClick={() => setSheetOpen(false)}
+                                                    asChild
+                                                    variant="ghost"
+                                                    className={`h-auto min-h-11 w-full justify-start whitespace-normal pl-8 text-left text-sm font-normal text-white/80 focus-visible:ring-white ${
+                                                        pathname ===
+                                                        child.path
+                                                            ? "bg-primary"
+                                                            : ""
+                                                    }`}
                                                 >
-                                                    <Button
-                                                        variant="ghost"
-                                                        className={`h-auto min-h-11 w-full justify-start whitespace-normal pl-8 text-left text-sm font-normal text-white/80 ${
-                                                            pathname ===
-                                                            child.path
-                                                                ? "bg-primary"
-                                                                : ""
-                                                        }`}
+                                                    <Link
+                                                        href={child.path}
+                                                        onClick={() => setSheetOpen(false)}
                                                     >
                                                         {child.name}
-                                                    </Button>
-                                                </Link>
+                                                    </Link>
+                                                </Button>
                                             ))}
                                         </div>
                                     );
@@ -189,7 +208,7 @@ const NavLinksBar = () => {
                         const current = isCurrent(link, pathname);
                         // Type and padding step down between lg and xl so all 11
                         // links fit a 1024px viewport without overflowing.
-                        const base = `relative rounded-md px-3 py-2 text-xs font-medium transition-colors xl:px-4 xl:text-sm ${
+                        const base = `relative rounded-md px-3 py-2 text-xs font-medium transition-colors focus-visible:ring-white xl:px-4 xl:text-sm ${
                             current
                                 ? "bg-primary text-white hover:bg-primary/90"
                                 : "text-white/90 hover:bg-white/10 hover:text-white"
@@ -230,13 +249,14 @@ const NavLinksBar = () => {
                                         }
                                     }}
                                 >
-                                    <Link href={link.path}>
-                                        <Button
-                                            variant="ghost"
-                                            className={`${base} h-12 gap-1`}
-                                            aria-expanded={open}
-                                            aria-haspopup="true"
-                                        >
+                                    <Button
+                                        asChild
+                                        variant="ghost"
+                                        className={`${base} h-12 gap-1`}
+                                        aria-expanded={open}
+                                        aria-haspopup="true"
+                                    >
+                                        <Link href={link.path}>
                                             {link.name}
                                             <ChevronDown
                                                 className={`h-3.5 w-3.5 transition-transform duration-200 ${
@@ -244,8 +264,8 @@ const NavLinksBar = () => {
                                                 }`}
                                             />
                                             {marker}
-                                        </Button>
-                                    </Link>
+                                        </Link>
+                                    </Button>
 
                                     {open && (
                                         <div className="absolute left-0 top-full z-50 min-w-[16rem] overflow-hidden rounded-b-lg border border-black/5 bg-white p-1.5 shadow-xl">
@@ -256,7 +276,7 @@ const NavLinksBar = () => {
                                                     // A ?type= link keeps the pathname, so the
                                                     // route-change effect would not close the menu.
                                                     onClick={() => setOpenMenu(null)}
-                                                    className={`group/item flex items-center justify-between gap-4 rounded-md px-3 py-2.5 text-sm outline-none transition-colors hover:bg-secondary/10 hover:text-secondary focus-visible:bg-secondary/10 ${
+                                                    className={`group/item flex items-center justify-between gap-4 rounded-md px-3 py-2.5 text-sm outline-none transition-colors hover:bg-secondary/10 hover:text-secondary focus-visible:bg-secondary/10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-secondary ${
                                                         pathname === child.path
                                                             ? "bg-secondary/10 font-semibold text-secondary"
                                                             : "text-neutral-700"
@@ -274,14 +294,14 @@ const NavLinksBar = () => {
 
                         return (
                             <div key={link.path} className="flex items-stretch">
-                                <Link href={link.path} className="flex items-stretch">
-                                    <Button variant="ghost" className={`${base} h-12`}>
+                                <Button asChild variant="ghost" className={`${base} h-12`}>
+                                    <Link href={link.path}>
                                         {link.name}
                                         {link.path === "/live-webinars" &&
                                             upcomingBadge(true)}
                                         {marker}
-                                    </Button>
-                                </Link>
+                                    </Link>
+                                </Button>
                             </div>
                         );
                     })}
