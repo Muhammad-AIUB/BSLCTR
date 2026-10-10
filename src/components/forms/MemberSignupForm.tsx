@@ -93,7 +93,8 @@ export function MemberSignupForm({ onBack, onSuccess }: MemberSignupFormProps) {
             }
 
             const data = await response.json();
-            alert(`Signup successful! A verification email has been sent to ${values.email}`);
+            // No email is sent and there is no member login yet; say only what happened.
+            alert("Signup received. Your membership application is pending approval.");
             form.reset();
             onSuccess?.();
             onBack();

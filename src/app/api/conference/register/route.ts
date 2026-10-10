@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { prisma } from "@/lib/prisma";
 
 // Mirrors the fields in src/components/forms/ConferenceRegistrationForm.tsx.
 const registrationSchema = z.object({
@@ -34,25 +35,16 @@ export async function POST(request: NextRequest) {
 
         const data: RegistrationData = validation.data;
 
-        // TODO: Save to database or send confirmation email
-        // For now, just log and return success
-        console.log("Conference registration received:", {
-            ...data,
-            timestamp: new Date().toISOString(),
-            ipAddress: request.headers.get("x-forwarded-for") || "unknown",
-        });
-
-        // Simulate async operation (e.g., sending email, saving to DB)
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        const registration = await prisma.conferenceRegistration.create({ data });
 
         return NextResponse.json(
             {
                 success: true,
                 message: "Registration successful",
                 data: {
-                    email: data.email,
-                    name: data.name,
-                    registeredAt: new Date().toISOString(),
+                    email: registration.email,
+                    name: registration.name,
+                    registeredAt: registration.createdAt.toISOString(),
                 },
             },
             { status: 201 }

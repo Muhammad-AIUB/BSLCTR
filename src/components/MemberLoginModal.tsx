@@ -34,6 +34,11 @@ export default function MemberLoginModal({ open, onClose, onSuccess }: Props) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
             });
+            // The login route went with the member dashboard and is not rebuilt yet.
+            if (res.status === 404) {
+                setError("Member login is not available yet.");
+                return;
+            }
             const data = await res.json();
             if (!res.ok) {
                 setError(data.error || "Login failed");

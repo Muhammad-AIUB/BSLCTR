@@ -103,6 +103,21 @@ model Guideline {
     updatedAt DateTime      @updatedAt
 }
 
+/// One submission of the conference registration form (/api/conference/register).
+model ConferenceRegistration {
+    id          String   @id @default(cuid())
+    name        String
+    degree      String
+    speciality  String
+    designation String
+    institution String
+    contactNo   String
+    email       String
+    /// "delegate" or "student", as validated by the route.
+    category    String
+    createdAt   DateTime @default(now())
+}
+
 model Member {
     id                     String       @id @default(cuid())
     name                   String

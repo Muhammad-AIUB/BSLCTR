@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 const memberSignupSchema = z.object({
@@ -100,6 +101,15 @@ export async function POST(request: NextRequest) {
             { status: 201 }
         );
     } catch (error) {
+        // Two signups with the same email can both pass the check above; the
+        // unique constraint then rejects the second.
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+            return NextResponse.json(
+                { message: "Email already registered" },
+                { status: 409 }
+            );
+        }
+
         console.error("Member signup error:", error);
 
         if (error instanceof SyntaxError) {
