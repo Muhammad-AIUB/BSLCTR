@@ -232,6 +232,28 @@
     animation: slide-in 0.3s ease-out;
 }
 
+/* The home hero's liver drifts a few pixels, slowly. CSS only, so it needs no JavaScript and
+   never hides the picture; switched off for anyone who has asked for reduced motion. */
+@keyframes hero-float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-12px);
+    }
+}
+
+.animate-hero-float {
+    animation: hero-float 8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-hero-float {
+        animation: none;
+    }
+}
+
 /* Rendered output of RichTextEditor (tiptap) content — preflight strips default element styles */
 .rich-text p {
     margin: 0.5em 0;
