@@ -32,7 +32,8 @@ export default function AdminLoginModal() {
             });
             if (!res.ok) {
                 const body = await res.json().catch(() => ({}));
-                setError(body.error ?? "Invalid credentials.");
+                // The route words every refusal itself; no body means it failed, not that the password was wrong.
+                setError(body.error ?? "Could not log in. Try again later.");
                 return;
             }
             setOpen(false);

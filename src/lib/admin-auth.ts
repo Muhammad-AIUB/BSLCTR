@@ -35,8 +35,16 @@ function sign(payload: string, password: string): string {
 
 const MAX_FAILED_LOGINS = 10;
 const LOGIN_LOCKOUT_MS = 15 * 60 * 1000;
+const MAX_TRACKED_KEYS = 10_000;
+// A full map is cut back to this, not by one, so a flood does not pay for a pass per request.
+const TRACKED_KEYS_AFTER_EVICTION = 9_000;
 // Kept in memory: enough for a single server process, and it resets on restart.
 const failedLogins = new Map<string, { count: number; until: number }>();
+
+/** The throttle key for a targeted account. */
+export function emailLoginKey(email: string): string {
+    return `email:${email.toLowerCase().slice(0, 254)}`;
+}
 
 /** True when `key` (a caller or a targeted email) has used up its failed attempts for now. */
 export function loginBlocked(key: string): boolean {
@@ -45,10 +53,26 @@ export function loginBlocked(key: string): boolean {
     return (failedLogins.get(key)?.count ?? 0) >= MAX_FAILED_LOGINS;
 }
 
+/**
+ * Bounds the map when someone sprays random emails or addresses. Expired counters go first,
+ * then the oldest ones, but never a real admin's: dropping those would hand the sprayer a
+ * fresh set of guesses against that account.
+ */
+function makeRoom(now: number): void {
+    for (const [key, f] of failedLogins) {
+        if (f.until <= now) failedLogins.delete(key);
+    }
+    if (failedLogins.size <= TRACKED_KEYS_AFTER_EVICTION) return;
+    const admins = new Set(credentials().map((c) => emailLoginKey(c.email)));
+    for (const key of failedLogins.keys()) {
+        if (failedLogins.size <= TRACKED_KEYS_AFTER_EVICTION) break;
+        if (!admins.has(key)) failedLogins.delete(key);
+    }
+}
+
 export function recordFailedLogin(key: string): void {
-    // Bounds the map when someone sprays random emails.
-    if (failedLogins.size > 10_000) failedLogins.clear();
     const now = Date.now();
+    if (failedLogins.size >= MAX_TRACKED_KEYS) makeRoom(now);
     const f = failedLogins.get(key);
     if (f && f.until > now) f.count++;
     else failedLogins.set(key, { count: 1, until: now + LOGIN_LOCKOUT_MS });
@@ -84,13 +108,14 @@ export function verifySessionToken(token: string | undefined): string | null {
     const [payload, sig] = token.split(".");
     if (!payload || !sig) return null;
     // Read before the signature check only to pick whose password signed it.
-    let claims: { email?: unknown; exp?: unknown };
+    let claims: { email?: unknown; exp?: unknown } | null;
     try {
         claims = JSON.parse(Buffer.from(payload, "base64url").toString());
     } catch {
         return null;
     }
-    const { email, exp } = claims;
+    // A payload can be valid JSON and still not an object, e.g. `null`.
+    const { email, exp } = claims ?? {};
     if (typeof email !== "string" || typeof exp !== "number" || exp <= Date.now()) return null;
     const admin = credentials().find((c) => c.email === email);
     return admin && safeEqual(sig, sign(payload, admin.password)) ? email : null;

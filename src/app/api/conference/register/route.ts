@@ -10,7 +10,7 @@ const registrationSchema = z.object({
     designation: z.string().trim().min(1, "Designation is required").max(200),
     institution: z.string().trim().min(2, "Institution is required").max(300),
     contactNo: z.string().trim().regex(/^\+?[0-9]{10,14}$/, "Contact number is not valid"),
-    email: z.string().trim().email("Invalid email address"),
+    email: z.string().trim().email("Invalid email address").max(254),
     category: z.enum(["delegate", "student"], { message: "Invalid participant's category" }),
 });
 

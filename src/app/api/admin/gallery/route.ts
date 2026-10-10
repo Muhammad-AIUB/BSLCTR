@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { adminFromRequest } from "@/lib/admin-auth";
-import { IMAGE_TYPES, VIDEO_TYPES, deleteUpload, saveUpload } from "@/lib/uploads";
+import { IMAGE_TYPES, VIDEO_TYPES, UploadError, deleteUpload, saveUpload } from "@/lib/uploads";
 import { youtubeId } from "@/lib/youtube";
 
 export const dynamic = "force-dynamic";
@@ -94,8 +94,10 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(created, { status: 201 });
     } catch (error) {
         if (saved) await deleteUpload(saved);
-        const message = error instanceof Error ? error.message : "Upload failed";
         console.error("create gallery item failed", error);
-        return NextResponse.json({ error: message }, { status: 400 });
+        if (error instanceof UploadError) {
+            return NextResponse.json({ error: error.message }, { status: 400 });
+        }
+        return NextResponse.json({ error: "Could not save the gallery item" }, { status: 500 });
     }
 }

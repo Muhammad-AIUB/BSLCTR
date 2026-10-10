@@ -6,6 +6,8 @@ export async function GET() {
         const photos = await prisma.photo.findMany({
             where: { status: "APPROVED" },
             orderBy: { createdAt: "desc" },
+            // Only what the gallery shows; who uploaded a row stays private.
+            select: { id: true, title: true, link: true, createdAt: true },
         });
         return NextResponse.json(photos);
     } catch (error) {

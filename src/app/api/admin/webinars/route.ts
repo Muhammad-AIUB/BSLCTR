@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { adminFromRequest } from "@/lib/admin-auth";
-import { IMAGE_TYPES, deleteUpload, saveUpload } from "@/lib/uploads";
+import { IMAGE_TYPES, UploadError, deleteUpload, saveUpload } from "@/lib/uploads";
 import {
     DEFAULT_DESCRIPTION_STYLE,
     DEFAULT_SPEAKERS_STYLE,
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
     const thumbnail = form.get("thumbnail");
 
     if (!title) return NextResponse.json({ error: "Title is required" }, { status: 400 });
-    // The public page compares these as "YYYY-MM-DD" / "HH:MM" strings.
+    // The public list is ordered by these as text, which needs "YYYY-MM-DD" / "HH:MM".
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
         return NextResponse.json({ error: "Choose a valid date" }, { status: 400 });
     }
@@ -101,7 +101,9 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         if (thumbUrl) await deleteUpload(thumbUrl);
         console.error("create webinar failed", error);
-        const message = error instanceof Error ? error.message : "Could not save the webinar";
-        return NextResponse.json({ error: message }, { status: 400 });
+        if (error instanceof UploadError) {
+            return NextResponse.json({ error: error.message }, { status: 400 });
+        }
+        return NextResponse.json({ error: "Could not save the webinar" }, { status: 500 });
     }
 }

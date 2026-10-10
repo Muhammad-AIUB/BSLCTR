@@ -28,7 +28,10 @@ export const CONTENT_TYPES: Record<string, string> = {
 
 const FILE_URL_PREFIX = "/api/files/";
 
-/** Validates and saves an uploaded file; returns its public URL. Throws an Error with a user-facing message. */
+/** A rejected upload. Its message is written for the admin and is safe to send back; no other error's is. */
+export class UploadError extends Error {}
+
+/** Validates and saves an uploaded file; returns its public URL. Throws an UploadError when the file is refused. */
 export async function saveUpload(
     file: File,
     allowed: string[],
@@ -36,10 +39,10 @@ export async function saveUpload(
 ): Promise<string> {
     const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
     if (!allowed.includes(ext)) {
-        throw new Error(`"${file.name}" must be one of: ${allowed.join(", ")}`);
+        throw new UploadError(`"${file.name}" must be one of: ${allowed.join(", ")}`);
     }
     if (file.size > maxBytes) {
-        throw new Error(`"${file.name}" is larger than ${Math.round(maxBytes / 1024 / 1024)} MB`);
+        throw new UploadError(`"${file.name}" is larger than ${Math.round(maxBytes / 1024 / 1024)} MB`);
     }
     await mkdir(UPLOAD_DIR, { recursive: true });
     const name = `${randomUUID()}.${ext}`;
@@ -65,9 +68,9 @@ export async function saveUploadStream(
 ): Promise<string> {
     const ext = filename.split(".").pop()?.toLowerCase() ?? "";
     if (!allowed.includes(ext)) {
-        throw new Error(`"${filename}" must be one of: ${allowed.join(", ")}`);
+        throw new UploadError(`"${filename}" must be one of: ${allowed.join(", ")}`);
     }
-    const tooLarge = () => new Error(`"${filename}" is larger than ${sizeLabel(maxBytes)}`);
+    const tooLarge = () => new UploadError(`"${filename}" is larger than ${sizeLabel(maxBytes)}`);
     // Content-Length lets an oversized upload be refused before any of it is written.
     if (declaredBytes && declaredBytes > maxBytes) throw tooLarge();
 
@@ -94,7 +97,7 @@ export async function saveUploadStream(
     }
     if (written === 0) {
         await unlink(target).catch(() => {});
-        throw new Error(`"${filename}" is empty`);
+        throw new UploadError(`"${filename}" is empty`);
     }
     return FILE_URL_PREFIX + name;
 }
@@ -103,5 +106,8 @@ export async function saveUploadStream(
 export async function deleteUpload(url: string): Promise<void> {
     if (!url.startsWith(FILE_URL_PREFIX)) return;
     const name = path.basename(url.slice(FILE_URL_PREFIX.length));
-    await unlink(path.join(UPLOAD_DIR, name)).catch(() => {});
+    await unlink(path.join(UPLOAD_DIR, name)).catch((error) => {
+        // Already gone is fine. Anything else leaves a file that is still served at its URL.
+        if (error?.code !== "ENOENT") console.error("could not delete upload", name, error);
+    });
 }

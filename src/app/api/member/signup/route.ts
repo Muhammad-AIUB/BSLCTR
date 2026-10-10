@@ -4,18 +4,21 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 const memberSignupSchema = z.object({
-    fullName: z.string().min(2, "Full name must be at least 2 characters"),
-    designation: z.string().min(1, "Designation is required"),
-    specialty: z.string().min(1, "Specialty is required"),
-    affiliatedInstitution: z.string().min(2, "Institution name is required"),
+    fullName: z.string().trim().min(2, "Full name must be at least 2 characters").max(200),
+    designation: z.string().trim().min(1, "Designation is required").max(200),
+    specialty: z.string().trim().min(1, "Specialty is required").max(200),
+    affiliatedInstitution: z.string().trim().min(2, "Institution name is required").max(300),
     bmdcRegNo: z
         .string()
+        .trim()
         .min(5, "BMDC registration number must be at least 5 characters")
         .max(20, "BMDC registration number is too long"),
     mobileNumber: z
         .string()
-        .regex(/^[0-9]{10,}$/, "Mobile number must be at least 10 digits"),
-    email: z.string().email("Invalid email address"),
+        .trim()
+        .regex(/^[0-9]{10,15}$/, "Mobile number must be 10 to 15 digits"),
+    // Lower-cased so the unique check does not take A@x.com and a@x.com for two people.
+    email: z.string().trim().toLowerCase().email("Invalid email address").max(254),
 });
 
 type MemberSignupData = z.infer<typeof memberSignupSchema>;

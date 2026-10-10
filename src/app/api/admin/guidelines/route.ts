@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { adminFromRequest } from "@/lib/admin-auth";
-import { DOC_TYPES, IMAGE_TYPES, deleteUpload, saveUpload } from "@/lib/uploads";
+import { DOC_TYPES, IMAGE_TYPES, UploadError, deleteUpload, saveUpload } from "@/lib/uploads";
 
 export const dynamic = "force-dynamic";
 
@@ -84,8 +84,10 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(created, { status: 201 });
     } catch (error) {
         await Promise.all(saved.map(deleteUpload));
-        const message = error instanceof Error ? error.message : "Upload failed";
         console.error("create guideline failed", error);
-        return NextResponse.json({ error: message }, { status: 400 });
+        if (error instanceof UploadError) {
+            return NextResponse.json({ error: error.message }, { status: 400 });
+        }
+        return NextResponse.json({ error: "Could not save the guideline" }, { status: 500 });
     }
 }

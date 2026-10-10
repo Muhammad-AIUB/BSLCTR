@@ -17,18 +17,19 @@ import { z } from "zod";
 import { ChevronLeft } from "lucide-react";
 import { useState } from "react";
 
-// The fields mirror the society's printed registration form.
+// The fields mirror the society's printed registration form, and the limits mirror
+// src/app/api/conference/register/route.ts.
 const formSchema = z.object({
-    name: z.string().trim().min(2, { message: "Please enter your name." }),
-    degree: z.string().trim().min(1, { message: "Please enter your degree." }),
-    speciality: z.string().trim().min(1, { message: "Please enter your speciality." }),
-    designation: z.string().trim().min(1, { message: "Please enter your designation." }),
-    institution: z.string().trim().min(2, { message: "Please enter your institution." }),
+    name: z.string().trim().min(2, { message: "Please enter your name." }).max(200),
+    degree: z.string().trim().min(1, { message: "Please enter your degree." }).max(200),
+    speciality: z.string().trim().min(1, { message: "Please enter your speciality." }).max(200),
+    designation: z.string().trim().min(1, { message: "Please enter your designation." }).max(200),
+    institution: z.string().trim().min(2, { message: "Please enter your institution." }).max(300),
     contactNo: z
         .string()
         .trim()
         .regex(/^\+?[0-9]{10,14}$/, { message: "Please enter a valid contact number." }),
-    email: z.string().trim().email({ message: "Please enter a valid email address." }),
+    email: z.string().trim().email({ message: "Please enter a valid email address." }).max(254),
     category: z.enum(["delegate", "student"], {
         message: "Please choose a participant's category.",
     }),
@@ -101,7 +102,14 @@ export function ConferenceRegistrationForm({ onBack, onDone }: ConferenceRegistr
             onDone();
         } catch (error) {
             console.error("Error:", error);
-            setSubmitError(error instanceof Error ? error.message : "Something went wrong");
+            // fetch itself rejects with a TypeError when the network is down.
+            setSubmitError(
+                error instanceof TypeError
+                    ? "Could not reach the server. Check your connection and try again."
+                    : error instanceof Error
+                      ? error.message
+                      : "Something went wrong"
+            );
         } finally {
             setIsSubmitting(false);
         }

@@ -4,7 +4,8 @@ import { WEBINAR_VISIBLE_AFTER_START_MS, webinarStart } from "@/lib/webinars";
 
 export async function GET() {
     try {
-        const all = await prisma.webinar.findMany({ orderBy: { createdAt: "desc" } });
+        // "YYYY-MM-DD" and "HH:MM" sort as text in the order they happen: soonest first.
+        const all = await prisma.webinar.findMany({ orderBy: [{ date: "asc" }, { time: "asc" }] });
 
         // Past webinars are hidden here, never deleted: a public GET must not
         // change data. Admins remove old ones from the dashboard.

@@ -3,7 +3,13 @@ import { readdir, stat, unlink } from "fs/promises";
 import path from "path";
 import { prisma } from "@/lib/prisma";
 import { adminFromRequest } from "@/lib/admin-auth";
-import { MAX_VIDEO_BYTES, UPLOAD_DIR, VIDEO_TYPES, saveUploadStream } from "@/lib/uploads";
+import {
+    MAX_VIDEO_BYTES,
+    UPLOAD_DIR,
+    UploadError,
+    VIDEO_TYPES,
+    saveUploadStream,
+} from "@/lib/uploads";
 
 export const dynamic = "force-dynamic";
 
@@ -62,8 +68,10 @@ export async function POST(req: NextRequest) {
         });
         return NextResponse.json({ url }, { status: 201 });
     } catch (error) {
-        const message = error instanceof Error ? error.message : "Upload failed";
         console.error("gallery video upload failed", error);
-        return NextResponse.json({ error: message }, { status: 400 });
+        if (error instanceof UploadError) {
+            return NextResponse.json({ error: error.message }, { status: 400 });
+        }
+        return NextResponse.json({ error: "Could not upload the video" }, { status: 500 });
     }
 }
