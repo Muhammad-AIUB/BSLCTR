@@ -70,7 +70,7 @@ export default function LanguageToggle() {
                         onClick={() => setLang(o.key)}
                         aria-pressed={active}
                         title={o.full}
-                        className={`min-h-9 cursor-pointer rounded-full px-4 text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 ${
+                        className={`min-h-9 cursor-pointer rounded-full px-4 text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary ${
                             active
                                 ? "bg-secondary text-white"
                                 : "text-slate-600 hover:text-slate-900"

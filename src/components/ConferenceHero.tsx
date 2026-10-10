@@ -38,7 +38,7 @@ export default function ConferenceHero() {
                     initial={reduceMotion ? false : { opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="mb-6 text-sm font-semibold uppercase tracking-[0.25em] text-primary sm:text-base"
+                    className="mb-6 text-sm font-semibold uppercase tracking-[0.25em] text-white sm:text-base"
                 >
                     22 December 2026 &nbsp;|&nbsp; Pan Pacific Sonargaon, Dhaka, Bangladesh
                 </motion.p>
@@ -55,7 +55,9 @@ export default function ConferenceHero() {
                             }}
                             className="mr-4 inline-block text-[2.75rem] leading-[1.05] sm:text-6xl lg:text-7xl"
                         >
-                            {word}
+                            {/* The trailing space keeps the heading's text as separate words;
+                                at the end of an inline-block it takes up no room. */}
+                            {`${word} `}
                         </motion.span>
                     ))}
                 </h1>

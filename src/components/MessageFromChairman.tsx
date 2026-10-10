@@ -165,7 +165,7 @@ Thank you.`,
                                                     <h3 className="text-2xl lg:text-3xl font-medium">
                                                         {section.author}
                                                     </h3>
-                                                    <p className="text-base font-semibold text-primary">
+                                                    <p className="text-base font-semibold text-primary-deep">
                                                         {section.position}
                                                     </p>
                                                     <p className="text-sm text-slate-500">

@@ -103,7 +103,7 @@ export default function ShareMenu({ path, title }: ShareMenuProps) {
                 aria-haspopup="menu"
                 aria-expanded={open}
                 aria-label={`Share ${title}`}
-                className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 outline-none transition-colors hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-primary/50"
+                className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 outline-none transition-colors hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-primary"
             >
                 <Share2 className="h-4 w-4" />
                 Share

@@ -11,7 +11,11 @@ type GalleryVideo = { key: string; title: string; date: string; id?: string; src
 
 export default function VideoGalleryPage() {
     const [videos, setVideos] = useState<GalleryVideo[]>([]);
+    const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
     const [playingId, setPlayingId] = useState<string | null>(null);
+    // The video just stopped. Play and Stop replace each other, which would drop keyboard
+    // focus; each takes it over as it appears.
+    const [stoppedId, setStoppedId] = useState<string | null>(null);
     const [floating, setFloating] = useState(false);
     // callback ref — fires as soon as the element mounts/unmounts
     const [playerEl, setPlayerEl] = useState<HTMLDivElement | null>(null);
@@ -23,8 +27,11 @@ export default function VideoGalleryPage() {
     // Videos are managed from the dashboard (Gallery tab); newest first.
     useEffect(() => {
         fetch("/api/videos")
-            .then((res) => (res.ok ? res.json() : []))
-            .then((rows: { id: string; title: string; link: string; createdAt: string }[]) =>
+            .then((res) => {
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                return res.json();
+            })
+            .then((rows: { id: string; title: string; link: string; createdAt: string }[]) => {
                 setVideos(
                     rows.map((r) => {
                         const id = youtubeId(r.link) ?? undefined;
@@ -39,9 +46,10 @@ export default function VideoGalleryPage() {
                             src: id ? undefined : r.link,
                         };
                     })
-                )
-            )
-            .catch(() => {});
+                );
+                setStatus("ready");
+            })
+            .catch(() => setStatus("error"));
     }, []);
 
     const fileVideos = videos.filter((v) => v.src);
@@ -71,6 +79,7 @@ export default function VideoGalleryPage() {
     }, [playingId]);
 
     const handleStop = () => {
+        setStoppedId(playingId);
         setPlayingId(null);
         setFloating(false);
     };
@@ -83,11 +92,23 @@ export default function VideoGalleryPage() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-100 via-primary/5 to-slate-200 px-4 py-12">
             <div className="max-w-6xl mx-auto">
-                <Link href="/gallery" className="inline-flex items-center gap-1.5 rounded-md text-slate-500 hover:text-primary text-sm py-2 -mt-2 mb-6 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2">
+                <Link href="/gallery" className="inline-flex items-center gap-1.5 rounded-md text-slate-500 hover:text-primary text-sm py-2 -mt-2 mb-6 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
                     <ChevronLeft className="h-4 w-4" /> Back to Gallery
                 </Link>
 
                 <h1 className="text-3xl font-medium mb-8">Video Gallery</h1>
+
+                {status === "loading" && (
+                    <p className="py-16 text-center text-slate-500">Loading...</p>
+                )}
+                {status === "error" && (
+                    <p role="alert" className="py-16 text-center text-slate-500">
+                        The videos could not be loaded. Please try again in a moment.
+                    </p>
+                )}
+                {status === "ready" && videos.length === 0 && (
+                    <p className="py-16 text-center text-slate-500">No videos yet.</p>
+                )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {fileVideos.map((video) => (
@@ -146,6 +167,7 @@ export default function VideoGalleryPage() {
                                                         onClick={scrollToPlayer}
                                                         className="bg-black/60 hover:bg-black/80 text-white rounded-full p-2.5 sm:p-1.5 transition-colors"
                                                         title="Back to player"
+                                                        aria-label="Back to player"
                                                     >
                                                         <Minimize2 className="h-5 w-5 sm:h-4 sm:w-4" />
                                                     </button>
@@ -154,6 +176,8 @@ export default function VideoGalleryPage() {
                                                     onClick={handleStop}
                                                     className="bg-black/60 hover:bg-black/80 text-white rounded-full p-2.5 sm:p-1.5 transition-colors"
                                                     title="Stop"
+                                                    aria-label="Stop video"
+                                                    autoFocus
                                                 >
                                                     <X className="h-5 w-5 sm:h-4 sm:w-4" />
                                                 </button>
@@ -161,22 +185,28 @@ export default function VideoGalleryPage() {
                                         </div>
                                     </div>
                                 ) : (
-                                    <div
-                                        className="relative aspect-video cursor-pointer group"
-                                        onClick={() => setPlayingId(video.id)}
+                                    <button
+                                        type="button"
+                                        aria-label={`Play ${video.title}`}
+                                        autoFocus={stoppedId === video.id}
+                                        className="group relative block aspect-video w-full cursor-pointer outline-none"
+                                        onClick={() => {
+                                            setStoppedId(null);
+                                            setPlayingId(video.id);
+                                        }}
                                     >
                                         <img
                                             src={`https://img.youtube.com/vi/${video.id}/hqdefault.jpg`}
-                                            alt={video.title}
+                                            alt=""
                                             className="w-full h-full object-cover"
                                         />
-                                        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
-                                        <div className="absolute inset-0 flex items-center justify-center">
-                                            <div className="w-16 h-16 bg-primary hover:bg-primary/90 rounded-full flex items-center justify-center shadow-xl transition-all group-hover:scale-110">
+                                        <span className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
+                                        <span className="absolute inset-0 flex items-center justify-center group-focus-visible:ring-4 group-focus-visible:ring-inset group-focus-visible:ring-white">
+                                            <span className="w-16 h-16 bg-primary hover:bg-primary/90 rounded-full flex items-center justify-center shadow-xl transition-all group-hover:scale-110">
                                                 <Play className="w-7 h-7 text-white ml-1" fill="white" />
-                                            </div>
-                                        </div>
-                                    </div>
+                                            </span>
+                                        </span>
+                                    </button>
                                 )}
 
                                 <div className="p-4">

@@ -53,7 +53,7 @@ function GalleryCard({
             transition={{ duration: 0.5, delay: index * 0.15 }}
             whileHover={{ y: -6 }}
         >
-            <Link href={href} className="block group rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2">
+            <Link href={href} className="block group rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
                 <div className="bg-white rounded-xl shadow-sm hover:shadow-lg hover:shadow-primary/10 border border-slate-100 overflow-hidden transition-all duration-300">
                     <div className={`bg-gradient-to-br ${gradient} h-44 flex items-center justify-center`}>
                         <div className="bg-white/20 rounded-full p-5 group-hover:scale-110 transition-transform duration-300">

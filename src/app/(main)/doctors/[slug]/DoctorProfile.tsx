@@ -15,7 +15,7 @@ export default function DoctorProfile({ doctor }: { doctor: Doctor }) {
                 <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
                     <Link
                         href="/doctors"
-                        className="inline-flex min-h-11 items-center gap-1.5 text-sm text-slate-600 outline-none transition-colors hover:text-secondary focus-visible:ring-2 focus-visible:ring-primary/50"
+                        className="inline-flex min-h-11 items-center gap-1.5 text-sm text-slate-600 outline-none transition-colors hover:text-secondary focus-visible:ring-2 focus-visible:ring-primary"
                     >
                         <ArrowLeft className="h-4 w-4" />
                         {t.backToDoctors}
@@ -153,7 +153,7 @@ export default function DoctorProfile({ doctor }: { doctor: Doctor }) {
                                                 <a
                                                     key={p}
                                                     href={`tel:${p.replace(/\s+/g, "")}`}
-                                                    className="font-medium text-secondary outline-none hover:underline focus-visible:ring-2 focus-visible:ring-primary/50"
+                                                    className="font-medium text-secondary outline-none hover:underline focus-visible:ring-2 focus-visible:ring-primary"
                                                 >
                                                     {p}
                                                 </a>

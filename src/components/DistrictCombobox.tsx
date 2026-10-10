@@ -153,7 +153,7 @@ export default function DistrictCombobox({
                     onFocus={openMenu}
                     onClick={openMenu}
                     onKeyDown={onKeyDown}
-                    className="flex h-9 w-full min-w-0 rounded-md border border-input bg-transparent py-1 pl-3 pr-16 text-base shadow-xs outline-none transition-[color,box-shadow] selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                    className="flex h-9 w-full min-w-0 rounded-md border border-input bg-transparent py-1 pl-3 pr-16 text-base shadow-xs outline-none transition-[color,box-shadow] selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                 />
 
                 {/* pointer-events-none so clicking the chevron falls through to
@@ -171,7 +171,7 @@ export default function DistrictCombobox({
                                 setQuery("");
                                 setTyped(false);
                             }}
-                            className="pointer-events-auto rounded p-1 text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
+                            className="pointer-events-auto rounded p-1 text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
                         >
                             <X className="h-3.5 w-3.5" />
                         </button>
