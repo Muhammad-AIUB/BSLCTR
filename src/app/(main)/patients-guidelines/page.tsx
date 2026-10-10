@@ -37,7 +37,9 @@ const bundled: GuidelineItem[] = [
 ];
 
 export default async function PatientsGuidelinesPage() {
-    const guidelines = [...(await getGuidelines("PATIENT")), ...bundled];
+    // The bundled PDFs are still shown when the database cannot be read.
+    const published = await getGuidelines("PATIENT");
+    const guidelines = [...(published ?? []), ...bundled];
 
     return (
         <Section
@@ -51,6 +53,12 @@ export default async function PatientsGuidelinesPage() {
                     They are general guidance and do not replace advice from
                     your treating physician.
                 </p>
+
+                {!published && (
+                    <p role="alert" className="mb-6 text-sm text-slate-600">
+                        More guides could not be loaded just now. Please try again in a moment.
+                    </p>
+                )}
 
                 <div className="flex flex-col gap-6">
                     {guidelines.map((g) => (

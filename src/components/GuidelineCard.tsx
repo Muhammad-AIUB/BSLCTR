@@ -3,7 +3,7 @@ import ShareMenu from "@/components/ShareMenu";
 import type { GuidelineItem } from "@/lib/guidelines";
 
 const action =
-    "inline-flex min-h-11 items-center gap-2 rounded-md px-4 py-2 text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary/50";
+    "inline-flex min-h-11 items-center gap-2 rounded-md px-4 py-2 text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary";
 
 export default function GuidelineCard({ guideline: g }: { guideline: GuidelineItem }) {
     return (
@@ -52,7 +52,12 @@ export default function GuidelineCard({ guideline: g }: { guideline: GuidelineIt
                         {g.file && (
                             <a
                                 href={g.file}
-                                download
+                                // An upload is stored under a random name; save it under the title.
+                                download={
+                                    g.file.startsWith("/api/files/")
+                                        ? `${g.title}.${g.file.split(".").pop()}`
+                                        : true
+                                }
                                 className={`${action} bg-secondary text-white hover:bg-secondary/90`}
                             >
                                 <Download className="h-4 w-4" />

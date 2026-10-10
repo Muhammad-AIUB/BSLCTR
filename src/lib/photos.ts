@@ -1,8 +1,8 @@
 import { prisma } from "@/lib/prisma";
 
 /**
- * Approved gallery photos, newest first, in the shape <PhotoGallery> takes.
- * Photos are managed from the dashboard (Gallery tab).
+ * Approved gallery photos, newest first, in the shape <PhotoGallery> takes, or null when
+ * the database could not be read. Photos are managed from the dashboard (Gallery tab).
  */
 export async function getGalleryPhotos(limit?: number) {
     try {
@@ -22,6 +22,6 @@ export async function getGalleryPhotos(limit?: number) {
         }));
     } catch (error) {
         console.error("load gallery photos failed", error);
-        return [];
+        return null;
     }
 }

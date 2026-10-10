@@ -9,22 +9,27 @@ import LanguageToggle, { useLang } from "@/components/LanguageToggle";
 import { DOCTORS, DOCTOR_CATEGORIES, UI, type Doctor, type Lang } from "@/lib/doctors";
 import { Section } from "@/components/ui/section";
 
-// useSearchParams needs a Suspense boundary for the page to prerender.
+// useSearchParams needs a Suspense boundary for the page to prerender, and only the fallback
+// is in the prerendered HTML. The fallback is therefore the unfiltered directory, so the page
+// has the doctors in it before JavaScript runs.
 export default function DoctorsPage() {
     return (
-        <Suspense>
-            <DoctorsDirectory />
+        <Suspense fallback={<DoctorsDirectory type={null} />}>
+            <FilteredDirectory />
         </Suspense>
     );
 }
 
-function DoctorsDirectory() {
+function FilteredDirectory() {
+    // ?type=<category slug>, set by the Doctors menu in the nav and the chips below.
+    return <DoctorsDirectory type={useSearchParams().get("type")} />;
+}
+
+function DoctorsDirectory({ type }: { type: string | null }) {
     const [district, setDistrict] = useState("");
     const { lang } = useLang();
     const t = UI[lang];
 
-    // ?type=<category slug>, set by the Doctors menu in the nav and the chips below.
-    const type = useSearchParams().get("type");
     const category = DOCTOR_CATEGORIES.find((c) => c.slug === type);
 
     const visible = useMemo(
@@ -38,7 +43,7 @@ function DoctorsDirectory() {
     );
 
     const chip = (active: boolean) =>
-        `rounded-full border px-4 py-2 text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 ${
+        `rounded-full border px-4 py-2 text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
             active
                 ? "border-primary bg-primary text-primary-foreground"
                 : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
@@ -127,7 +132,7 @@ function DoctorCard({ doctor: d, lang }: { doctor: Doctor; lang: Lang }) {
     return (
         <Link
             href={`/doctors/${d.slug}`}
-            className="group flex flex-col rounded-xl border border-slate-200 bg-white p-6 shadow-sm outline-none transition-shadow hover:shadow-md focus-visible:ring-2 focus-visible:ring-primary/50"
+            className="group flex flex-col rounded-xl border border-slate-200 bg-white p-6 shadow-sm outline-none transition-shadow hover:shadow-md focus-visible:ring-2 focus-visible:ring-primary"
         >
             <div className="flex items-start gap-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}

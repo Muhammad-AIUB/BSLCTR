@@ -8,8 +8,9 @@ import { getGalleryPhotos } from "@/lib/photos";
 
 const Home = async () => {
     // The latest photos from the dashboard's Gallery tab; the section is left
-    // out until there are some, rather than filled with sample content.
-    const photos = await getGalleryPhotos(8);
+    // out until there are some (or when they cannot be loaded), rather than
+    // filled with sample content.
+    const photos = (await getGalleryPhotos(8)) ?? [];
 
     return (
         <div className="flex flex-col">

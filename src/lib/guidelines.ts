@@ -12,7 +12,8 @@ export type GuidelineItem = {
     meta?: string;
 };
 
-export async function getGuidelines(type: GuidelineType): Promise<GuidelineItem[]> {
+/** Guidelines of one type, newest first, or null when the database could not be read. */
+export async function getGuidelines(type: GuidelineType): Promise<GuidelineItem[] | null> {
     try {
         const rows = await prisma.guideline.findMany({
             where: { type },
@@ -28,6 +29,6 @@ export async function getGuidelines(type: GuidelineType): Promise<GuidelineItem[
         }));
     } catch (error) {
         console.error("getGuidelines failed", error);
-        return [];
+        return null;
     }
 }

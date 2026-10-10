@@ -17,13 +17,17 @@ export default async function ClinicalGuidelinesPage() {
     return (
         <Section watermark="Clinical" eyebrow="Guidance" title="Clinical Guidelines">
             <div className="max-w-5xl">
-                {guidelines.length === 0 ? (
+                {!guidelines || guidelines.length === 0 ? (
                     <div className="flex items-center justify-center py-12">
                         <div className="w-full max-w-sm rounded-xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center sm:px-10">
                             <p className="font-medium text-slate-600">
-                                No clinical guidelines published yet.
+                                {guidelines
+                                    ? "No clinical guidelines published yet."
+                                    : "The clinical guidelines could not be loaded."}
                             </p>
-                            <p className="mt-1 text-sm text-slate-500">Check back soon.</p>
+                            <p className="mt-1 text-sm text-slate-500">
+                                {guidelines ? "Check back soon." : "Please try again in a moment."}
+                            </p>
                         </div>
                     </div>
                 ) : (

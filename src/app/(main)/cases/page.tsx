@@ -19,11 +19,16 @@ const isPptUrl = (url: string) => /\.pptx?([?#]|$)/i.test(url);
 export default function CasePresentationsPage() {
     const [cases, setCases] = useState<CasePresentation[]>([]);
     const [loading, setLoading] = useState(true);
+    const [failed, setFailed] = useState(false);
 
     useEffect(() => {
         fetch("/api/case-presentations")
-            .then((r) => r.json())
+            .then((r) => {
+                if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                return r.json();
+            })
             .then(setCases)
+            .catch(() => setFailed(true))
             .finally(() => setLoading(false));
     }, []);
 
@@ -33,6 +38,10 @@ export default function CasePresentationsPage() {
 
                 {loading ? (
                     <div className="text-center py-10 text-muted-foreground">Loading...</div>
+                ) : failed ? (
+                    <p role="alert" className="text-center py-10 text-muted-foreground">
+                        The case presentations could not be loaded. Please try again in a moment.
+                    </p>
                 ) : cases.length === 0 ? (
                     <div className="flex items-center justify-center py-12">
                         <div className="text-center border border-dashed border-slate-300 rounded-xl px-6 py-10 sm:px-10 bg-white max-w-sm w-full">
@@ -74,7 +83,7 @@ function CaseCard({ caseItem: c }: { caseItem: CasePresentation }) {
                 <div className="flex flex-wrap gap-2 mb-4">
                     {c.files.filter(Boolean).map((f, i) => (
                         <a key={i} href={f} target="_blank" rel="noreferrer"
-                            className={`inline-flex items-center gap-1.5 text-xs font-medium border px-3 py-2 sm:py-1.5 rounded-md outline-none transition-colors focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-primary/50 ${
+                            className={`inline-flex items-center gap-1.5 text-xs font-medium border px-3 py-2 sm:py-1.5 rounded-md outline-none transition-colors focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-primary ${
                                 isPptUrl(f)
                                     ? "bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100"
                                     : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
