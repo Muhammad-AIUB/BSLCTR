@@ -31,7 +31,8 @@ export default function AdminLoginModal() {
                 body: JSON.stringify({ email: email.trim(), password }),
             });
             if (!res.ok) {
-                setError("Invalid credentials.");
+                const body = await res.json().catch(() => ({}));
+                setError(body.error ?? "Invalid credentials.");
                 return;
             }
             setOpen(false);

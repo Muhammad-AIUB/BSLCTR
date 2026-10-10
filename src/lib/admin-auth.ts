@@ -28,8 +28,34 @@ function safeEqual(a: string, b: string): boolean {
     return ab.length === bb.length && timingSafeEqual(ab, bb);
 }
 
-function sign(payload: string): string {
-    return createHmac("sha256", secret()).update(payload).digest("base64url");
+/** The signature covers the admin's current password, so changing it (or removing the admin) ends their sessions. */
+function sign(payload: string, password: string): string {
+    return createHmac("sha256", secret()).update(`${payload}.${password}`).digest("base64url");
+}
+
+const MAX_FAILED_LOGINS = 10;
+const LOGIN_LOCKOUT_MS = 15 * 60 * 1000;
+// Kept in memory: enough for a single server process, and it resets on restart.
+const failedLogins = new Map<string, { count: number; until: number }>();
+
+/** True when `key` (a caller or a targeted email) has used up its failed attempts for now. */
+export function loginBlocked(key: string): boolean {
+    const f = failedLogins.get(key);
+    if (f && f.until <= Date.now()) failedLogins.delete(key);
+    return (failedLogins.get(key)?.count ?? 0) >= MAX_FAILED_LOGINS;
+}
+
+export function recordFailedLogin(key: string): void {
+    // Bounds the map when someone sprays random emails.
+    if (failedLogins.size > 10_000) failedLogins.clear();
+    const now = Date.now();
+    const f = failedLogins.get(key);
+    if (f && f.until > now) f.count++;
+    else failedLogins.set(key, { count: 1, until: now + LOGIN_LOCKOUT_MS });
+}
+
+export function clearFailedLogins(key: string): void {
+    failedLogins.delete(key);
 }
 
 /** Returns the matching admin email, or null. Checks every entry so timing does not reveal which one matched. */
@@ -43,26 +69,31 @@ export function checkCredentials(email: string, password: string): string | null
     return match;
 }
 
+/** `email` must be one checkCredentials just returned. */
 export function createSessionToken(email: string): string {
     const payload = Buffer.from(
         JSON.stringify({ email, exp: Date.now() + SESSION_TTL_MS })
     ).toString("base64url");
-    return `${payload}.${sign(payload)}`;
+    const password = credentials().find((c) => c.email === email)?.password ?? "";
+    return `${payload}.${sign(payload, password)}`;
 }
 
-/** Returns the admin email if the token is authentic and unexpired. */
+/** Returns the admin email if the token is authentic, unexpired and that admin still has the same password. */
 export function verifySessionToken(token: string | undefined): string | null {
     if (!token) return null;
     const [payload, sig] = token.split(".");
-    if (!payload || !sig || !safeEqual(sig, sign(payload))) return null;
+    if (!payload || !sig) return null;
+    // Read before the signature check only to pick whose password signed it.
+    let claims: { email?: unknown; exp?: unknown };
     try {
-        const { email, exp } = JSON.parse(Buffer.from(payload, "base64url").toString());
-        return typeof email === "string" && typeof exp === "number" && exp > Date.now()
-            ? email
-            : null;
+        claims = JSON.parse(Buffer.from(payload, "base64url").toString());
     } catch {
         return null;
     }
+    const { email, exp } = claims;
+    if (typeof email !== "string" || typeof exp !== "number" || exp <= Date.now()) return null;
+    const admin = credentials().find((c) => c.email === email);
+    return admin && safeEqual(sig, sign(payload, admin.password)) ? email : null;
 }
 
 export function adminFromRequest(req: NextRequest): string | null {

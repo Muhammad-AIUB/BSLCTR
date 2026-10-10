@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import DOMPurify from "dompurify";
 import { CalendarIcon, FileText, Tag } from "lucide-react";
 import { Section } from "@/components/ui/section";
 
@@ -66,7 +67,7 @@ function CaseCard({ caseItem: c }: { caseItem: CasePresentation }) {
 
             {c.description && c.description !== "<p></p>" && (
                 <div className="rich-text text-sm text-slate-600 mb-4 break-words [&_img]:max-w-full [&_img]:h-auto"
-                    dangerouslySetInnerHTML={{ __html: c.description }} />
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(c.description) }} />
             )}
 
             {c.files.length > 0 && (
