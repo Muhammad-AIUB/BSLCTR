@@ -165,9 +165,11 @@ export default function DistrictCombobox({
                             aria-label="Clear district"
                             onClick={() => {
                                 onChange("");
+                                // Focus first: it runs openMenu, which copies the
+                                // district being cleared into the query.
+                                inputRef.current?.focus();
                                 setQuery("");
                                 setTyped(false);
-                                inputRef.current?.focus();
                             }}
                             className="pointer-events-auto rounded p-1 text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
                         >

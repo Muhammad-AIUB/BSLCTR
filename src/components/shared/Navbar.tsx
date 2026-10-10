@@ -32,9 +32,9 @@ const Navbar = () => {
                     </span>
                 </Link>
 
-                {/* These two entry points are all that is left. The admin and member
-                    dashboards they led to have been removed, so there is no logged-in
-                    avatar state, no notification badge and no pending-count polling. */}
+                {/* AdminNavControls swaps Admin Login for Dashboard + Log out once the
+                    server confirms an admin session. The member dashboard has not been
+                    rebuilt, so the Member menu has no logged-in state. */}
                 <div className="flex items-center gap-3">
                     <AdminNavControls>
                         <div className="relative" ref={memberMenuRef}>
@@ -64,7 +64,7 @@ const Navbar = () => {
             </nav>
 
             {/* onSuccess can never fire: /api/member/login went with the member
-                dashboard, so the modal only ever reaches its error branch. */}
+                dashboard, so the modal only ever says login is not available yet. */}
             <MemberLoginModal
                 open={loginOpen}
                 onClose={() => setLoginOpen(false)}

@@ -8,6 +8,7 @@ import SubscribeModal from "../SubscribeModal";
 import { ChevronDown, ChevronRight, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { DOCTOR_CATEGORIES } from "@/lib/doctors";
+import { bangladeshToday } from "@/lib/webinars";
 
 type NavLink = {
     name: string;
@@ -55,6 +56,9 @@ const isCurrent = (link: NavLink, pathname: string) =>
 const NavLinksBar = () => {
     const [showSubscribeModal, setShowSubscribeModal] = useState(false);
     const [openMenu, setOpenMenu] = useState<string | null>(null);
+    // Controlled so that following a link closes the mobile sheet: the layout
+    // survives navigation, so an uncontrolled sheet would stay open over the new page.
+    const [sheetOpen, setSheetOpen] = useState(false);
     const [hasUpcoming, setHasUpcoming] = useState(false);
     const pathname = usePathname();
 
@@ -62,7 +66,7 @@ const NavLinksBar = () => {
         fetch("/api/webinars")
             .then((r) => r.json())
             .then((data: { date: string }[]) => {
-                const today = new Date().toISOString().split("T")[0];
+                const today = bangladeshToday();
                 setHasUpcoming(data.some((w) => w.date > today));
             })
             .catch(() => {});
@@ -97,7 +101,7 @@ const NavLinksBar = () => {
             <nav className="w-full bg-secondary shadow-sm">
                 {/* Mobile: hamburger */}
                 <div className="flex items-center justify-between px-4 py-3 lg:hidden">
-                    <Sheet>
+                    <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
                         <SheetTrigger asChild>
                             <Button
                                 variant="ghost"
@@ -120,9 +124,10 @@ const NavLinksBar = () => {
                                                 key={link.path}
                                                 variant="ghost"
                                                 className="h-auto min-h-11 w-full justify-start whitespace-normal text-left text-white"
-                                                onClick={() =>
-                                                    setShowSubscribeModal(true)
-                                                }
+                                                onClick={() => {
+                                                    setSheetOpen(false);
+                                                    setShowSubscribeModal(true);
+                                                }}
                                             >
                                                 {link.name}
                                             </Button>
@@ -131,7 +136,10 @@ const NavLinksBar = () => {
 
                                     return (
                                         <div key={link.path}>
-                                            <Link href={link.path}>
+                                            <Link
+                                                href={link.path}
+                                                onClick={() => setSheetOpen(false)}
+                                            >
                                                 <Button
                                                     variant="ghost"
                                                     className={`h-auto min-h-11 w-full justify-start whitespace-normal text-left text-white ${
@@ -151,6 +159,7 @@ const NavLinksBar = () => {
                                                 <Link
                                                     key={child.path}
                                                     href={child.path}
+                                                    onClick={() => setSheetOpen(false)}
                                                 >
                                                     <Button
                                                         variant="ghost"
