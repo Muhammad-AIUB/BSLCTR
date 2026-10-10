@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Play, X, Minimize2, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { youtubeId } from "@/lib/youtube";
@@ -120,20 +120,45 @@ export default function VideoGalleryPage() {
                                 className="bg-white rounded-xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-lg transition-all duration-300"
                             >
                                 {isPlaying ? (
+                                    // The outer box keeps the card's shape. The player inside is the
+                                    // only iframe: it goes fixed to the corner when the card scrolls
+                                    // out of view, so the same video keeps playing where it was.
+                                    // This needs the card to rest with no transform (a hover lift
+                                    // on it would trap the fixed player inside the card).
                                     <div className="relative aspect-video bg-black">
-                                        <iframe
-                                            src={`https://www.youtube.com/embed/${video.id}?autoplay=1`}
-                                            title={video.title}
-                                            className="w-full h-full"
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                            allowFullScreen
-                                        />
-                                        <button
-                                            onClick={handleStop}
-                                            className="absolute top-3 right-3 bg-black/60 hover:bg-black/80 text-white rounded-full p-2.5 sm:p-1.5 transition-colors z-10"
+                                        <div
+                                            className={
+                                                floating
+                                                    ? "fixed bottom-6 right-6 z-50 aspect-video w-[300px] max-w-[calc(100vw-3rem)] overflow-hidden rounded-xl border border-white/10 bg-black shadow-2xl"
+                                                    : "absolute inset-0"
+                                            }
                                         >
-                                            <X className="h-5 w-5 sm:h-4 sm:w-4" />
-                                        </button>
+                                            <iframe
+                                                src={`https://www.youtube.com/embed/${video.id}?autoplay=1`}
+                                                title={video.title}
+                                                className="w-full h-full"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowFullScreen
+                                            />
+                                            <div className="absolute top-3 right-3 z-10 flex gap-2">
+                                                {floating && (
+                                                    <button
+                                                        onClick={scrollToPlayer}
+                                                        className="bg-black/60 hover:bg-black/80 text-white rounded-full p-2.5 sm:p-1.5 transition-colors"
+                                                        title="Back to player"
+                                                    >
+                                                        <Minimize2 className="h-5 w-5 sm:h-4 sm:w-4" />
+                                                    </button>
+                                                )}
+                                                <button
+                                                    onClick={handleStop}
+                                                    className="bg-black/60 hover:bg-black/80 text-white rounded-full p-2.5 sm:p-1.5 transition-colors"
+                                                    title="Stop"
+                                                >
+                                                    <X className="h-5 w-5 sm:h-4 sm:w-4" />
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 ) : (
                                     <div
@@ -163,44 +188,6 @@ export default function VideoGalleryPage() {
                     })}
                 </div>
             </div>
-
-            {/* Floating Mini Player — appears when playing card scrolls out of view */}
-            <AnimatePresence>
-                {playingId && floating && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.85, y: 24 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.85, y: 24 }}
-                        transition={{ duration: 0.2 }}
-                        className="fixed bottom-6 right-6 z-50 w-[300px] max-w-[calc(100vw-3rem)] bg-black rounded-xl overflow-hidden shadow-2xl border border-white/10"
-                        style={{ aspectRatio: "16/9" }}
-                    >
-                        <iframe
-                            src={`https://www.youtube.com/embed/${playingId}?autoplay=1`}
-                            title="Floating Player"
-                            className="w-full h-full"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                        />
-                        <div className="absolute top-2 right-2 flex gap-2 sm:gap-1.5">
-                            <button
-                                onClick={scrollToPlayer}
-                                className="bg-black/70 hover:bg-black/90 text-white rounded-full p-2 sm:p-1.5 transition-colors backdrop-blur-sm"
-                                title="Back to player"
-                            >
-                                <Minimize2 className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
-                            </button>
-                            <button
-                                onClick={handleStop}
-                                className="bg-black/70 hover:bg-black/90 text-white rounded-full p-2 sm:p-1.5 transition-colors backdrop-blur-sm"
-                                title="Stop"
-                            >
-                                <X className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
-                            </button>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
         </div>
     );
 }

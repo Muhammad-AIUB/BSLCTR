@@ -31,7 +31,7 @@ const MIN_ZOOM = 1;
 const MAX_ZOOM = 4;
 const ZOOM_STEP = 0.5;
 
-const PhotoGallery = ({ photos: photosProp }: { photos?: Photo[] }) => {
+const PhotoGallery = ({ photos }: { photos: Photo[] }) => {
     const [selectedCategory, setSelectedCategory] = useState<string>("All");
     const [selectedImage, setSelectedImage] = useState<Photo | null>(null);
     const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
@@ -86,93 +86,6 @@ const PhotoGallery = ({ photos: photosProp }: { photos?: Photo[] }) => {
         return () => window.removeEventListener("keydown", onKey);
     }, [selectedImage, changeZoom, resetZoom]);
     const isInView = useInView(ref, { once: true, margin: "-100px" });
-
-    // Enhanced photos data with categories
-    const photos = useMemo<Photo[]>(
-        () => photosProp ?? [
-            {
-                id: 1,
-                src: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=1200&h=800&fit=crop",
-                alt: "Medical Conference 1",
-                title: "BSLCTR Annual Conference 2024",
-                date: "March 15, 2024",
-                location: "Dhaka Medical College",
-                attendees: "250+ Attendees",
-                category: "Conference",
-            },
-            {
-                id: 2,
-                src: "https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=1200&h=800&fit=crop",
-                alt: "Medical Conference 2",
-                title: "Hepatobiliary Surgery Workshop",
-                date: "February 20, 2024",
-                location: "Bangabandhu Sheikh Mujib Medical University",
-                attendees: "180+ Surgeons",
-                category: "Workshop",
-            },
-            {
-                id: 3,
-                src: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&h=800&fit=crop",
-                alt: "Medical Conference 3",
-                title: "Liver Disease Symposium",
-                date: "January 10, 2024",
-                location: "National Institute of Liver Disease",
-                attendees: "320+ Participants",
-                category: "Symposium",
-            },
-            {
-                id: 4,
-                src: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1200&h=800&fit=crop",
-                alt: "Medical Conference 4",
-                title: "Advanced Hepatology Training",
-                date: "December 5, 2023",
-                location: "Square Hospitals Ltd",
-                attendees: "150+ Doctors",
-                category: "Training",
-            },
-            {
-                id: 5,
-                src: "https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=1200&h=800&fit=crop",
-                alt: "Medical Conference 5",
-                title: "International Medical Summit",
-                date: "November 18, 2023",
-                location: "Pan Pacific Sonargaon",
-                attendees: "500+ Delegates",
-                category: "Conference",
-            },
-            {
-                id: 6,
-                src: "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=1200&h=800&fit=crop",
-                alt: "Medical Conference 6",
-                title: "Clinical Research Seminar",
-                date: "October 8, 2023",
-                location: "United Hospital Ltd",
-                attendees: "200+ Researchers",
-                category: "Seminar",
-            },
-            {
-                id: 7,
-                src: "https://images.unsplash.com/photo-1512678080530-7760d81faba6?w=1200&h=800&fit=crop",
-                alt: "Medical Conference 7",
-                title: "Liver Transplant Workshop",
-                date: "September 12, 2023",
-                location: "Apollo Hospital Dhaka",
-                attendees: "120+ Specialists",
-                category: "Workshop",
-            },
-            {
-                id: 8,
-                src: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&h=800&fit=crop",
-                alt: "Medical Conference 8",
-                title: "Cholangiocarcinoma Research Summit",
-                date: "August 25, 2023",
-                location: "Evercare Hospital Dhaka",
-                attendees: "280+ Participants",
-                category: "Symposium",
-            },
-        ],
-        [photosProp]
-    );
 
     // Get unique categories
     const categories = useMemo(() => {

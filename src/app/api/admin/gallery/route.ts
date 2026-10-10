@@ -52,6 +52,12 @@ export async function POST(req: NextRequest) {
     const rawUploaded = String(form.get("uploaded") ?? "");
     const uploaded = UPLOADED_VIDEO.test(rawUploaded) ? rawUploaded : "";
 
+    // A file that already backs a gallery video is not this request's to claim,
+    // and must not be deleted by the clean-up below.
+    if (uploaded && (await prisma.video.findFirst({ where: { link: uploaded }, select: { id: true } }))) {
+        return NextResponse.json({ error: "Invalid uploaded file" }, { status: 400 });
+    }
+
     // A rejected submission must not leave its already-uploaded video behind.
     const reject = async (error: string) => {
         if (uploaded) await deleteUpload(uploaded);
