@@ -58,6 +58,9 @@ const KINDS: {
 export default function DashboardGalleryPage() {
     const [kind, setKind] = useState<Kind>("VIDEO");
     const [items, setItems] = useState<Record<Kind, Item[]>>({ VIDEO: [], PHOTO: [] });
+    // Kept apart from `error`, which belongs to the form: a list that fails to refresh after a
+    // save must not read as a failed save, and a failed load must not read as an empty list.
+    const [listState, setListState] = useState<"loading" | "ready" | "error">("loading");
     const [submitting, setSubmitting] = useState(false);
     // Upload progress of a video file, 0-100, while it is being sent.
     const [progress, setProgress] = useState<number | null>(null);
@@ -71,14 +74,18 @@ export default function DashboardGalleryPage() {
     const current = KINDS.find((k) => k.value === kind)!;
 
     const load = useCallback(async () => {
-        const res = await fetch("/api/admin/gallery", { cache: "no-store" });
-        if (res.status === 401) {
-            window.location.href = "/";
-            return;
-        }
-        if (res.ok) {
+        try {
+            const res = await fetch("/api/admin/gallery", { cache: "no-store" });
+            if (res.status === 401) {
+                window.location.href = "/";
+                return;
+            }
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const body = await res.json();
             setItems({ VIDEO: body.videos, PHOTO: body.photos });
+            setListState("ready");
+        } catch {
+            setListState("error");
         }
     }, []);
 
@@ -101,6 +108,12 @@ export default function DashboardGalleryPage() {
         try {
             // Videos go up on their own first: they are too large to send with the form.
             if (kind === "VIDEO" && f instanceof File && f.size > 0) {
+                // Checked here as well as on the server, so that a form the server would
+                // refuse does not first upload a video of up to 2 GB.
+                if (!String(data.get("title") ?? "").trim()) {
+                    setError("Title is required");
+                    return;
+                }
                 if (String(data.get("link") ?? "").trim()) {
                     setError("Use either a link or a file, not both");
                     return;
@@ -110,6 +123,10 @@ export default function DashboardGalleryPage() {
                 data.delete("file");
             }
             const res = await fetch("/api/admin/gallery", { method: "POST", body: data });
+            if (res.status === 401) {
+                window.location.href = "/";
+                return;
+            }
             const body = await res.json().catch(() => ({}));
             if (!res.ok) {
                 setError(body.error ?? `Could not save the ${current.label.toLowerCase()}.`);
@@ -131,9 +148,22 @@ export default function DashboardGalleryPage() {
 
     async function onDelete(item: Item) {
         if (!window.confirm(`Delete "${item.title}"? This cannot be undone.`)) return;
-        const res = await fetch(`/api/admin/gallery/${item.id}?kind=${kind}`, { method: "DELETE" });
-        if (res.ok) await load();
-        else setError(`Could not delete that ${current.label.toLowerCase()}.`);
+        setError(null);
+        try {
+            const res = await fetch(`/api/admin/gallery/${item.id}?kind=${kind}`, { method: "DELETE" });
+            if (res.status === 401) {
+                window.location.href = "/";
+                return;
+            }
+            if (!res.ok) {
+                setError(`Could not delete that ${current.label.toLowerCase()}.`);
+                return;
+            }
+        } catch {
+            setError("Could not reach the server. Try again.");
+            return;
+        }
+        await load();
     }
 
     async function onSaveTitle(e: React.FormEvent<HTMLFormElement>) {
@@ -149,6 +179,10 @@ export default function DashboardGalleryPage() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ title }),
             });
+            if (res.status === 401) {
+                window.location.href = "/";
+                return;
+            }
             if (!res.ok) {
                 const body = await res.json().catch(() => ({}));
                 setError(body.error ?? "Could not save the title.");
@@ -183,7 +217,7 @@ export default function DashboardGalleryPage() {
                         {KINDS.map((k) => (
                             <label
                                 key={k.value}
-                                className={`flex cursor-pointer items-center justify-center rounded-md border px-4 py-3 text-sm font-medium transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary/50 ${
+                                className={`flex cursor-pointer items-center justify-center rounded-md border px-4 py-3 text-sm font-medium transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary ${
                                     kind === k.value
                                         ? "border-primary bg-accent text-primary-deep"
                                         : "border-slate-200 hover:bg-slate-50"
@@ -254,7 +288,13 @@ export default function DashboardGalleryPage() {
             </form>
 
             <h2 className="mt-10 text-lg font-semibold">{current.label}s in the gallery</h2>
-            {list.length === 0 ? (
+            {listState === "error" ? (
+                <p role="alert" className="mt-2 text-sm text-destructive">
+                    Could not load the gallery. Reload the page to try again.
+                </p>
+            ) : listState === "loading" ? (
+                <p className="mt-2 text-sm text-body">Loading...</p>
+            ) : list.length === 0 ? (
                 <p className="mt-2 text-sm text-body">Nothing added yet.</p>
             ) : (
                 <ul className="mt-3 grid gap-3">

@@ -25,6 +25,9 @@ type Webinar = {
 
 export default function DashboardWebinarsPage() {
     const [items, setItems] = useState<Webinar[]>([]);
+    // Kept apart from `error`, which belongs to the form: a list that fails to refresh after a
+    // save must not read as a failed save, and a failed load must not read as an empty list.
+    const [listState, setListState] = useState<"loading" | "ready" | "error">("loading");
     const [speakers, setSpeakers] = useState("");
     const [description, setDescription] = useState("");
     const [speakersStyle, setSpeakersStyle] = useState<TextStyle>(DEFAULT_SPEAKERS_STYLE);
@@ -35,12 +38,18 @@ export default function DashboardWebinarsPage() {
     const formRef = useRef<HTMLFormElement>(null);
 
     const load = useCallback(async () => {
-        const res = await fetch("/api/admin/webinars", { cache: "no-store" });
-        if (res.status === 401) {
-            window.location.href = "/";
-            return;
+        try {
+            const res = await fetch("/api/admin/webinars", { cache: "no-store" });
+            if (res.status === 401) {
+                window.location.href = "/";
+                return;
+            }
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            setItems(await res.json());
+            setListState("ready");
+        } catch {
+            setListState("error");
         }
-        if (res.ok) setItems(await res.json());
     }, []);
 
     useEffect(() => {
@@ -63,6 +72,10 @@ export default function DashboardWebinarsPage() {
 
         try {
             const res = await fetch("/api/admin/webinars", { method: "POST", body: data });
+            if (res.status === 401) {
+                window.location.href = "/";
+                return;
+            }
             const body = await res.json().catch(() => ({}));
             if (!res.ok) {
                 setError(body.error ?? "Could not save the webinar.");
@@ -84,9 +97,22 @@ export default function DashboardWebinarsPage() {
 
     async function onDelete(w: Webinar) {
         if (!window.confirm(`Delete "${w.headline}"? This cannot be undone.`)) return;
-        const res = await fetch(`/api/admin/webinars/${w.id}`, { method: "DELETE" });
-        if (res.ok) await load();
-        else setError("Could not delete that webinar.");
+        setError(null);
+        try {
+            const res = await fetch(`/api/admin/webinars/${w.id}`, { method: "DELETE" });
+            if (res.status === 401) {
+                window.location.href = "/";
+                return;
+            }
+            if (!res.ok) {
+                setError("Could not delete that webinar.");
+                return;
+            }
+        } catch {
+            setError("Could not reach the server. Try again.");
+            return;
+        }
+        await load();
     }
 
     return (
@@ -198,7 +224,13 @@ export default function DashboardWebinarsPage() {
             </form>
 
             <h2 className="mt-10 text-lg font-semibold">Scheduled</h2>
-            {items.length === 0 ? (
+            {listState === "error" ? (
+                <p role="alert" className="mt-2 text-sm text-destructive">
+                    Could not load the scheduled webinars. Reload the page to try again.
+                </p>
+            ) : listState === "loading" ? (
+                <p className="mt-2 text-sm text-body">Loading...</p>
+            ) : items.length === 0 ? (
                 <p className="mt-2 text-sm text-body">No webinars scheduled.</p>
             ) : (
                 <ul className="mt-3 grid gap-3">

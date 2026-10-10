@@ -27,18 +27,27 @@ const TYPES: { value: GuidelineType; label: string; page: string }[] = [
 export default function DashboardGuidelinesPage() {
     const [type, setType] = useState<GuidelineType>("PATIENT");
     const [items, setItems] = useState<Guideline[]>([]);
+    // Kept apart from `error`, which belongs to the form: a list that fails to refresh after a
+    // save must not read as a failed save, and a failed load must not read as an empty list.
+    const [listState, setListState] = useState<"loading" | "ready" | "error">("loading");
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [notice, setNotice] = useState<{ text: string; page: string } | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
 
     const load = useCallback(async () => {
-        const res = await fetch("/api/admin/guidelines", { cache: "no-store" });
-        if (res.status === 401) {
-            window.location.href = "/";
-            return;
+        try {
+            const res = await fetch("/api/admin/guidelines", { cache: "no-store" });
+            if (res.status === 401) {
+                window.location.href = "/";
+                return;
+            }
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            setItems(await res.json());
+            setListState("ready");
+        } catch {
+            setListState("error");
         }
-        if (res.ok) setItems(await res.json());
     }, []);
 
     useEffect(() => {
@@ -61,6 +70,10 @@ export default function DashboardGuidelinesPage() {
 
         try {
             const res = await fetch("/api/admin/guidelines", { method: "POST", body: data });
+            if (res.status === 401) {
+                window.location.href = "/";
+                return;
+            }
             const body = await res.json().catch(() => ({}));
             if (!res.ok) {
                 setError(body.error ?? "Could not save the guideline.");
@@ -79,9 +92,22 @@ export default function DashboardGuidelinesPage() {
 
     async function onDelete(g: Guideline) {
         if (!window.confirm(`Delete "${g.title}"? This cannot be undone.`)) return;
-        const res = await fetch(`/api/admin/guidelines/${g.id}`, { method: "DELETE" });
-        if (res.ok) await load();
-        else setError("Could not delete that guideline.");
+        setError(null);
+        try {
+            const res = await fetch(`/api/admin/guidelines/${g.id}`, { method: "DELETE" });
+            if (res.status === 401) {
+                window.location.href = "/";
+                return;
+            }
+            if (!res.ok) {
+                setError("Could not delete that guideline.");
+                return;
+            }
+        } catch {
+            setError("Could not reach the server. Try again.");
+            return;
+        }
+        await load();
     }
 
     return (
@@ -102,7 +128,7 @@ export default function DashboardGuidelinesPage() {
                         {TYPES.map((t) => (
                             <label
                                 key={t.value}
-                                className={`flex cursor-pointer items-center justify-center rounded-md border px-4 py-3 text-sm font-medium transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary/50 ${
+                                className={`flex cursor-pointer items-center justify-center rounded-md border px-4 py-3 text-sm font-medium transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary ${
                                     type === t.value
                                         ? "border-primary bg-accent text-primary-deep"
                                         : "border-slate-200 hover:bg-slate-50"
@@ -186,7 +212,13 @@ export default function DashboardGuidelinesPage() {
             </form>
 
             <h2 className="mt-10 text-lg font-semibold">Published</h2>
-            {items.length === 0 ? (
+            {listState === "error" ? (
+                <p role="alert" className="mt-2 text-sm text-destructive">
+                    Could not load the published guidelines. Reload the page to try again.
+                </p>
+            ) : listState === "loading" ? (
+                <p className="mt-2 text-sm text-body">Loading...</p>
+            ) : items.length === 0 ? (
                 <p className="mt-2 text-sm text-body">Nothing published yet.</p>
             ) : (
                 <ul className="mt-3 grid gap-3">
