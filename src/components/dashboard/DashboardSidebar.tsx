@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Home, Images, Video } from "lucide-react";
+import { BookOpen, ClipboardList, Home, Images, UserPlus, Video } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Add new dashboard sections here; Guidelines is the first.
@@ -10,6 +10,8 @@ const ITEMS = [
     { name: "Guidelines", href: "/dashboard/guidelines", icon: BookOpen },
     { name: "Webinars", href: "/dashboard/webinars", icon: Video },
     { name: "Gallery", href: "/dashboard/gallery", icon: Images },
+    { name: "Registrations", href: "/dashboard/registrations", icon: ClipboardList },
+    { name: "Member signups", href: "/dashboard/members", icon: UserPlus },
 ];
 
 export default function DashboardSidebar({ email }: { email: string }) {
@@ -33,7 +35,10 @@ export default function DashboardSidebar({ email }: { email: string }) {
                 </Link>
             </div>
 
-            <nav aria-label="Dashboard" className="flex gap-1 px-3 pb-3 md:flex-col md:pb-0">
+            <nav
+                aria-label="Dashboard"
+                className="flex gap-1 overflow-x-auto px-3 pb-3 md:flex-col md:overflow-visible md:pb-0"
+            >
                 {ITEMS.map(({ name, href, icon: Icon }) => {
                     const active = pathname.startsWith(href);
                     return (
@@ -42,7 +47,7 @@ export default function DashboardSidebar({ email }: { email: string }) {
                             href={href}
                             aria-current={active ? "page" : undefined}
                             className={cn(
-                                "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
+                                "flex shrink-0 items-center gap-3 whitespace-nowrap rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
                                 active ? "bg-primary text-white" : "text-white/80 hover:bg-white/10"
                             )}
                         >
