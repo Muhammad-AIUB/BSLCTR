@@ -1,18 +1,21 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
+import { useModal } from "@/lib/use-modal";
 
 // Photos are scoped per conference year. Add other years here as they become available.
+// These are filed under 2026 because that is what they show: the stage banner reads
+// "CON 2026" and the delegate badges "4th International Annual Conference".
 const momentsByYear: Record<string, { src: string; alt: string }[]> = {
-    "2025": [
+    "2026": [
         { src: "/bslctrcon/moments/moment-1.jpeg", alt: "Faculty members seated on stage at BSLCTR CON" },
         { src: "/bslctrcon/moments/moment-2.jpeg", alt: "Delegates discussing the conference program" },
-        { src: "/bslctrcon/moments/moment-3.jpeg", alt: "Panel discussion at BSLCTR CON 2025" },
+        { src: "/bslctrcon/moments/moment-3.jpeg", alt: "Panel discussion at BSLCTR CON 2026" },
         { src: "/bslctrcon/moments/moment-4.jpeg", alt: "Presenting a bouquet at the annual conference" },
         { src: "/bslctrcon/moments/moment-5.jpeg", alt: "Surgical team in the operating theatre" },
         { src: "/bslctrcon/moments/moment-6.jpeg", alt: "Crest presentation at the international annual conference" },
@@ -21,9 +24,12 @@ const momentsByYear: Record<string, { src: string; alt: string }[]> = {
     ],
 };
 
-function MomentsContent() {
-    const searchParams = useSearchParams();
-    const year = searchParams.get("year") ?? "2025";
+/** Shown when the address names no year. */
+const LATEST_YEAR = "2026";
+
+function MomentsContent({ requested }: { requested: string | null }) {
+    // The year goes into the heading and is used as a lookup key, so take only what looks like one.
+    const year = requested && /^\d{4}$/.test(requested) ? requested : LATEST_YEAR;
     const moments = momentsByYear[year] ?? [];
 
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -31,12 +37,19 @@ function MomentsContent() {
     const next = () => setLightboxIndex((i) => (i === null ? null : (i + 1) % moments.length));
     const prev = () => setLightboxIndex((i) => (i === null ? null : (i - 1 + moments.length) % moments.length));
 
+    const lightboxRef = useRef<HTMLDivElement>(null);
+    useModal(lightboxIndex !== null, lightboxRef, (e) => {
+        if (e.key === "ArrowLeft") prev();
+        else if (e.key === "ArrowRight") next();
+        else if (e.key === "Escape") setLightboxIndex(null);
+    });
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-100 via-primary/5 to-slate-200 px-4 sm:px-6 lg:px-8 py-10">
             <div className="max-w-6xl mx-auto">
                 <Link
                     href="/bslctrcon"
-                    className="inline-flex items-center gap-1.5 rounded-md text-slate-500 hover:text-primary text-sm py-2 -my-2 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2"
+                    className="inline-flex items-center gap-1.5 rounded-md text-slate-500 hover:text-primary text-sm py-2 -my-2 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                 >
                     <ChevronLeft className="h-4 w-4" /> Back to BSLCTR CON
                 </Link>
@@ -74,8 +87,17 @@ function MomentsContent() {
                                     hidden: { opacity: 0, scale: 0.9 },
                                     visible: { opacity: 1, scale: 1, transition: { duration: 0.4 } },
                                 }}
-                                className="group relative cursor-pointer"
+                                role="button"
+                                tabIndex={0}
+                                aria-label={`Open photo: ${photo.alt}`}
+                                className="group relative cursor-pointer rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                                 onClick={() => setLightboxIndex(index)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") {
+                                        e.preventDefault();
+                                        setLightboxIndex(index);
+                                    }
+                                }}
                             >
                                 <div className="relative aspect-[3/2] overflow-hidden rounded-xl bg-white shadow-sm hover:shadow-lg transition-all duration-300 border border-slate-200">
                                     <img
@@ -97,6 +119,10 @@ function MomentsContent() {
             <AnimatePresence>
                 {lightboxIndex !== null && moments[lightboxIndex] && (
                     <motion.div
+                        ref={lightboxRef}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label={moments[lightboxIndex].alt}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -108,6 +134,8 @@ function MomentsContent() {
                             size="icon"
                             className="absolute top-4 right-4 text-white hover:bg-white/10 max-sm:bg-black/40 z-10"
                             onClick={() => setLightboxIndex(null)}
+                            aria-label="Close"
+                            data-autofocus
                         >
                             <X className="w-6 h-6" />
                         </Button>
@@ -117,6 +145,7 @@ function MomentsContent() {
                             size="icon"
                             className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/10 max-sm:bg-black/40 z-10"
                             onClick={(e) => { e.stopPropagation(); prev(); }}
+                            aria-label="Previous photo"
                         >
                             <ChevronLeft className="w-8 h-8" />
                         </Button>
@@ -126,6 +155,7 @@ function MomentsContent() {
                             size="icon"
                             className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/10 max-sm:bg-black/40 z-10"
                             onClick={(e) => { e.stopPropagation(); next(); }}
+                            aria-label="Next photo"
                         >
                             <ChevronRight className="w-8 h-8" />
                         </Button>
@@ -154,10 +184,16 @@ function MomentsContent() {
     );
 }
 
+function MomentsForRequestedYear() {
+    return <MomentsContent requested={useSearchParams().get("year")} />;
+}
+
+// useSearchParams needs a Suspense boundary for the page to prerender, and only the fallback
+// is in the prerendered HTML. The fallback is therefore the default year, not an empty box.
 export default function MomentsPage() {
     return (
-        <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-slate-100 via-primary/5 to-slate-200" />}>
-            <MomentsContent />
+        <Suspense fallback={<MomentsContent requested={null} />}>
+            <MomentsForRequestedYear />
         </Suspense>
     );
 }

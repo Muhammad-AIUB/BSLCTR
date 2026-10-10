@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { Camera, Presentation, Calendar, ChevronLeft } from "lucide-react";
 import { Section } from "@/components/ui/section";
 
-const YEARS = ["2025", "2024", "2023"];
+const YEARS = ["2026", "2025", "2024", "2023"];
 
 export default function BslctrConPage() {
     const [year, setYear] = useState<string | null>(null);
@@ -20,7 +20,7 @@ export default function BslctrConPage() {
 
                 {year === null ? (
                     /* Year selection */
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                         {YEARS.map((y, i) => (
                             <YearCard key={y} year={y} index={i} onClick={() => setYear(y)} />
                         ))}
@@ -30,7 +30,7 @@ export default function BslctrConPage() {
                     <div>
                         <button
                             onClick={() => setYear(null)}
-                            className="inline-flex items-center gap-1.5 rounded-md text-slate-500 hover:text-primary text-sm mb-6 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2"
+                            className="inline-flex items-center gap-1.5 rounded-md text-slate-500 hover:text-primary text-sm mb-6 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                         >
                             <ChevronLeft className="h-4 w-4" /> Back to years
                         </button>
@@ -78,7 +78,7 @@ function YearCard({
             transition={{ duration: 0.5, delay: index * 0.12 }}
             whileHover={{ y: -6 }}
             onClick={onClick}
-            className="block w-full text-left group rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2"
+            className="block w-full text-left group rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
             <div className="bg-white rounded-xl shadow-sm hover:shadow-lg hover:shadow-primary/10 border border-slate-100 overflow-hidden transition-all duration-300">
                 <div className="bg-gradient-to-br from-primary to-secondary h-32 flex items-center justify-center">
@@ -113,7 +113,7 @@ function ConCard({
             transition={{ duration: 0.5, delay: index * 0.15 }}
             whileHover={{ y: -6 }}
         >
-            <Link href={href} className="block group rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2">
+            <Link href={href} className="block group rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
                 <div className="bg-white rounded-xl shadow-sm hover:shadow-lg hover:shadow-primary/10 border border-slate-100 overflow-hidden transition-all duration-300">
                     <div className={`bg-gradient-to-br ${gradient} h-44 flex items-center justify-center`}>
                         <div className="bg-white/20 rounded-full p-5 group-hover:scale-110 transition-transform duration-300">
