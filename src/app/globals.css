@@ -168,6 +168,11 @@
     * {
         @apply border-border outline-ring/50;
     }
+    /* The top bar is sticky and up to 81px tall. Without this, a control reached with
+       Shift+Tab is scrolled to the very top of the window and sits underneath it. */
+    html {
+        scroll-padding-top: 5.5rem;
+    }
     body {
         @apply bg-background text-foreground;
         font-size: 1rem;
@@ -197,15 +202,7 @@
     /* Accessible focus ring for hand-rolled interactive elements
        (the shadcn primitives ship their own; use this on raw <button>/<a>). */
     .focus-ring {
-        @apply outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background;
-    }
-
-    /* Dropdown / popover surface + rows — used across the Navbar menus. */
-    .menu-panel {
-        @apply z-[9999] overflow-hidden rounded-xl border border-border bg-popover shadow-lg;
-    }
-    .menu-item {
-        @apply flex w-full items-center gap-2 px-4 py-3 text-left text-sm font-medium text-foreground outline-none transition-colors hover:bg-muted focus-visible:bg-muted;
+        @apply outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
     }
 
     /* Card lift on hover. Pair with the shadcn Card (which is shadow-sm at rest). */

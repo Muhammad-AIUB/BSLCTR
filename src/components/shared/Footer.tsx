@@ -46,7 +46,7 @@ export function Footer() {
                             className="inline-flex items-center gap-3 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-white/70"
                         >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src="/Logo1.png" alt="" className="h-12 w-auto" />
+                            <img src="/logo.png" alt="" width={387} height={288} className="h-12 w-auto" />
                             <span className="text-xl font-semibold tracking-wide">BSLCTR</span>
                         </Link>
                         <p className="mt-4 max-w-xs text-sm font-medium leading-relaxed text-white/90">

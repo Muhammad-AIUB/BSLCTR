@@ -1,104 +1,72 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  //   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { PatientForm } from "./forms/PatientForm";
-import { PhysicianForm } from "./forms/PhysicianForm";
 import { ConferenceRegistrationForm } from "./forms/ConferenceRegistrationForm";
-import { Stethoscope, Users, Calendar } from "lucide-react";
-
-type UserType = "none" | "patient" | "physician" | "conference";
+import { Calendar } from "lucide-react";
 
 type SubscribeModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  /** Open straight on the conference form, skipping the Patient / Physician chooser. */
+  /** Open straight on the conference form, skipping the subscribe notice. */
   conferenceOnly?: boolean;
 };
 
+// Subscriptions have nowhere to be stored yet, so the Subscribe buttons open a notice and
+// not a form: asking for someone's details and then discarding them is worse than not
+// asking. Conference registration is saved, and stays reachable from here.
 const SubscribeModal = ({ isOpen, onClose, conferenceOnly = false }: SubscribeModalProps) => {
-  const initialType: UserType = conferenceOnly ? "conference" : "none";
-  const [userType, setUserType] = useState<UserType>(initialType);
+  const [registering, setRegistering] = useState(conferenceOnly);
 
-  const handleReset = () => {
-    setUserType(initialType);
-  };
-
-  const close = () => {
-    onClose();
-    setTimeout(handleReset, 300); // Reset after close animation
-  };
+  // Every opening starts from the same place, whatever was showing when it last closed.
+  useEffect(() => {
+    if (isOpen) setRegistering(conferenceOnly);
+  }, [isOpen, conferenceOnly]);
 
   return (
     <Dialog
       open={isOpen}
       onOpenChange={(open) => {
-        if (!open) close();
+        if (!open) onClose();
       }}
     >
       <DialogContent className="sm:max-w-[500px] overflow-y-auto max-h-[calc(100dvh-2rem)]">
         <DialogHeader>
           <DialogTitle className="font-bold">
-            {userType === "conference" ? "Conference Registration" : "Subscribe"}
+            {registering ? "Conference Registration" : "Subscribe"}
           </DialogTitle>
           <DialogDescription>
-            {userType === "conference"
+            {registering
               ? "Fill in your details to register for the conference."
-              : "Choose your subscription type to receive relevant information."}
+              : "Subscriptions are not open yet."}
           </DialogDescription>
         </DialogHeader>
 
-        {userType === "none" && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 py-4">
+        {registering ? (
+          <ConferenceRegistrationForm
+            onBack={conferenceOnly ? undefined : () => setRegistering(false)}
+            onDone={onClose}
+          />
+        ) : (
+          <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:justify-end">
             <Button
-              className="h-12 rounded-full bg-secondary text-base text-white hover:bg-secondary/90 active:scale-[0.98]"
-              onClick={() => setUserType("patient")}
+              className="h-11 rounded-full bg-secondary px-5 text-white hover:bg-secondary/90"
+              onClick={() => setRegistering(true)}
             >
-              <Users /> Patient
+              <Calendar /> Register for the conference
             </Button>
-            <Button
-              className="h-12 rounded-full bg-primary text-base text-white hover:bg-primary/90 active:scale-[0.98]"
-              onClick={() => setUserType("physician")}
-            >
-              <Stethoscope /> Physician
-            </Button>
-            <Button
-              className="h-12 rounded-full bg-primary text-base text-white hover:bg-primary/90 active:scale-[0.98] col-span-1 sm:col-span-2"
-              onClick={() => setUserType("conference")}
-            >
-              <Calendar /> Conference Registration
+            <Button variant="outline" className="h-11 rounded-full px-5" onClick={onClose}>
+              Close
             </Button>
           </div>
         )}
-
-        {userType === "patient" && <PatientForm onBack={handleReset} />}
-        {userType === "physician" && <PhysicianForm onBack={handleReset} />}
-        {userType === "conference" && (
-          <ConferenceRegistrationForm
-            onBack={conferenceOnly ? undefined : handleReset}
-            onDone={close}
-          />
-        )}
-
-        {/* {userType === "none" && (
-          <DialogFooter>
-            <Button
-              //   variant="outline"
-              onClick={onClose}
-              className="rounded-full bg-destructive text-white hover:bg-destructive/80"
-            >
-              Cancel
-            </Button>
-          </DialogFooter>
-        )} */}
       </DialogContent>
     </Dialog>
   );
