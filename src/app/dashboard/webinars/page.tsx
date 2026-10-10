@@ -93,8 +93,9 @@ export default function DashboardWebinarsPage() {
         <div className="mx-auto max-w-4xl">
             <h1 className="text-2xl font-semibold text-secondary">Webinars</h1>
             <p className="mt-1 text-sm text-body">
-                Schedule a webinar. It is shown on the Live Webinars page and removed automatically
-                once its date and time have passed.
+                Schedule a webinar, with its date and time in Bangladesh time. It is shown on the
+                Live Webinars page until a few hours after it starts; delete it here when it is no
+                longer needed.
             </p>
 
             <form

@@ -12,6 +12,7 @@ import {
     parseTextStyle,
     textStyleToCss,
 } from "@/lib/text-style";
+import { bangladeshToday } from "@/lib/webinars";
 
 interface Sponsor { name: string; logo: string; }
 interface Webinar {
@@ -43,7 +44,7 @@ export default function LiveWebinars() {
             .finally(() => setLoading(false));
     }, []);
 
-    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+    const today = bangladeshToday(); // YYYY-MM-DD
     const live = webinars.filter((w) => w.date <= today);
     const upcoming = webinars.filter((w) => w.date > today);
 

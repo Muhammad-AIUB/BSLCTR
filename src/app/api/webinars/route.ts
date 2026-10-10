@@ -1,30 +1,18 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { deleteUpload } from "@/lib/uploads";
+import { WEBINAR_VISIBLE_AFTER_START_MS, webinarStart } from "@/lib/webinars";
 
 export async function GET() {
     try {
         const all = await prisma.webinar.findMany({ orderBy: { createdAt: "desc" } });
 
-        const now = new Date();
-        const expiredIds: string[] = [];
-
-        for (const w of all) {
-            // date: "YYYY-MM-DD", time: "HH:MM"
-            const dt = new Date(`${w.date}T${w.time}:00`);
-            if (!isNaN(dt.getTime()) && dt < now) {
-                expiredIds.push(w.id);
-            }
-        }
-
-        if (expiredIds.length > 0) {
-            await prisma.webinar.deleteMany({ where: { id: { in: expiredIds } } });
-            await Promise.all(
-                all.filter((w) => expiredIds.includes(w.id) && w.thumbnail).map((w) => deleteUpload(w.thumbnail))
-            );
-        }
-
-        const active = all.filter((w) => !expiredIds.includes(w.id));
+        // Past webinars are hidden here, never deleted: a public GET must not
+        // change data. Admins remove old ones from the dashboard.
+        const cutoff = Date.now() - WEBINAR_VISIBLE_AFTER_START_MS;
+        const active = all.filter((w) => {
+            const start = webinarStart(w.date, w.time).getTime();
+            return isNaN(start) || start > cutoff;
+        });
         return NextResponse.json(active);
     } catch (error) {
         console.error(error);

@@ -7,6 +7,7 @@ import {
     DEFAULT_SPEAKERS_STYLE,
     parseTextStyle,
 } from "@/lib/text-style";
+import { webinarStart } from "@/lib/webinars";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +32,7 @@ export async function GET(req: NextRequest) {
     if (!adminFromRequest(req)) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    // Unlike the public /api/webinars, this never deletes past webinars.
+    // Unlike the public /api/webinars, this also lists webinars that are over.
     const rows = await prisma.webinar.findMany({ orderBy: [{ date: "desc" }, { time: "desc" }] });
     return NextResponse.json(rows);
 }
@@ -59,6 +60,17 @@ export async function POST(req: NextRequest) {
     }
     if (!/^\d{2}:\d{2}$/.test(time)) {
         return NextResponse.json({ error: "Choose a valid time" }, { status: 400 });
+    }
+    const start = webinarStart(date, time).getTime();
+    if (isNaN(start)) {
+        return NextResponse.json({ error: "Choose a valid date and time" }, { status: 400 });
+    }
+    // The public page hides a webinar once it is over, so a past one would never show.
+    if (start <= Date.now()) {
+        return NextResponse.json(
+            { error: "Date and time must be in the future (Bangladesh time)" },
+            { status: 400 }
+        );
     }
     if (!isHttpUrl(link)) {
         return NextResponse.json({ error: "Link must be a valid http(s) URL" }, { status: 400 });
