@@ -19,6 +19,9 @@ type SubscribeModalProps = {
   conferenceOnly?: boolean;
 };
 
+// The society's conference banner, 1200 x 341, shown as the registration form's letterhead.
+const CONFERENCE_BANNER = "/bslctrcon/registration-banner.webp";
+
 // Subscriptions have nowhere to be stored yet, so the Subscribe buttons open a notice and
 // not a form: asking for someone's details and then discarding them is worse than not
 // asking. Conference registration is saved, and stays reachable from here.
@@ -37,7 +40,30 @@ const SubscribeModal = ({ isOpen, onClose, conferenceOnly = false }: SubscribeMo
         if (!open) onClose();
       }}
     >
-      <DialogContent className="sm:max-w-[500px] overflow-y-auto max-h-[calc(100dvh-2rem)]">
+      <DialogContent
+        className="sm:max-w-[500px] overflow-y-auto max-h-[calc(100dvh-2rem)]"
+        // Over the banner the close button gets a white disc, or its red cross is lost
+        // against the picture.
+        closeClassName={
+          registering
+            ? "top-3 right-3 rounded-full bg-white p-1 opacity-100 shadow-md data-[state=open]:bg-white"
+            : undefined
+        }
+      >
+        {registering && (
+          // Edge to edge across the top of the dialog, which clips it to its own corners.
+          <div className="-mx-6 -mt-6">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={CONFERENCE_BANNER}
+              alt="BSLCTR CON 2026, 5th International Annual Conference. 22 December 2026, Pan Pacific Sonargaon, Dhaka, Bangladesh. Bangladesh Society for Liver Cancer Treatment & Research."
+              width={1200}
+              height={341}
+              className="block h-auto w-full"
+            />
+          </div>
+        )}
+
         <DialogHeader>
           <DialogTitle className="font-bold">
             {registering ? "Conference Registration" : "Subscribe"}
