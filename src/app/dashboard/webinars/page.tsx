@@ -233,7 +233,7 @@ export default function DashboardWebinarsPage() {
             ) : items.length === 0 ? (
                 <p className="mt-2 text-sm text-body">No webinars scheduled.</p>
             ) : (
-                <ul className="mt-3 grid gap-3">
+                <ul className="mt-3 grid grid-cols-1 gap-3">
                     {items.map((w) => (
                         <li
                             key={w.id}

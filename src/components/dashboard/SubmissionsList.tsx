@@ -274,7 +274,7 @@ export default function SubmissionsList<T extends { id: string }>({
                                                 <th
                                                     key={c.header}
                                                     scope="col"
-                                                    className="whitespace-nowrap px-4 py-3 font-semibold"
+                                                    className="px-4 py-3 align-bottom font-semibold"
                                                 >
                                                     {c.header}
                                                 </th>

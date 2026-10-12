@@ -297,7 +297,7 @@ export default function DashboardGalleryPage() {
             ) : list.length === 0 ? (
                 <p className="mt-2 text-sm text-body">Nothing added yet.</p>
             ) : (
-                <ul className="mt-3 grid gap-3">
+                <ul className="mt-3 grid grid-cols-1 gap-3">
                     {list.map((item) => {
                         const yt = kind === "VIDEO" ? youtubeId(item.link) : null;
                         const thumb =
