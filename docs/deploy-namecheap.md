@@ -17,6 +17,9 @@ The database stays on Neon. The site reaches it over port 443, like any HTTPS re
 ```
 
 `.env` and `uploads/` sit beside `bundle/`, not inside it, so a redeploy cannot delete them.
+`uploads/` also holds a hidden file, `.session-cutoffs.json`: the record of when each admin
+last signed out. Leave it with the uploads; without it, a signed-out session works again
+until it expires.
 
 ## 1. Build the archive
 
