@@ -42,46 +42,62 @@ export async function POST(request: NextRequest) {
 
         const data: MemberSignupData = validation.data;
 
-        // Check if email already exists
-        const existingMember = await prisma.member.findUnique({
-            where: { email: data.email },
-        });
+        const result = await prisma.$transaction(
+            async (tx) => {
+                // One signup at a time per BMDC number. The table has no unique rule on bmdcNo,
+                // so without this lock two requests sent together both pass the look-up below
+                // before either has inserted. Postgres releases it when the transaction ends.
+                // It is tried, not waited for: a queue of waiters would each hold a database
+                // connection, and a burst for one number could use up the pool.
+                const [{ locked }] = await tx.$queryRaw<{ locked: boolean }[]>`
+                    SELECT pg_try_advisory_xact_lock(hashtext('member-bmdc:' || lower(${data.bmdcRegNo}))) AS locked`;
+                if (!locked) {
+                    return {
+                        conflict: "An application with this BMDC registration number is being processed",
+                    } as const;
+                }
 
-        if (existingMember) {
-            return NextResponse.json(
-                { message: "Email already registered" },
-                { status: 409 }
-            );
-        }
+                // Check if email already exists
+                const existingMember = await tx.member.findUnique({
+                    where: { email: data.email },
+                    select: { id: true },
+                });
+                if (existingMember) return { conflict: "Email already registered" } as const;
 
-        // Check if BMDC reg no already exists
-        const existingBmdcReg = await prisma.member.findFirst({
-            where: { bmdcNo: data.bmdcRegNo },
-        });
+                // Check if BMDC reg no already exists. Compared without case: A-12345 and
+                // a-12345 are one registration.
+                const existingBmdcReg = await tx.$queryRaw<{ id: string }[]>`
+                    SELECT id FROM "Member" WHERE lower("bmdcNo") = lower(${data.bmdcRegNo}) LIMIT 1`;
+                if (existingBmdcReg.length > 0) {
+                    return { conflict: "BMDC registration number already registered" } as const;
+                }
 
-        if (existingBmdcReg) {
-            return NextResponse.json(
-                { message: "BMDC registration number already registered" },
-                { status: 409 }
-            );
-        }
-
-        // Create new member
-        const newMember = await prisma.member.create({
-            data: {
-                name: data.fullName,
-                designation: data.designation,
-                specialtySubject: data.specialty,
-                // The signup form has no qualifications field and the column is
-                // required; an admin fills it in when reviewing the application.
-                academicQualifications: "",
-                currentPosting: data.affiliatedInstitution,
-                bmdcNo: data.bmdcRegNo,
-                mobileNo: data.mobileNumber,
-                email: data.email,
-                status: "PENDING", // Default status is PENDING until admin approves
+                // Create new member
+                const member = await tx.member.create({
+                    data: {
+                        name: data.fullName,
+                        designation: data.designation,
+                        specialtySubject: data.specialty,
+                        // The signup form has no qualifications field and the column is
+                        // required; an admin fills it in when reviewing the application.
+                        academicQualifications: "",
+                        currentPosting: data.affiliatedInstitution,
+                        bmdcNo: data.bmdcRegNo,
+                        mobileNo: data.mobileNumber,
+                        email: data.email,
+                        status: "PENDING", // Default status is PENDING until admin approves
+                    },
+                });
+                return { member } as const;
             },
-        });
+            // Longer than Prisma's 2 s and 5 s: the database may be waking from idle.
+            { maxWait: 10_000, timeout: 15_000 }
+        );
+
+        if ("conflict" in result) {
+            return NextResponse.json({ message: result.conflict }, { status: 409 });
+        }
+        const newMember = result.member;
 
         console.log("New member signup:", {
             id: newMember.id,
