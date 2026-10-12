@@ -5,9 +5,16 @@
 /** A webinar stays on the public page this long after it starts, so late joiners still find the link. */
 export const WEBINAR_VISIBLE_AFTER_START_MS = 6 * 60 * 60 * 1000;
 
+const BANGLADESH_OFFSET_MS = 6 * 60 * 60 * 1000;
+
 /** The instant a webinar starts. Invalid when the date or time is not a real one. */
 export function webinarStart(date: string, time: string): Date {
-    return new Date(`${date}T${time}:00+06:00`);
+    const start = new Date(`${date}T${time}:00+06:00`);
+    if (isNaN(start.getTime())) return start;
+    // Date does not refuse 30 February or 24:00: it reads them as 2 March and the next
+    // midnight. So the instant is read back in Bangladesh time and must say what was typed.
+    const readBack = new Date(start.getTime() + BANGLADESH_OFFSET_MS).toISOString().slice(0, 16);
+    return readBack === `${date}T${time}` ? start : new Date(NaN);
 }
 
 /**
