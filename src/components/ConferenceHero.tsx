@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 
 const TITLE_WORDS = ["BSLCTR", "5th", "Annual", "Conference", "2026"];
 
-// The hero picture: a glowing wireframe liver on deep blue, 719 x 1600, with a world map
-// above it. It is tall, so a phone gets all of it as a backdrop, and a wide screen gets the
-// liver and its rings cropped out of it, beside the words.
-const HERO_PICTURE = "/hero-liver.webp";
+// The hero picture: a glowing wireframe liver with a tumour lit red inside it, on deep
+// blue, 715 x 1600, with a world map above it. It is tall, so a phone gets all of it as a
+// backdrop, and a wide screen gets the liver and its rings cropped out of it, beside the words.
+const HERO_PICTURE = "/hero-liver-tumour.webp";
 
 export default function ConferenceHero() {
     // When the user has asked for reduced motion we render the final state
@@ -33,7 +33,7 @@ export default function ConferenceHero() {
                 src={HERO_PICTURE}
                 alt=""
                 aria-hidden="true"
-                width={719}
+                width={715}
                 height={1600}
                 className="absolute inset-0 h-full w-full object-cover opacity-60 mix-blend-lighten lg:hidden"
             />
@@ -100,7 +100,7 @@ export default function ConferenceHero() {
                     <img
                         src={HERO_PICTURE}
                         alt=""
-                        width={719}
+                        width={715}
                         height={1600}
                         className="animate-hero-float h-full w-full object-cover object-[50%_55%]"
                     />
