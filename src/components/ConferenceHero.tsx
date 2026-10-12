@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import SubscribeModal from "@/components/SubscribeModal";
 
 const TITLE_WORDS = ["BSLCTR", "5th", "Annual", "Conference", "2026"];
 
@@ -17,9 +16,6 @@ export default function ConferenceHero() {
     // immediately. The animation is an enhancement over a correct static
     // hero, never a gate on the content appearing.
     const reduceMotion = useReducedMotion();
-    // Opens the registration modal rather than linking to /subscribe — that
-    // route does not exist, and the nav's own "Subscribe" is a modal too.
-    const [showSubscribe, setShowSubscribe] = useState(false);
 
     return (
         <section className="relative flex h-svh min-h-[36rem] w-full items-center overflow-hidden bg-secondary">
@@ -85,12 +81,8 @@ export default function ConferenceHero() {
                         }}
                         className="mt-10"
                     >
-                        <Button
-                            variant="pill"
-                            size="lg"
-                            onClick={() => setShowSubscribe(true)}
-                        >
-                            Register for conference
+                        <Button asChild variant="pill" size="lg">
+                            <Link href="/bslctrcon/register">Register for conference</Link>
                         </Button>
                     </motion.div>
                 </div>
@@ -115,11 +107,6 @@ export default function ConferenceHero() {
                 </div>
             </div>
 
-            <SubscribeModal
-                isOpen={showSubscribe}
-                onClose={() => setShowSubscribe(false)}
-                conferenceOnly
-            />
         </section>
     );
 }

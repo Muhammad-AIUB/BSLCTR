@@ -14,8 +14,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { ChevronLeft } from "lucide-react";
-import { useState } from "react";
+import { CircleCheck } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
 // The fields mirror the society's printed registration form, and the limits mirror
 // src/app/api/conference/register/route.ts.
@@ -57,16 +58,18 @@ const TEXT_FIELDS: {
     { name: "email", label: "E-mail", type: "email", autoComplete: "email" },
 ];
 
-type ConferenceRegistrationFormProps = {
-    /** Returns to the subscribe chooser. Omit when the form is opened directly. */
-    onBack?: () => void;
-    /** Called after a successful registration. */
-    onDone: () => void;
-};
-
-export function ConferenceRegistrationForm({ onBack, onDone }: ConferenceRegistrationFormProps) {
+export function ConferenceRegistrationForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
+    // Set once the server has saved the registration; the form gives way to a confirmation.
+    const [registered, setRegistered] = useState(false);
+    const confirmationRef = useRef<HTMLHeadingElement>(null);
+
+    // The submit button that had focus is gone by now, so focus moves to the confirmation:
+    // a screen reader announces it, and the next Tab starts from there.
+    useEffect(() => {
+        if (registered) confirmationRef.current?.focus();
+    }, [registered]);
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
@@ -97,9 +100,8 @@ export function ConferenceRegistrationForm({ onBack, onDone }: ConferenceRegistr
                 throw new Error(error.message || "Registration failed");
             }
 
-            alert("Registration received. Thank you!");
             form.reset();
-            onDone();
+            setRegistered(true);
         } catch (error) {
             console.error("Error:", error);
             // fetch itself rejects with a TypeError when the network is down.
@@ -115,20 +117,39 @@ export function ConferenceRegistrationForm({ onBack, onDone }: ConferenceRegistr
         }
     }
 
+    if (registered) {
+        return (
+            <div className="py-6 text-center">
+                <CircleCheck className="mx-auto h-12 w-12 text-green-600" aria-hidden="true" />
+                <h3 ref={confirmationRef} tabIndex={-1} className="mt-4 text-xl outline-none">
+                    Registration received
+                </h3>
+                <p className="mt-2 text-body">Thank you. Your details have been saved.</p>
+                <div className="mt-6 flex flex-wrap justify-center gap-3">
+                    <Button
+                        variant="outline"
+                        className="h-11 rounded-full px-5"
+                        onClick={() => setRegistered(false)}
+                    >
+                        Register another person
+                    </Button>
+                    <Button
+                        asChild
+                        className="h-11 rounded-full bg-secondary px-5 text-white hover:bg-secondary/90"
+                    >
+                        <Link href="/">Back to home</Link>
+                    </Button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                {onBack && (
-                    <Button
-                        type="button"
-                        variant="ghost"
-                        onClick={onBack}
-                        className="mb-2 h-auto rounded-md px-3 py-2 text-muted-foreground hover:bg-muted hover:text-foreground"
-                        aria-label="Back"
-                    >
-                        <ChevronLeft className="h-4 w-4 mr-1" /> Back
-                    </Button>
-                )}
+                <p className="pb-2 text-body">
+                    Fill in your details to register for the conference.
+                </p>
 
                 {TEXT_FIELDS.map(({ name, label, type, autoComplete }) => (
                     <FormField

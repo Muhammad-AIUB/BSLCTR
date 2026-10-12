@@ -25,7 +25,7 @@ There is no `test` or `lint:unused` script, and no tests.
 **Data**: Prisma + Neon adapter (serverless), singleton at `src/lib/prisma.ts`. Connection string via `.env` → `prisma.config.ts` → `prisma/schema.prisma`.  
 **Styling**: Tailwind v4 via PostCSS. Design tokens (colors, utils) in `src/app/globals.css` using CSS variables. Quicksand font via `next/font/google` (max weight: 700).  
 **Components**: shadcn/ui (New York variant), stored at `src/components/ui/`. Merge classes with `cn()` from `@/lib/utils.ts`.  
-**Forms**: React Hook Form + Zod validation. `MemberSignupForm` and `ConferenceRegistrationForm` POST to `/api/member/signup` and `/api/conference/register`, which save to the database; admins read both from the dashboard (`src/lib/submissions.ts`). The Patient/Physician forms in `src/components/forms/` have no backend and are not mounted: the Subscribe buttons open a "not open yet" notice.
+**Forms**: React Hook Form + Zod validation. `MemberSignupForm` and `ConferenceRegistrationForm` POST to `/api/member/signup` and `/api/conference/register`, which save to the database; admins read both from the dashboard (`src/lib/submissions.ts`). Conference registration is a page, `/bslctrcon/register`; the hero button and the Subscribe notice link to it. The Patient/Physician forms in `src/components/forms/` have no backend and are not mounted: the Subscribe buttons open a "not open yet" notice.
 
 ## Patterns We Do Not Use
 
@@ -48,6 +48,7 @@ There is no `test` or `lint:unused` script, and no tests.
 - We do not write a form value into a CSV by hand. The rows come from public forms, and a cell starting with `=`, `+`, `-` or `@` runs as a formula in the admin's spreadsheet; `toCsv()` in `src/lib/csv.ts` neutralises those and keeps phone and BMDC numbers as text.
 - We do not put a control on the page that does nothing. The site-wide search box had no handler and was removed; a feature that is not built yet gets no control, or one that says so.
 - We do not build an overlay without dialog behaviour. The photo lightboxes could not be opened or left from the keyboard; `useModal()` from `src/lib/use-modal.ts` moves focus in and out, keeps Tab inside and stops the page behind scrolling.
+- We do not open conference registration in a modal. The hero button used to; the owner asked for a page of its own (2026-10-12), `/bslctrcon/register`, which also gives registration an address that can be sent to people. The form shows its own confirmation there once the row is saved, in place of an `alert()`.
 
 ## Git & Version Control
 
