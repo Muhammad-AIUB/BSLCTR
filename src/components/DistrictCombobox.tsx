@@ -64,7 +64,6 @@ export default function DistrictCombobox({
             document.removeEventListener("mousedown", onPointerDown);
             document.removeEventListener("touchstart", onPointerDown);
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open]);
 
     // Keep the highlighted option in view during keyboard navigation.

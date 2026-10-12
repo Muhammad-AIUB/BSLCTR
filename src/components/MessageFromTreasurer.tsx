@@ -15,17 +15,6 @@ const MessageFromTreasurer = () => {
         visible: { opacity: 1, y: 0 },
     };
 
-
-    const staggerContainer = {
-        hidden: {},
-        visible: {
-            transition: {
-                staggerChildren: 0.2,
-                delayChildren: 0.1,
-            },
-        },
-    };
-
     return (
         // Decorative pattern/orb background removed with the ILCA restyle — the
         // dot grid was hardcoded to the retired teal rgba(0,162,183,0.08).

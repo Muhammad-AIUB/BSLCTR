@@ -243,7 +243,7 @@ export function PatientForm({ onBack }: PatientFormProps) {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>
-                                    Please describe your relative's liver
+                                    Please describe your relative&apos;s liver
                                     disease
                                 </FormLabel>
                                 <FormControl>
