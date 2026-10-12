@@ -8,6 +8,11 @@ type SectionProps = {
     eyebrow?: string;
     /** The section heading. */
     title?: string;
+    /**
+     * Set on the one section whose title names the page, so that every page has an <h1>.
+     * It is drawn at the <h2> size either way.
+     */
+    pageTitle?: boolean;
     className?: string;
     children: React.ReactNode;
 };
@@ -23,6 +28,7 @@ export function Section({
     watermark,
     eyebrow,
     title,
+    pageTitle = false,
     className,
     children,
 }: SectionProps) {
@@ -47,7 +53,8 @@ export function Section({
                                 {eyebrow}
                             </p>
                         )}
-                        {title && <h2>{title}</h2>}
+                        {title &&
+                            (pageTitle ? <h1 className="text-[2.5rem]">{title}</h1> : <h2>{title}</h2>)}
                     </div>
                 </header>
             )}

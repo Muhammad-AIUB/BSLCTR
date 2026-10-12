@@ -13,7 +13,7 @@ const CONFERENCE_BANNER = "/bslctrcon/registration-banner.webp";
 
 export default function ConferenceRegistrationPage() {
     return (
-        <Section watermark="Register" eyebrow="BSLCTR CON 2026" title="Conference Registration">
+        <Section pageTitle watermark="Register" eyebrow="BSLCTR CON 2026" title="Conference Registration">
             <div className="w-full max-w-2xl overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img

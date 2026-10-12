@@ -34,7 +34,7 @@ const causes = [
 export default function DonatePage() {
     return (
         <>
-            <Section watermark="Donate" eyebrow="Support our work" title="Make a Donation">
+            <Section pageTitle watermark="Donate" eyebrow="Support our work" title="Make a Donation">
                 <div className="max-w-3xl">
                     <p className="text-body">
                         Liver cancer is largely preventable, yet many patients in

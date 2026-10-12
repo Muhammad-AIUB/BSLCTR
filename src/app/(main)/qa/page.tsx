@@ -77,7 +77,7 @@ function QAList({ items }: { items: QA[] }) {
 export default function QAPage() {
     return (
         <>
-            <Section watermark="Q&A" eyebrow="Questions & answers" title="Liver Cancer: Common Questions">
+            <Section pageTitle watermark="Q&A" eyebrow="Questions & answers" title="Liver Cancer: Common Questions">
                 <QAList items={liverQuestions} />
                 <p className="mt-8 max-w-3xl text-sm text-body">
                     This information is for general awareness only and is not a

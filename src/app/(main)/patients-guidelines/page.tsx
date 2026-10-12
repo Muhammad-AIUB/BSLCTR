@@ -46,6 +46,7 @@ export default async function PatientsGuidelinesPage() {
             watermark="Patients"
             eyebrow="Guidance"
             title="Patients Guidelines"
+            pageTitle
         >
             <div className="max-w-5xl">
                 <p className="mb-8 max-w-2xl text-body">

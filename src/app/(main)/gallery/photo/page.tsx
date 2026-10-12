@@ -22,7 +22,7 @@ export default async function PhotoGalleryPage() {
                     <ChevronLeft className="h-4 w-4" /> Back to Gallery
                 </Link>
             </div>
-            <Section watermark="Photos" eyebrow="Gallery" title="Photo Gallery" className="pt-6 lg:pt-8">
+            <Section pageTitle watermark="Photos" eyebrow="Gallery" title="Photo Gallery" className="pt-6 lg:pt-8">
                 {photos ? (
                     <PhotoGallery photos={photos} />
                 ) : (

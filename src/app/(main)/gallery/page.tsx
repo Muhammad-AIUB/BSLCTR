@@ -7,7 +7,7 @@ import { Section } from "@/components/ui/section";
 
 export default function GalleryPage() {
     return (
-        <Section watermark="Gallery" eyebrow="Media" title="Gallery">
+        <Section pageTitle watermark="Gallery" eyebrow="Media" title="Gallery">
             <div className="w-full max-w-3xl">
                 <p className="mb-12 text-body">
                     Browse our video and photo collections

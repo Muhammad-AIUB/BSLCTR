@@ -50,7 +50,7 @@ function DoctorsDirectory({ type }: { type: string | null }) {
         }`;
 
     return (
-        <Section watermark={t.doctors} eyebrow="Directory" title={t.doctors}>
+        <Section pageTitle watermark={t.doctors} eyebrow="Directory" title={t.doctors}>
             <div className="max-w-6xl">
                 {/* The toggle used to sit in the heading row; the heading now
                     lives on <Section>, so it moves above the intro. */}

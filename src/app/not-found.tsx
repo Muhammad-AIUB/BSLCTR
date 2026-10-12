@@ -12,7 +12,7 @@ export const metadata = {
 export default function NotFound() {
     return (
         <MainLayout>
-            <Section watermark="404" eyebrow="Not found" title="This page does not exist">
+            <Section pageTitle watermark="404" eyebrow="Not found" title="This page does not exist">
                 <p className="max-w-2xl text-body">
                     The link may be out of date, or the page may have been moved.
                 </p>

@@ -28,7 +28,7 @@ export default function PageError({
         });
 
     return (
-        <Section watermark="Error" eyebrow="Something went wrong" title="This page could not be shown">
+        <Section pageTitle watermark="Error" eyebrow="Something went wrong" title="This page could not be shown">
             <p role="alert" className="max-w-2xl text-body">
                 Please try again in a moment.
             </p>

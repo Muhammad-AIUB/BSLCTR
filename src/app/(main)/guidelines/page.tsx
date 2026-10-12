@@ -15,7 +15,7 @@ export default async function ClinicalGuidelinesPage() {
     const guidelines = await getGuidelines("CLINICAL");
 
     return (
-        <Section watermark="Clinical" eyebrow="Guidance" title="Clinical Guidelines">
+        <Section pageTitle watermark="Clinical" eyebrow="Guidance" title="Clinical Guidelines">
             <div className="max-w-5xl">
                 {!guidelines || guidelines.length === 0 ? (
                     <div className="flex items-center justify-center py-12">

@@ -6,6 +6,7 @@ export default function Live() {
             watermark="Live"
             eyebrow="Streaming"
             title="Watch our live broadcast"
+            pageTitle
         >
             <p className="mb-12 max-w-2xl text-lg leading-relaxed text-body">
                 Stay connected with us through our live sessions. Join the

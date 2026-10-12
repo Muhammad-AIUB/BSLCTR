@@ -12,7 +12,7 @@ export default function BslctrConPage() {
     const [year, setYear] = useState<string | null>(null);
 
     return (
-        <Section watermark="Con" eyebrow="Conference" title="BSLCTR CON">
+        <Section pageTitle watermark="Con" eyebrow="Conference" title="BSLCTR CON">
             <div className="w-full max-w-3xl">
                 <p className="mb-12 text-body">
                     Highlights from the BSLCTR International Annual Conference

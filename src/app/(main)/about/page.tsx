@@ -41,7 +41,7 @@ const stats = [
 export default function AboutPage() {
     return (
         <>
-            <Section watermark="About" eyebrow="Who we are" title="About BSLCTR">
+            <Section pageTitle watermark="About" eyebrow="Who we are" title="About BSLCTR">
                 <div className="max-w-3xl">
                     <p className="text-body">
                         The Bangladesh Society for Liver Cancer Treatment &amp;

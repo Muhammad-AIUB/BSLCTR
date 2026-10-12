@@ -63,7 +63,7 @@ export default function LiveWebinars() {
     // A failed load is not the same as nothing being scheduled.
     if (failed) {
         return (
-            <Section watermark="Webinars" eyebrow="Events" title="Live Webinars">
+            <Section pageTitle watermark="Webinars" eyebrow="Events" title="Live Webinars">
                 <p role="alert" className="py-10 text-center text-muted-foreground">
                     The webinars could not be loaded. Please try again in a moment.
                 </p>
@@ -72,7 +72,7 @@ export default function LiveWebinars() {
     }
 
     return (
-        <Section watermark="Webinars" eyebrow="Events" title="Live Webinars">
+        <Section pageTitle watermark="Webinars" eyebrow="Events" title="Live Webinars">
             <div className="max-w-5xl space-y-14">
 
                 {/* Live / Recent Webinars */}
