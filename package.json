@@ -5,7 +5,8 @@
     "scripts": {
         "dev": "next dev",
         "build": "next build",
-        "start": "next start",
+        "build:namecheap": "next build && node scripts/namecheap/package.mjs",
+        "start": "node --env-file=.env dist/namecheap/app.js",
         "lint": "eslint .",
         "typecheck": "tsc --noEmit",
         "seed": "tsx --env-file=.env prisma/seed.ts",
