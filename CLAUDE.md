@@ -9,12 +9,14 @@
 ```bash
 npm run dev       # dev server (port 3000)
 npm run build     # build + type-check + lint
-npm run start     # serve production build
+npm run build:namecheap  # build, then package dist/bslctr-namecheap.tar.gz for upload
+npm run start     # serve the packaged bundle, as the host will (run build:namecheap first)
 npm run seed      # seed admin row
-npx tsc --noEmit  # type-check only (delete .next/ first)
+npm run typecheck # type-check only (tsc --noEmit; delete .next/ first)
+npm run lint      # ESLint with the Next rule sets (eslint.config.mjs)
 ```
 
-⚠️ **`npm run lint` hangs** — no ESLint config. Use `npm run build` instead.
+There is no `test` or `lint:unused` script, and no tests.
 
 ## Architecture & Conventions
 
@@ -34,7 +36,7 @@ npx tsc --noEmit  # type-check only (delete .next/ first)
 - We do not render sample content when real data is missing. `PhotoGallery` once fell back to stock photos captioned as society events on the home page; a section with no data is left out instead.
 - We do not tell a user something happened unless the code did it. No "email sent" or "registration received" message without the send or the saved row behind it.
 - We do not pass database HTML to `dangerouslySetInnerHTML` unsanitised. Run it through `DOMPurify.sanitize` first (see `cases/page.tsx`), because any stored `<script>`/`onerror` would run on the same origin as the admin session.
-- We do not use ESLint directly. `next lint` hangs (no config); use `npm run build` for lint + type-check.
+- We do not run `next lint`. With no ESLint config it stopped at a setup prompt and hung, and Next 16 removes it; `npm run lint` runs ESLint itself against `eslint.config.mjs`, and `npm run build` now fails on a lint error too.
 - We do not select `password` from `/api/members`. Personal contact details omitted from public directory.
 - We do not assume dead code is wired up. `AutoplayCarousel`, `HeroSection`, `HeroSlider`, `Layout`, `ProtectedRoute`, `YoutubeLive`, `TopBar`, `PatientForm`, `PhysicianForm` are imported nowhere.
 - We do not show a failed load as an empty list. A database error used to render "No clinical guidelines published yet" and, in the dashboard, "Nothing published yet"; loaders return `null` and fetching pages keep a failed state, so the page says it could not load. (The home page's photo strip is the exception: it is left out, like any section with no data.)
@@ -55,8 +57,15 @@ git config user.name "Muhammad-AIUB" && git config user.email "mjubayer.aiub@gma
 ```
 **Never push automatically.** Keep changes local unless explicitly asked.
 
+## Deployment
+
+Namecheap shared hosting (Stellar Plus): cPanel's "Setup Node.js App", which is Phusion Passenger. The steps are in `docs/deploy-namecheap.md`. The site is built here with `output: "standalone"` and uploaded as one archive; the host builds and installs nothing. `scripts/namecheap/package.mjs` assembles the archive and `scripts/namecheap/app.js` is the startup file, which reads `.env` and keeps `uploads/` beside `bundle/` so a redeploy does not delete them. The database stays on Neon.
+
 ## Known Landmines
 
+- **`.next/standalone` holds a copy of `.env`** — `next build` puts this machine's `.env`, with the database URL and admin passwords, into the standalone folder. Upload the archive from `npm run build:namecheap`, which leaves it out, and never that folder.
+- **The build machine is Windows and the host is Linux** — a dependency with a native binary (a `.node` file) will build here and fail there. The packaging script stops when it finds one; sharp's is dropped on purpose, with `images.unoptimized` set so nothing asks for it.
+- **`next start` does not serve a standalone build** — it warns and is not what the host runs. `npm run start` runs the packaged `app.js`.
 - **`vercel.json` breaks routing** — SPA rewrite left over from Vite; deletes every route to `/`. Delete or fix before serverless deploy.
 - **`components.json` misconfigured** — `tailwind.css` points to `src/index.css` (doesn't exist); real file is `src/app/globals.css`. `npx shadcn add` will fail until fixed.
 - **Uploads are written to local disk** — `src/lib/uploads.ts` saves to `uploads/` (or `UPLOAD_DIR`) and `/api/files/[name]` serves them; works on a persistent server, fails on serverless. The old unauthenticated `/api/upload` route was deleted.
