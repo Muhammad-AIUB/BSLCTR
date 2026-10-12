@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { XIcon } from "lucide-react";
@@ -47,8 +49,15 @@ function DialogOverlay({
 function DialogContent({
   className,
   children,
+  onOpenAutoFocus,
+  onCloseAutoFocus,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content>) {
+  // Radix hands focus back to the DialogTrigger on close. A dialog opened from state has no
+  // trigger, and focus then drops to <body>, so a keyboard user starts again from the top of
+  // the page. Whatever had focus when the dialog opened gets it back instead.
+  const opener = React.useRef<HTMLElement | null>(null);
+
   return (
     <DialogPortal data-slot="dialog-portal">
       <DialogOverlay />
@@ -58,6 +67,21 @@ function DialogContent({
           "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg",
           className
         )}
+        onOpenAutoFocus={(event) => {
+          // Runs before focus moves into the dialog.
+          opener.current =
+            document.activeElement instanceof HTMLElement ? document.activeElement : null;
+          onOpenAutoFocus?.(event);
+        }}
+        onCloseAutoFocus={(event) => {
+          onCloseAutoFocus?.(event);
+          const target = opener.current;
+          opener.current = null;
+          // Left to Radix when the opener is gone (Admin Login gives way to Log out).
+          if (event.defaultPrevented || !target?.isConnected || target === document.body) return;
+          event.preventDefault();
+          target.focus();
+        }}
         {...props}
       >
         {children}
