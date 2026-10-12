@@ -9,9 +9,18 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
     {
-        // .claude/ holds whole worktree copies of the repo and dist/ the built bundle;
-        // uploads/ and public/ are not source.
-        ignores: [".next/**", ".claude/**", "dist/**", "next-env.d.ts", "uploads/**", "public/**"],
+        // .claude/ holds whole worktree copies of the repo, .gstack/ QA reports and the
+        // scripts that produced them, and dist/ the built bundle; uploads/ and public/ are
+        // not source.
+        ignores: [
+            ".next/**",
+            ".claude/**",
+            ".gstack/**",
+            "dist/**",
+            "next-env.d.ts",
+            "uploads/**",
+            "public/**",
+        ],
     },
     ...compat.extends("next/core-web-vitals", "next/typescript"),
 ];
