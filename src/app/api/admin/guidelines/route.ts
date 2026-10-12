@@ -20,8 +20,13 @@ export async function GET(req: NextRequest) {
     if (!adminFromRequest(req)) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const rows = await prisma.guideline.findMany({ orderBy: { createdAt: "desc" } });
-    return NextResponse.json(rows);
+    try {
+        const rows = await prisma.guideline.findMany({ orderBy: { createdAt: "desc" } });
+        return NextResponse.json(rows);
+    } catch (error) {
+        console.error("list guidelines failed", error);
+        return NextResponse.json({ error: "Could not load the guidelines" }, { status: 500 });
+    }
 }
 
 export async function POST(req: NextRequest) {

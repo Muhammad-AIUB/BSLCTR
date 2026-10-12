@@ -10,28 +10,33 @@ import { prisma } from "@/lib/prisma";
  * public contact route. Never select `password`.
  */
 export async function GET() {
-    const members = await prisma.member.findMany({
-        where: { status: "APPROVED" },
-        orderBy: { name: "asc" },
-        select: {
-            id: true,
-            name: true,
-            bmdcNo: true,
-            designation: true,
-            specialtySubject: true,
-            otherSpecialty: true,
-            academicQualifications: true,
-            specializedTraining: true,
-            currentPosting: true,
-            pastPostings: true,
-            chamberAddresses: true,
-            shortIntroduction: true,
-            shortBiography: true,
-            journals: true,
-            profilePicture: true,
-            interventions: true,
-        },
-    });
+    try {
+        const members = await prisma.member.findMany({
+            where: { status: "APPROVED" },
+            orderBy: { name: "asc" },
+            select: {
+                id: true,
+                name: true,
+                bmdcNo: true,
+                designation: true,
+                specialtySubject: true,
+                otherSpecialty: true,
+                academicQualifications: true,
+                specializedTraining: true,
+                currentPosting: true,
+                pastPostings: true,
+                chamberAddresses: true,
+                shortIntroduction: true,
+                shortBiography: true,
+                journals: true,
+                profilePicture: true,
+                interventions: true,
+            },
+        });
 
-    return NextResponse.json(members);
+        return NextResponse.json(members);
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json([], { status: 500 });
+    }
 }

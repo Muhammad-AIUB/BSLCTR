@@ -12,10 +12,15 @@ export async function DELETE(
     }
     const { id } = await params;
 
-    const existing = await prisma.webinar.findUnique({ where: { id } });
-    if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    try {
+        const existing = await prisma.webinar.findUnique({ where: { id } });
+        if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    await prisma.webinar.delete({ where: { id } });
-    if (existing.thumbnail) await deleteUpload(existing.thumbnail);
-    return NextResponse.json({ ok: true });
+        await prisma.webinar.delete({ where: { id } });
+        if (existing.thumbnail) await deleteUpload(existing.thumbnail);
+        return NextResponse.json({ ok: true });
+    } catch (error) {
+        console.error("delete webinar failed", error);
+        return NextResponse.json({ error: "Could not delete the webinar" }, { status: 500 });
+    }
 }

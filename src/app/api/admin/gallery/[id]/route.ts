@@ -24,13 +24,18 @@ export async function PATCH(
         return NextResponse.json({ error: "Title is too long" }, { status: 400 });
     }
 
-    // updateMany so a missing id is a 404 rather than a thrown error.
-    const { count } =
-        kind === "VIDEO"
-            ? await prisma.video.updateMany({ where: { id }, data: { title } })
-            : await prisma.photo.updateMany({ where: { id }, data: { title } });
-    if (count === 0) return NextResponse.json({ error: "Not found" }, { status: 404 });
-    return NextResponse.json({ ok: true });
+    try {
+        // updateMany so a missing id is a 404 rather than a thrown error.
+        const { count } =
+            kind === "VIDEO"
+                ? await prisma.video.updateMany({ where: { id }, data: { title } })
+                : await prisma.photo.updateMany({ where: { id }, data: { title } });
+        if (count === 0) return NextResponse.json({ error: "Not found" }, { status: 404 });
+        return NextResponse.json({ ok: true });
+    } catch (error) {
+        console.error("rename gallery item failed", error);
+        return NextResponse.json({ error: "Could not save the title" }, { status: 500 });
+    }
 }
 
 /** DELETE /api/admin/gallery/:id?kind=VIDEO|PHOTO */
@@ -47,14 +52,19 @@ export async function DELETE(
         return NextResponse.json({ error: "Unknown kind" }, { status: 400 });
     }
 
-    const existing =
-        kind === "VIDEO"
-            ? await prisma.video.findUnique({ where: { id } })
-            : await prisma.photo.findUnique({ where: { id } });
-    if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    try {
+        const existing =
+            kind === "VIDEO"
+                ? await prisma.video.findUnique({ where: { id } })
+                : await prisma.photo.findUnique({ where: { id } });
+        if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    if (kind === "VIDEO") await prisma.video.delete({ where: { id } });
-    else await prisma.photo.delete({ where: { id } });
-    await deleteUpload(existing.link);
-    return NextResponse.json({ ok: true });
+        if (kind === "VIDEO") await prisma.video.delete({ where: { id } });
+        else await prisma.photo.delete({ where: { id } });
+        await deleteUpload(existing.link);
+        return NextResponse.json({ ok: true });
+    } catch (error) {
+        console.error("delete gallery item failed", error);
+        return NextResponse.json({ error: "Could not delete the gallery item" }, { status: 500 });
+    }
 }

@@ -30,11 +30,16 @@ export async function GET(req: NextRequest) {
     if (!adminFromRequest(req)) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const [videos, photos] = await Promise.all([
-        prisma.video.findMany({ orderBy: { createdAt: "desc" } }),
-        prisma.photo.findMany({ orderBy: { createdAt: "desc" } }),
-    ]);
-    return NextResponse.json({ videos, photos });
+    try {
+        const [videos, photos] = await Promise.all([
+            prisma.video.findMany({ orderBy: { createdAt: "desc" } }),
+            prisma.photo.findMany({ orderBy: { createdAt: "desc" } }),
+        ]);
+        return NextResponse.json({ videos, photos });
+    } catch (error) {
+        console.error("list gallery failed", error);
+        return NextResponse.json({ error: "Could not load the gallery" }, { status: 500 });
+    }
 }
 
 export async function POST(req: NextRequest) {
@@ -54,8 +59,19 @@ export async function POST(req: NextRequest) {
 
     // A file that already backs a gallery video is not this request's to claim,
     // and must not be deleted by the clean-up below.
-    if (uploaded && (await prisma.video.findFirst({ where: { link: uploaded }, select: { id: true } }))) {
-        return NextResponse.json({ error: "Invalid uploaded file" }, { status: 400 });
+    if (uploaded) {
+        let claimed: boolean;
+        try {
+            claimed = Boolean(
+                await prisma.video.findFirst({ where: { link: uploaded }, select: { id: true } })
+            );
+        } catch (error) {
+            // Whether the file backs a video is not known, so it is left where it is. If
+            // nothing claims it, the sweep in the upload route removes it after a day.
+            console.error("create gallery item failed", error);
+            return NextResponse.json({ error: "Could not save the gallery item" }, { status: 500 });
+        }
+        if (claimed) return NextResponse.json({ error: "Invalid uploaded file" }, { status: 400 });
     }
 
     // A rejected submission must not leave its already-uploaded video behind.

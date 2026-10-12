@@ -12,10 +12,15 @@ export async function DELETE(
     }
     const { id } = await params;
 
-    const existing = await prisma.guideline.findUnique({ where: { id } });
-    if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    try {
+        const existing = await prisma.guideline.findUnique({ where: { id } });
+        if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    await prisma.guideline.delete({ where: { id } });
-    await Promise.all([...existing.pdfs, existing.thumbnail].filter(Boolean).map(deleteUpload));
-    return NextResponse.json({ ok: true });
+        await prisma.guideline.delete({ where: { id } });
+        await Promise.all([...existing.pdfs, existing.thumbnail].filter(Boolean).map(deleteUpload));
+        return NextResponse.json({ ok: true });
+    } catch (error) {
+        console.error("delete guideline failed", error);
+        return NextResponse.json({ error: "Could not delete the guideline" }, { status: 500 });
+    }
 }

@@ -32,9 +32,16 @@ export async function GET(req: NextRequest) {
     if (!adminFromRequest(req)) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    // Unlike the public /api/webinars, this also lists webinars that are over.
-    const rows = await prisma.webinar.findMany({ orderBy: [{ date: "desc" }, { time: "desc" }] });
-    return NextResponse.json(rows);
+    try {
+        // Unlike the public /api/webinars, this also lists webinars that are over.
+        const rows = await prisma.webinar.findMany({
+            orderBy: [{ date: "desc" }, { time: "desc" }],
+        });
+        return NextResponse.json(rows);
+    } catch (error) {
+        console.error("list webinars failed", error);
+        return NextResponse.json({ error: "Could not load the webinars" }, { status: 500 });
+    }
 }
 
 export async function POST(req: NextRequest) {
